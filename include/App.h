@@ -5,74 +5,50 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#define GL_GLEXT_PROTOTYPES
+
 #include "GLFW/glfw3.h"
 #include <GL/gl.h>
+#include <GL/glext.h>
+#include <cmath>
+#include <cstdio>
 #include <stdlib.h>
+#include <iostream>
 
 class App {
     public:
 
-        App() {
-            if (!glfwInit())
-                std::exit(1);
+        App();
+        ~App();
 
-            window = glfwCreateWindow(1280, 720, "m_floating Hello windows", nullptr, nullptr);
-
-            if (window == nullptr)
-                std::exit(1);
-
-            glfwMakeContextCurrent(window);
-
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO(); (void)io;
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-            io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-
-            ImGui::StyleColorsDark();
-
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init();
-        }
-
-
-        ~App() {
-            ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
-            glfwDestroyWindow(window);
-            glfwTerminate();
-        }
-        void Run() {
-            while (!glfwWindowShouldClose(window)) {
-                glfwPollEvents();
-                ImGui_ImplGlfw_NewFrame();
-                ImGui_ImplOpenGL3_NewFrame();
-                ImGui::NewFrame();
-                ImGui::DockSpaceOverViewport();
-
-                Update();
-
-                ImGui::Render();
-                int display_w, display_h;
-                glfwGetFramebufferSize(window, &display_w, &display_h);
-                glViewport(0, 0, display_w, display_h);
-                glClearColor(clear_color.x*clear_color.w, clear_color.y*clear_color.w, clear_color.z*clear_color.w, clear_color.w);
-                glClear(GL_COLOR_BUFFER_BIT);
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-                glfwSwapBuffers(window);
-            }
-        }
-
-
+        void Run();
         void Update();
 
 
     private:
+
         GLFWwindow* window;
         bool show_demo_window = true;
-        ImVec4 clear_color = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+        ImVec4 clear_color = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
+        GLuint VAO, VBO, shaderProgram;
+        bool drawTriangle = true;
+
+
+        // vertex shader
+        const char* vertexShaderSource = "#version 330 core\n"
+            "layout (location = 0) in vec3 aPos;\n"
+            "void main()\n"
+            "{\n"
+            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+            "}\0";
+
+        //Fragment Shader source code
+        const char* fragmentShaderSource = "#version 330 core\n"
+            "out vec4 FragColor;\n"
+            "void main()\n"
+            "{\n"
+            "   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
+            "}\n\0";
 
 };
 
