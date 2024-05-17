@@ -27,13 +27,13 @@ project "Renderer"
     language "c++"
 
     files {
-        "src/*.cpp",
-        "include/*.h"
+        "src/**.cpp",
+        "src/**.h"
     }
 
     includedirs {
         "lib/imgui/",
-        "include/"
+        "lib/",
     }
 
     links {
