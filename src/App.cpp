@@ -40,8 +40,14 @@ void App::Update() {
         cam.render();
     }
 
+    ImGui::Text("camera pos: %f, %f, %f", cam.position.x, cam.position.y, cam.position.z);
+    ImGui::Text("viewport: %f, %f, %f", cam.viewport_origin.x, cam.viewport_origin.y, cam.viewport_origin.z);
+    ImGui::Text("du: %f, %f, %f", cam.viewport_du.x, cam.viewport_du.y, cam.viewport_du.z);
+    ImGui::Text("dv: %f, %f, %f", cam.viewport_dv.x, cam.viewport_dv.y, cam.viewport_dv.z);
+
     ImGui::Separator();
-    ImGui::ColorEdit4("Sky color: ", glm::value_ptr(cam.sky_color));
+    ImGui::ColorEdit4("Sky color", glm::value_ptr(cam.sky_color));
+    ImGui::ColorEdit4("Sphere color", glm::value_ptr(cam.sphere_color));
 
     ImGui::Separator();
     ImGui::Text("image pointer = %x", image->texture);
