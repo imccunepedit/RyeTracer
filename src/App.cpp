@@ -1,36 +1,60 @@
 #include "App.h"
 #include "Camera.h"
+#include "Image.h"
 #include "imgui.h"
 #include <cstdint>
+
+#include "glm/gtc/type_ptr.hpp"
+
+
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFUALT_WINDOW_HEIGHT 720
 
 
 void App::Update() {
 
-
-    ImGui::Begin("Viewport");
-    image_width = ImGui::GetContentRegionAvail().x;
-    image_height = ImGui::GetContentRegionAvail().y;
-    ImGui::Image((void*)(intptr_t)image_texture, ImVec2(image_width, image_height));
+    // window containing our rendered image
+    // remove padding
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
+    // 24 (8+16) remove scrollbars and scrolling
+    ImGui::Begin("Viewport", NULL, 24);
+    // keep track of the window size
+    viewport_width = ImGui::GetContentRegionAvail().x;
+    viewport_height = ImGui::GetContentRegionAvail().y;
+    // draw the image into the viewport
+    ImGui::Image((void*)(intptr_t)image->texture, ImVec2(image->width, image->height));
     ImGui::End();
+    ImGui::PopStyleVar();
 
 
     ImGui::Begin("Controls");
+    ImGui::Separator();
     ImGui::ColorEdit4("Background", (float*)&clear_color);
+    ImGui::Checkbox("Show demo window: ", &show_demo_window);
 
+    ImGui::Separator();
     if (ImGui::Button("Render"))
     {
-        Camera cam;
-        cam.Render(&image_texture, image_width, image_height);
+        image->width = viewport_width;
+        image->height = viewport_height;
+        cam.render();
     }
 
-    ImGui::Text("image pointer = %x", image_texture);
-    ImGui::Text("image size = %d x %d", image_width, image_height);
+    ImGui::Separator();
+    ImGui::ColorEdit4("Sky color: ", glm::value_ptr(cam.sky_color));
+
+    ImGui::Separator();
+    ImGui::Text("image pointer = %x", image->texture);
+    ImGui::Text("viewport size = %d x %d", image->width, image->height);
+    ImGui::Text("fram time: %f", ImGui::GetIO().DeltaTime);
+
+
+
     ImGui::End();
 
-
+    if (show_demo_window) ImGui::ShowDemoWindow();
 
 }
-
 
 void App::Run() {
 
@@ -41,7 +65,6 @@ void App::Run() {
         // int display_w, display_h;
         // glfwGetFramebufferSize(window, &display_w, &display_h);
 
-
         // tell opengl what color to make the rendered buffer
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -49,7 +72,7 @@ void App::Run() {
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
-        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode); // do the docking things, make sure whats rendered in the background can still be seen
 
         Update();
 
@@ -75,7 +98,7 @@ App::App() {
 
 
     // create a window size x,y,title,fullscreen
-    window = glfwCreateWindow(800, 800, "m_floating Hello windows", nullptr, nullptr);
+    window = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFUALT_WINDOW_HEIGHT, "m_floating Hello windows", nullptr, nullptr);
 
     // make sure window exists
     if (window == nullptr)
@@ -96,6 +119,8 @@ App::App() {
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    cam.set_output(image);
 
 }
 

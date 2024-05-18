@@ -39,7 +39,7 @@ project "Renderer"
     links {
         "GL",
         "glfw",
-        "ImGui"
+        "ImGui",
     }
 
 

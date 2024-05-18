@@ -4,7 +4,9 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-#include <cstdint>
+
+#include "Image.h"
+#include "Camera.h"
 
 #define GL_GLEXT_PROTOTYPES
 
@@ -13,6 +15,7 @@
 #include <GL/glext.h>
 #include <cmath>
 #include <cstdio>
+#include <cstdint>
 #include <stdlib.h>
 #include <iostream>
 
@@ -28,11 +31,12 @@ class App {
 
     private:
         GLFWwindow* window;
-        bool show_demo_window = true;
+        bool show_demo_window = false;
         ImVec4 clear_color = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
-        int image_width = 255;
-        int image_height = 300;
-        GLuint image_texture;
+
+        Image* image = new Image();
+        Camera cam;
+        int viewport_width, viewport_height;
 
 };
 
