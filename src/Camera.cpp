@@ -5,18 +5,20 @@
 #include <iostream>
 
 #include <glm/glm.hpp>
-#include "GL/gl.h"
+#include <GL/gl.h>
 
 #include "Camera.h"
 #include "Ray.h"
+#include "Hit.h"
+#include "Scene.h"
 
-void Camera::render() {
+void Camera::render(Scene s) {
     initialize();
     uint32_t* image_data = new uint32_t[image->width*image->height];
     for (int j=0; j < image->height; j++) {
         for (int i = 0; i < image->width; i++) {
             Ray r = get_ray(i, j);
-            glm::vec4 pixel_color = trace_ray(r);
+            glm::vec4 pixel_color = trace_ray(r, s);
             image_data[i + j*image->width] = convert_color(pixel_color);
         }
     }
@@ -25,29 +27,16 @@ void Camera::render() {
 }
 
 
-glm::vec4 Camera::trace_ray(Ray r) {
-    glm::dvec3 center = glm::dvec3(4,0,0);
-    double radius = 1;
+glm::vec4 Camera::trace_ray(Ray r, Scene s) {
+    Hit h;
+    for ( auto i = s.objects.begin(); i != s.objects.end(); ++i) {
+        bool is_hit = i->hit(r,h);
+        if (is_hit) {
+            return glm::vec4(h.normal, 1) * 0.5f + glm::vec4(0.5f);
+        }
 
-    double a = glm::dot(r.direction, r.direction);
-    double b = -2.0 * glm::dot(r.direction, center - r.origin);
-    double c = glm::dot(center - r.origin,center - r.origin) - radius * radius;
-
-    double discriminant = b*b - 4*a*c;
-    double t = -1.0;
-
-    if (discriminant >= 0) {
-        t = (-b - std::sqrt(discriminant)) / (2*a);
-    }
-
-    if (t > 0) {
-        return glm::vec4(r.at(t) - center, 1)*0.5f + glm::vec4(0.5);
     }
     return sky_color;
-
-
-
-
 }
 
 

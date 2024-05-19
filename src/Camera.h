@@ -2,24 +2,28 @@
 #define CAMERA_H_
 
 #include <cstdint>
+#include <cmath>
+
 #include <glm/geometric.hpp>
 #include <glm/glm.hpp>
-#include <cmath>
-#include "GL/gl.h"
+
+#include <GL/gl.h>
+
 #include "Image.h"
 #include "Ray.h"
+#include "Scene.h"
 
 class Camera {
     public:
-        void set_output(Image* iimage) {
-            image = iimage;
+        void set_output(Image* i) {
+            image = i;
         }
-        void render();
+        void render(Scene s);
 
     private:
         void initialize();
         Ray get_ray(int x, int y);
-        glm::vec4 trace_ray(Ray r);
+        glm::vec4 trace_ray(Ray r, Scene s);
         uint32_t convert_color(glm::vec4 color);
 
 
@@ -27,7 +31,7 @@ class Camera {
 
     public:
         Image* image;
-        glm::vec4 sky_color = glm::vec4(0.1, 0.2, 0.5, 1.0);
+        glm::vec4 sky_color = glm::vec4(0, 0, 0.1, 1.0);
         glm::vec4 sphere_color = glm::vec4(0,0,0,1.0);
 
         glm::dvec3 position = glm::dvec3(0,0,0);

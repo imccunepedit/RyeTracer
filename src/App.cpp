@@ -1,10 +1,13 @@
+#include <cstdint>
+
+#include "glm/gtc/type_ptr.hpp"
+
 #include "App.h"
 #include "Camera.h"
 #include "Image.h"
 #include "imgui.h"
-#include <cstdint>
+#include "Scene.h"
 
-#include "glm/gtc/type_ptr.hpp"
 
 
 #define DEFAULT_WINDOW_WIDTH 1280
@@ -37,7 +40,7 @@ void App::Update() {
     {
         image->width = viewport_width;
         image->height = viewport_height;
-        cam.render();
+        cam.render(my_scene);
     }
 
     ImGui::Text("camera pos: %f, %f, %f", cam.position.x, cam.position.y, cam.position.z);
@@ -88,6 +91,8 @@ void App::Run() {
         // swap the currently displayed buffer with the one that was just rendered
         glfwSwapBuffers(window);
 
+
+
     }
 
 }
@@ -127,7 +132,7 @@ App::App() {
     ImGui_ImplOpenGL3_Init("#version 330");
 
     cam.set_output(image);
-
+    my_scene.add_object(Sphere({4,0,0}, 1));
 }
 
 

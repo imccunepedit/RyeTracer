@@ -38,6 +38,8 @@ class App {
         Camera cam;
         int viewport_width, viewport_height;
 
+        Scene my_scene;
+
 };
 
 
