@@ -44,7 +44,7 @@ glm::vec4 Camera::trace_ray(Ray &r, Scene &s) {
 
     if (s.spheres.size() == 0) return s.sky_color;
     Hit closest_hit;
-    Sphere* closest_sphere = nullptr;
+    bool has_hit = false;
     closest_hit.t = max_distance;
     for (int i = 0; i < s.spheres.size(); i++) {
         Sphere sphere = s.spheres.at(i);
@@ -53,19 +53,18 @@ glm::vec4 Camera::trace_ray(Ray &r, Scene &s) {
             continue;
         }
 
-        if (closest_sphere == nullptr) {
+        if (!has_hit) {
             closest_hit = hit;
-            closest_sphere = &sphere;
+            has_hit = true;
         } else if (hit.t < closest_hit.t) {
             closest_hit = hit;
-            closest_sphere = &sphere;
         }
 
     }
 
-    if (closest_sphere != nullptr) {
-        return closest_sphere->color;
-        std::cout << closest_sphere->color.b << "\n";
+    if (has_hit) {
+        // std::cout << closest_sphere->color.b << "\n";
+        return closest_hit.color;
     }
     return s.sky_color;
 

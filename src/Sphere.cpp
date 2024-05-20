@@ -23,6 +23,7 @@ Hit Sphere::hit(Ray &ray) {
 
     hit.point = ray.at(t);
     hit.normal = glm::normalize(hit.point - center);
+    hit.color = color;
 
     // otherwise calculate hit position
     t = (-b - std::sqrt(discriminant)) / (2*a);
