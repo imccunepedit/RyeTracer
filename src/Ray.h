@@ -4,14 +4,14 @@
 #include <glm/glm.hpp>
 class Ray {
     public:
-        Ray(glm::dvec3 orig, glm::dvec3 dir) : origin(orig), direction(dir) {}
+        Ray(glm::vec3 orig, glm::vec3 dir) : origin(orig), direction(dir) {}
 
-        glm::dvec3 at(double t) {
+        glm::vec3 at(float t) {
             return origin + direction * t;
         }
 
-        glm::dvec3 origin;
-        glm::dvec3 direction;
+        glm::vec3 origin;
+        glm::vec3 direction;
 };
 
 #endif // RAY_H_

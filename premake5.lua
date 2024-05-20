@@ -25,6 +25,7 @@ project "ImGui"
 project "Renderer"
     kind "WindowedApp"
     language "c++"
+    symbols "Full"
 
     files {
         "src/**.cpp",

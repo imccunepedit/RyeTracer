@@ -5,9 +5,9 @@
 
 class Hit {
     public:
-        glm::dvec3 point;
-        glm::dvec3 normal;
-        double t;
+        glm::vec3 point;
+        glm::vec3 normal;
+        float t;
 };
 
 #endif // HIT_H_

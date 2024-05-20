@@ -8,14 +8,14 @@
 
 class Sphere {
     public:
-        Sphere(glm::dvec3 c, double r) : center(c), radius(r) {}
+        Sphere(glm::vec3 c, float r, glm::vec4 co) : center(c), radius(r), color(co) {}
 
-        bool hit(Ray &ray, Hit &hit);
+        Hit hit(Ray &ray);
 
     public:
-        glm::dvec3 center;
-        double radius;
-        glm::vec4 color;
+        glm::vec3 center;
+        float radius;
+        glm::vec4 color = {0,1,0,1};
 };
 
 #endif // SPHERE_H_

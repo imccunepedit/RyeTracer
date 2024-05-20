@@ -1,3 +1,4 @@
+#include <memory>
 #include <cstdint>
 
 #include "glm/gtc/type_ptr.hpp"
@@ -7,6 +8,7 @@
 #include "Image.h"
 #include "imgui.h"
 #include "Scene.h"
+#include "Sphere.h"
 
 
 
@@ -31,33 +33,60 @@ void App::Update() {
 
 
     ImGui::Begin("Controls");
-    ImGui::Separator();
+    ImGui::SeparatorText("ImGui");
     ImGui::ColorEdit4("Background", (float*)&clear_color);
     ImGui::Checkbox("Show demo window: ", &show_demo_window);
 
-    ImGui::Separator();
+    ImGui::SeparatorText("Camera");
+    ImGui::DragFloat3("Position", glm::value_ptr(cam.position));
+    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.forward));
+    ImGui::DragFloat("Focal Distance", &cam.focal_dist);
     if (ImGui::Button("Render"))
     {
         image->width = viewport_width;
         image->height = viewport_height;
-        cam.render(my_scene);
+        cam.render(my_scene, image);
+    }
+    ImGui::SameLine();
+    ImGui::Checkbox("render every frame", &render_every_frame);
+    if (render_every_frame) {
+        image->width = viewport_width;
+        image->height = viewport_height;
+        cam.render(my_scene, image);
     }
 
-    ImGui::Text("camera pos: %f, %f, %f", cam.position.x, cam.position.y, cam.position.z);
+
+
     ImGui::Text("viewport: %f, %f, %f", cam.viewport_origin.x, cam.viewport_origin.y, cam.viewport_origin.z);
     ImGui::Text("du: %f, %f, %f", cam.viewport_du.x, cam.viewport_du.y, cam.viewport_du.z);
     ImGui::Text("dv: %f, %f, %f", cam.viewport_dv.x, cam.viewport_dv.y, cam.viewport_dv.z);
 
-    ImGui::Separator();
-    ImGui::ColorEdit4("Sky color", glm::value_ptr(cam.sky_color));
-    ImGui::ColorEdit4("Sphere color", glm::value_ptr(cam.sphere_color));
 
-    ImGui::Separator();
-    ImGui::Text("image pointer = %x", image->texture);
-    ImGui::Text("viewport size = %d x %d", image->width, image->height);
-    ImGui::Text("fram time: %f", ImGui::GetIO().DeltaTime);
+    ImGui::SeparatorText("Image");
+    ImGui::Text("Image pointer: 0x%x", image->texture);
+    ImGui::Text("Viewport size: %d x %d", image->width, image->height);
+    ImGui::Text("Frame time (fps): %fms (%f)", ImGui::GetIO().DeltaTime*1000, ImGui::GetIO().Framerate);
 
-
+    ImGui::SeparatorText("Scene");
+    ImGui::ColorEdit4("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);
+    if (ImGui::Button("Add Sphere")) {
+        my_scene.add_sphere(Sphere({10,0,0},1,{1,0,0,1}));;
+    }
+    ImGui::Spacing();
+    if (ImGui::TreeNode("Spheres")) {
+        for (int i = 0; i < my_scene.spheres.size(); i++) {
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            if (ImGui::TreeNode((void*)(intptr_t)i, "Sphere %d", i)) {
+                ImGui::ColorEdit4("Color", glm::value_ptr(my_scene.spheres[i].color));
+                ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center));
+                if (ImGui::Button("Remove")) {
+                    my_scene.spheres.erase(std::next(my_scene.spheres.begin(), i));
+                }
+                ImGui::TreePop();
+            }
+        }
+        ImGui::TreePop();
+    }
 
     ImGui::End();
 
@@ -131,8 +160,11 @@ App::App() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    cam.set_output(image);
-    my_scene.add_object(Sphere({4,0,0}, 1));
+
+
+    my_scene.add_sphere(Sphere(glm::vec3(4,0,0), 1, glm::vec4(0,1,0,1)));
+    my_scene.add_sphere(Sphere(glm::vec3(4,2,0), 1, glm::vec4(1,0,0,1)));
+    my_scene.add_sphere(Sphere(glm::vec3(4,-2,0), 1, glm::vec4(1,1,0,1)));
 }
 
 

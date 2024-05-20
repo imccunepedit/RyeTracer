@@ -1,4 +1,3 @@
-#include <cmath>
 #include <cstdint>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
@@ -10,10 +9,14 @@
 #include "Camera.h"
 #include "Ray.h"
 #include "Hit.h"
-#include "Scene.h"
 
-void Camera::render(Scene s) {
-    initialize();
+#define PI 3.14159
+float convert_to_rads (float angle) {
+    return angle / 180 * PI;
+}
+
+void Camera::render(Scene &s, Image* image) {
+    initialize(image);
     uint32_t* image_data = new uint32_t[image->width*image->height];
     for (int j=0; j < image->height; j++) {
         for (int i = 0; i < image->width; i++) {
@@ -27,16 +30,45 @@ void Camera::render(Scene s) {
 }
 
 
-glm::vec4 Camera::trace_ray(Ray r, Scene s) {
-    Hit h;
-    for ( auto i = s.objects.begin(); i != s.objects.end(); ++i) {
-        bool is_hit = i->hit(r,h);
-        if (is_hit) {
-            return glm::vec4(h.normal, 1) * 0.5f + glm::vec4(0.5f);
+
+glm::vec4 Camera::trace_ray(Ray &r, Scene &s) {
+    // Sphere sp = Sphere({4,0,0},1,{1,0,0,1});
+
+    // Hit h = sp.hit(r);
+    // if (h.t > 0 ) {
+    //     return sp.color;
+    // }
+
+    // return s.sky_color;
+
+
+    if (s.spheres.size() == 0) return s.sky_color;
+    Hit closest_hit;
+    Sphere* closest_sphere = nullptr;
+    closest_hit.t = max_distance;
+    for (int i = 0; i < s.spheres.size(); i++) {
+        Sphere sphere = s.spheres.at(i);
+        Hit hit = sphere.hit(r);
+        if (hit.t < min_distance) {
+            continue;
+        }
+
+        if (closest_sphere == nullptr) {
+            closest_hit = hit;
+            closest_sphere = &sphere;
+        } else if (hit.t < closest_hit.t) {
+            closest_hit = hit;
+            closest_sphere = &sphere;
         }
 
     }
-    return sky_color;
+
+    if (closest_sphere != nullptr) {
+        return closest_sphere->color;
+        std::cout << closest_sphere->color.b << "\n";
+    }
+    return s.sky_color;
+
 }
 
 
@@ -50,23 +82,30 @@ uint32_t Camera::convert_color(glm::vec4 color) {
 }
 
 Ray Camera::get_ray(int x, int y) {
-    glm::dvec3 pixel = viewport_origin + double(x) * viewport_du + double(y) * viewport_dv;
-    glm::dvec3 direction = pixel - position;
+    // TODO for some reason the direction converges towards 1,0,0 each render
+    glm::vec3 pixel = viewport_origin + float(x) * viewport_du + float(y) * viewport_dv;
+    glm::vec3 direction = glm::normalize(pixel - position);
     return Ray(position, direction);
 }
 
 
-void Camera::initialize() {
-    aspect_ratio = double(image->width) / image->height;
+void Camera::initialize(Image* image) {
 
-    viewport_width = tan(fov/2.0) * focal_dist * 2;
+    // if (initialized) {
+    //     return;
+    // }
+    // initialized = true;
+
+    aspect_ratio = float(image->width) / image->height;
+
+    viewport_width = tan(convert_to_rads(fov)/2.0) * focal_dist * 2;
     viewport_height = viewport_width / aspect_ratio;
 
-    viewport_u = viewport_width* right;
+    viewport_u = viewport_width * right;
     viewport_v = -viewport_height * up;
 
-    viewport_du = viewport_u/double(image->width);
-    viewport_dv = viewport_v/double(image->height);
+    viewport_du = viewport_u/float(image->width);
+    viewport_dv = viewport_v/float(image->height);
 
-    viewport_origin = forward*focal_dist - 0.5*viewport_v - 0.5*viewport_u;
+    viewport_origin = (position + forward*focal_dist) - 0.5f*viewport_v - 0.5f*viewport_u;
 }

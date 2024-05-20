@@ -2,13 +2,17 @@
 #define SCENE_H_
 
 #include <vector>
+#include <memory>
 
 #include "Sphere.h"
 
 class Scene {
     public:
-        std::vector<Sphere> objects;
-        void add_object(Sphere s);
+        void add_sphere(Sphere s);
+
+    public:
+        std::vector<Sphere> spheres;
+        glm::vec4 sky_color = {0.02,0.01,0.09,1.0};
 };
 
 #endif // SCENE_H_
