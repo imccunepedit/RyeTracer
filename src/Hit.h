@@ -1,7 +1,8 @@
 #ifndef HIT_H_
 #define HIT_H_
 
-#include "glm/glm.hpp"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 class Hit {
     public:
