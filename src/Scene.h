@@ -9,6 +9,8 @@
 class Scene {
     public:
         void add_sphere(Sphere s);
+        void remove_sphere(int i);
+        void load_default();
 
     public:
         std::vector<Sphere> spheres;

@@ -1,9 +1,9 @@
-#include "App.h"
+#include "RayTracer.h"
 
 int main() {
-    App app;
+    RayTracer ray_tracer;
 
-    app.Run();
+    ray_tracer.Run();
 
     return 0;
 }
