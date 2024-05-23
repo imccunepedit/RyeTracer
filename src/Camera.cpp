@@ -11,124 +11,74 @@
 
 void Camera::render(const Scene &s, Image* image) {
     // initilize our camera with the info from our output image
-    initialize(image);
+    calculate_viewport_size(image);
     uint32_t* image_data = new uint32_t[image->width*image->height];
     for (int j=0; j < image->height; j++) {
         for (int i = 0; i < image->width; i++) {
-            glm::vec4 pixel_color = per_pixel(i, j, s);
-            image_data[i + j*image->width] = process_color(pixel_color);
+            image_data[i + j*image->width] = per_pixel(i, j, s);
         }
     }
-    image->setImage(image_data);
+    image->set_image(image_data);
 }
 
-glm::vec4 Camera::per_pixel(int& x, int& y, const Scene &s) {
+uint32_t Camera::per_pixel(int& x, int& y, const Scene &scene) {
     glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     for (int i = 0; i < rays_per_pixel; i++)
     {
-        Ray r = get_ray(x, y);
-        color += trace_ray(r, s, max_bounces);
+        Ray ray = get_ray(x, y);
+        color += trace_ray(ray, scene, max_depth);
     }
-    return color / float(rays_per_pixel);
+
+    return process_color(color);
+
+    color /= float(rays_per_pixel);
+
 }
 
-glm::vec4 Camera::trace_ray(const Ray &r, const Scene &s, int bounces) {
-    // testing
-    // Sphere sp = Sphere({4,0,0},1,{1,0,0,1});
-
-    // Hit h = sp.hit(r);
-    // if (h.t > 0 ) {
-    //     return sp.color;
-    // }
-
-    // return s.sky_color;
-
-
-    // if we are at max depth just return
-    if (bounces < 1)
+glm::vec4 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth) {
+    if (depth < 1)
     {
-        return glm::vec4(0.0f);
+        return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
-    // if there isn't anything in the scene return skycolor
-    if (s.spheres.size() == 0)
-    {
-        return s.sky_color;
-    }
+    Hit hit = scene.hit(ray);
 
-    // try and find our closeset hit, loop over spheres
-    Hit closest_hit;
-    bool has_hit = false;
-    closest_hit.t = max_distance;
-    for (int i = 0; i < s.spheres.size(); i++)
-    {
-        Sphere sphere = s.spheres.at(i);
-        Hit hit = sphere.hit(r);
-        if (hit.t < min_distance)
-        {
-            continue;
-        }
+    return hit.color;
 
-        if (!has_hit)
-        {
-            closest_hit = hit;
-            has_hit = true;
-        }
-        else if (hit.t < closest_hit.t)
-        {
-            closest_hit = hit;
-        }
+    // if we haven't hit anything return what should be the sky color
+    if (std::isinf(hit.distance))
+        return hit.color;
 
-    }
+    // Ray bounced_ray = Ray(hit.point, glm::reflect(ray.direction, hit.normal));
 
-    // if we have hit anything then calculate new rays
-    if (has_hit)
-    {
-        // glm::vec4 color =  glm::vec4(closest_hit.normal*0.5f+0.5f, 1);
-        glm::vec4 color = closest_hit.color;
-        glm::vec3 dir = glm::sphericalRand(1.0);
-        if (glm::dot(dir, closest_hit.normal) < 0)
-        {
-            dir *= -1.0;
-        }
-        float hit_offset = 0.0001f;
-        glm::vec3 bounce_origin = closest_hit.point + closest_hit.normal * hit_offset;
-        Ray bounce_ray = Ray(closest_hit.point, dir);
-        color += 0.5f * trace_ray(bounce_ray, s, bounces-1);
-        return color;
-        // / glm::vec4(bounces,bounces,bounces, 1);
-        // std::cout << closest_sphere->color.b << "\n";
+    glm::vec4 color = hit.color;
 
-    }
-
-    return s.sky_color;
+    // color += 0.5f * trace_ray(bounced_ray, scene, depth-1);
 
 }
 
 
-uint32_t Camera::process_color(glm::vec4 color) {
-    color = glm::clamp(color, glm::vec4(0), glm::vec4(1));
-    int r = color.r*255;
-    int g = color.g*255;
-    int b = color.b*255;
-    int a = color.a*255;
+uint32_t Camera::process_color(const glm::vec4& color) {
+    glm::vec4 ncolor = glm::clamp(color, glm::vec4(0), glm::vec4(1));
+    int r = ncolor.r*255;
+    int g = ncolor.g*255;
+    int b = ncolor.b*255;
+    int a = 255;
     return (a << 24) | (b << 16) | (g << 8) | r;
 }
 
 Ray Camera::get_ray(int& x, int& y) {
-    glm::vec3 offset =  glm::linearRand(glm::vec3(0.0f), viewport_du + viewport_dv);
+    // generate an offset so we cover more of our pixels area with rays
+    // glm::vec3 offset =  glm::linearRand(glm::vec3(0.0f), viewport_du + viewport_dv);
+    glm::vec3 offset = glm::vec3(0.0f);
+
     glm::vec3 pixel = viewport_origin + offset + float(x) * viewport_du + float(y) * viewport_dv;
     glm::vec3 direction = glm::normalize(pixel - position);
     return Ray(position, direction);
 }
 
 
-void Camera::initialize(Image* image) {
-
-    // if (initialized) {
-    //     return;
-    // }
-    // initialized = true;
+void Camera::calculate_viewport_size(Image* image) {
 
     aspect_ratio = float(image->width) / image->height;
 
@@ -136,11 +86,11 @@ void Camera::initialize(Image* image) {
     viewport_width = tan(glm::radians(fov)/2.0) * focal_dist * 2;
     viewport_height = viewport_width / aspect_ratio;
 
-    viewport_u = viewport_width * right;
-    viewport_v = -viewport_height * up;
+    viewport_u = viewport_width * local_right;
+    viewport_v = -viewport_height * local_up;
 
     viewport_du = viewport_u/float(image->width);
     viewport_dv = viewport_v/float(image->height);
 
-    viewport_origin = (position + forward*focal_dist) - 0.5f*viewport_v - 0.5f*viewport_u;
+    viewport_origin = (position + local_forward*focal_dist) - 0.5f*viewport_v - 0.5f*viewport_u;
 }

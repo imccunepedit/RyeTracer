@@ -12,23 +12,21 @@ Hit Sphere::hit(const Ray &ray) {
     // calculate the discriminant
     Hit hit;
     float discriminant = b*b - 4*a*c;
-    float t = -1.0f;
-
 
     // if the disciminant is negative there wasn't a hit and as far as the sphere knows
-    // the ray went to infinity (or the sky box) so we can say that the normal is pointing
-    // back at the camera
     if (discriminant < 0) {
-        hit.t = t;
-        hit.point = ray.at(t);
-        hit.normal = -ray.direction;
         return hit;
     }
 
 
+    // make sure that we only use rays that go away from the camera
+    // we don't want to be able to see behind use
+    float t = (-b - std::sqrt(discriminant)) / (2*a);
+    if (t < 0)
+        return hit;
+
     // otherwise calculate hit position
-    t = (-b - std::sqrt(discriminant)) / (2*a);
-    hit.t = t;
+    hit.distance = t;
     hit.point = ray.at(t);
     hit.normal = (hit.point - center) / radius;
     hit.color = material.diffuse;

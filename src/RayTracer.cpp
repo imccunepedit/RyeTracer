@@ -15,72 +15,31 @@
 
 RayTracer::RayTracer ()
 {
+    image = new Image();
     my_scene.load_default();
+}
+
+RayTracer::~RayTracer()
+{
+    delete image;
 }
 
 void RayTracer::Update()
 {
-    // window containing our rendered image
-    // remove padding
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
-    // 24 (8+16) remove scrollbars and scrolling
-    ImGui::Begin("Viewport", NULL, 24);
-    // keep track of the window size
-    viewport_width = ImGui::GetContentRegionAvail().x;
-    viewport_height = ImGui::GetContentRegionAvail().y;
+    ImGuiIO& io = ImGui::GetIO();
 
-    // our images actual width and height, viewport may have changed size
-    ImVec2 image_size = ImVec2(image->width, image->height);
-    ImTextureID image_id = (void*)(intptr_t)image->texture;
-
-    // tell ImGui how to orient our image
-    ImVec2 uv0 = ImVec2(0.0f,0.0f);
-    ImVec2 uv1 = ImVec2(1.0f,1.0f);
-
-    // draw the image into the viewport
-    ImGui::Image(image_id, image_size, uv0, uv1);
-
-    if (ImGui::BeginItemTooltip())
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        ImVec2 region_size = ImVec2(10, 10);
-        float region_zoom = 10;
-        ImVec2 region0 = {io.MousePos.x, io.MousePos.y};
-        ImVec2 region1 = {io.MousePos.x + region_size.x, io.MousePos.y + region_size.y};
-        if (region1.x > image_size.x)
-        {
-            region1.x = image_size.x;
-            region0.x = image_size.x - region_size.x;
-        }
-        if (region1.y > image_size.y)
-        {
-            region1.y = image_size.y;
-            region0.y = image_size.y - region_size.y;
-        }
-        ImVec2 ttuv0 = ImVec2(region0.x / image_size.x, region0.y/image_size.y);
-        ImVec2 ttuv1 = ImVec2(region1.x / image_size.x, region1.y/image_size.y);
-        ImGui::Text("Zoom: %.2f", region_zoom);
-        ImGui::Text("Min: (%.2f, %.2f)",region0.x, region0.y);
-        ImGui::Text("Max: (%.2f, %.2f)",region1.x, region1.y);
-        ImGui::Image(image_id, ImVec2(region_size.x*region_zoom, region_size.y*region_zoom), ttuv0, ttuv1);
-        ImGui::EndTooltip();
-    }
-
-
-    ImGui::End();
-    ImGui::PopStyleVar();
-
+    image->draw_image();
 
     ImGui::Begin("Controls");
 
     ImGui::SeparatorText("Camera");
     ImGui::DragFloat3("Position", glm::value_ptr(cam.position));
-    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.forward));
+    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.local_forward));
     ImGui::DragFloat("Focal Distance", &cam.focal_dist);
     if (ImGui::Button("Render"))
     {
-        image->width = viewport_width;
-        image->height = viewport_height;
+        image->width = image->window_width;
+        image->height = image->window_height;
         cam.render(my_scene, image);
     }
     ImGui::SameLine();
@@ -99,7 +58,6 @@ void RayTracer::Update()
 
 
     ImGui::SeparatorText("Image");
-    ImGui::Text("Image pointer: 0x%x", image->texture);
     ImGui::Text("Viewport size: %d x %d", image->width, image->height);
     ImGui::Text("Frame time (fps): %fms (%f)", ImGui::GetIO().DeltaTime*1000, ImGui::GetIO().Framerate);
 

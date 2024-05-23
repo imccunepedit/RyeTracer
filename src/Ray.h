@@ -4,7 +4,7 @@
 #include <glm/vec3.hpp>
 class Ray {
     public:
-        Ray(glm::vec3 orig, glm::vec3 dir) : origin(orig), direction(dir) {}
+        Ray(glm::vec3 orig, glm::vec3 dir, float offset = 0.0001f) : origin(orig + dir * offset), direction(dir) {}
 
         glm::vec3 at(float t) const{
             return origin + direction * t;

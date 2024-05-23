@@ -18,37 +18,36 @@
 
 class Camera {
     public:
-        void render(const Scene &scene, Image* image);
+        void calculate_camera_directions();
+        void calculate_viewport_size(Image* image);
 
-        void initialize(Image* image);
+        void render(const Scene &scene, Image* image);
+        void draw_controls(const char& title);
 
     private:
-        glm::vec4 per_pixel(int& x, int& y, const Scene& s);
+        uint32_t per_pixel(int& x, int& y, const Scene& scene);
         Ray get_ray(int& x, int& y);
-        glm::vec4 trace_ray(const Ray &r, const Scene &s, int bounces);
-        uint32_t process_color(glm::vec4 color);
+        glm::vec4 trace_ray(const Ray &ray, const Scene &scene, int bounces);
+        uint32_t process_color(const glm::vec4& color);
 
 
 
 
     public:
-        float max_distance = 1.0e+10;
-        float min_distance = 1.0e-2;
-        int max_bounces = 10;
+        int max_depth = 1; // max depth into scene
         int rays_per_pixel = 1;
         glm::vec3 position = glm::vec3(0,0,0);
-        glm::vec3 up = glm::vec3(0,0,1);
-        glm::vec3 forward = glm::vec3(1,0,0);
-        glm::vec3 viewport_origin;
+        glm::vec3 local_up = glm::vec3(0,0,1);
+        glm::vec3 local_forward = glm::vec3(1,0,0);
+        glm::vec3 viewport_origin; //top left of top left pixel
 
     // private:
-        bool initialized = false;
         float aspect_ratio;
         float focal_dist = 1.0;
         float fov = 90;
 
 
-        glm::vec3 right = glm::cross(up, forward);
+        glm::vec3 local_right = glm::cross(local_up, local_forward);
 
         float viewport_width, viewport_height;
         glm::vec3 viewport_u, viewport_v;

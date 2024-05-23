@@ -5,7 +5,6 @@
 
 class Material {
     public:
-        Material (glm::vec4 c) : diffuse(c) {}
         glm::vec4 diffuse = glm::vec4(0.5f);
 };
 

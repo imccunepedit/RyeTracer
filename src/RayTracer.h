@@ -7,13 +7,14 @@ class RayTracer : public App
 {
     public:
         RayTracer();
+        ~RayTracer();
     private:
         void Update() override;
 
     private:
         bool render_every_frame = false;
 
-        Image* image = new Image();
+        Image* image;
         Camera cam;
         int viewport_width, viewport_height;
 

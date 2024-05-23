@@ -8,8 +8,8 @@ class Hit {
     public:
         glm::vec3 point;
         glm::vec3 normal;
-        float t;
         glm::vec4 color;
+        float distance = std::numeric_limits<float>::infinity();
 };
 
 #endif // HIT_H_
