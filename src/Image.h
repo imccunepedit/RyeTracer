@@ -10,9 +10,8 @@ class Image {
         bool set_image(uint32_t* image);
         void draw_image();
 
-        int window_width, window_height;
+        int width_last, height_last;
         int width, height;
-        ImTextureID texture_id;
 
     private:
         GLuint texture;

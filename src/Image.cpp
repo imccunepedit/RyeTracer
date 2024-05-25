@@ -1,16 +1,21 @@
 #include "Image.h"
 #include "imgui.h"
 
-void Image::draw_image() {
-    texture_id = (void*)(intptr_t)texture;
+void Image::draw_image()
+{
     // window containing our rendered image
     // remove padding
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
     // 24 (8+16) remove scrollbars and scrolling
     ImGui::Begin("Viewport", NULL, 24);
+
+    // TODO keep image position correctly and unstrected while moving
     // keep track of the window size
-    window_width = ImGui::GetContentRegionAvail().x;
-    window_height = ImGui::GetContentRegionAvail().y;
+    // width_last = width;
+    // height_last = height;
+    width = ImGui::GetContentRegionAvail().x;
+    height = ImGui::GetContentRegionAvail().y;
+
 
     // our images actual width and height, viewport may have changed size
     ImVec2 image_size = ImVec2(width, height);
@@ -20,8 +25,8 @@ void Image::draw_image() {
     ImVec2 uv1 = ImVec2(1.0f,1.0f);
 
     // draw the image into the viewport
-    ImGui::Image(texture_id, image_size, uv0, uv1);
-
+    ImGui::Image((ImTextureID) texture, image_size, uv0, uv1);
+#if 0
     if (ImGui::BeginItemTooltip() )
     {
         ImGuiIO& io = ImGui::GetIO();
@@ -44,9 +49,10 @@ void Image::draw_image() {
         ImGui::Text("Zoom: %.2f", region_zoom);
         ImGui::Text("Min: (%.2f, %.2f)",region0.x, region0.y);
         ImGui::Text("Max: (%.2f, %.2f)",region1.x, region1.y);
-        ImGui::Image(texture_id, ImVec2(region_size.x*region_zoom, region_size.y*region_zoom), ttuv0, ttuv1);
+        ImGui::Image((ImTextureID) texture, ImVec2(region_size.x*region_zoom, region_size.y*region_zoom), ttuv0, ttuv1);
         ImGui::EndTooltip();
     }
+#endif
 
 
     ImGui::End();
@@ -55,9 +61,8 @@ void Image::draw_image() {
 
 }
 
-
-
-bool Image::set_image(uint32_t* image_data) {
+bool Image::set_image(uint32_t* image_data)
+{
     // Create a OpenGL texture identifier
     GLuint image_texture;
     glGenTextures(1, &image_texture);

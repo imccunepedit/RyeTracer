@@ -31,42 +31,39 @@ void RayTracer::Update()
     image->draw_image();
 
     ImGui::Begin("Controls");
+    ImGui::SeparatorText("Info");
+    ImGui::Text("Viewport size: %d x %d", image->width, image->height);
+    ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
 
     ImGui::SeparatorText("Camera");
-    ImGui::DragFloat3("Position", glm::value_ptr(cam.position));
-    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.local_forward));
-    ImGui::DragFloat("Focal Distance", &cam.focal_dist);
+    ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
+    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.local_forward), 0.1f);
+    ImGui::DragFloat("Focal Distance", &cam.focal_dist, 0.1f);
     if (ImGui::Button("Render"))
     {
-        image->width = image->window_width;
-        image->height = image->window_height;
         cam.render(my_scene, image);
+        // std::thread render_thread(&Camera::render, &cam, my_scene, image);
+        // render_thread.join();
     }
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &render_every_frame);
     if (render_every_frame) {
-        image->width = viewport_width;
-        image->height = viewport_height;
         cam.render(my_scene, image);
     }
 
+    if (ImGui::Button("Reset accumulator"))
+        cam.reset_accumulator();
 
+    ImGui::End();
 
-    ImGui::Text("viewport: %f, %f, %f", cam.viewport_origin.x, cam.viewport_origin.y, cam.viewport_origin.z);
-    ImGui::Text("du: %f, %f, %f", cam.viewport_du.x, cam.viewport_du.y, cam.viewport_du.z);
-    ImGui::Text("dv: %f, %f, %f", cam.viewport_dv.x, cam.viewport_dv.y, cam.viewport_dv.z);
-
-
-    ImGui::SeparatorText("Image");
-    ImGui::Text("Viewport size: %d x %d", image->width, image->height);
-    ImGui::Text("Frame time (fps): %fms (%f)", ImGui::GetIO().DeltaTime*1000, ImGui::GetIO().Framerate);
-
-    ImGui::SeparatorText("Scene");
-    ImGui::ColorEdit4("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);
+    ImGui::Begin("Scene");
+    ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);
+    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.directional_light_color), ImGuiColorEditFlags_Float);
+    ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.directional_light_direction), 0.1f, -1.0f, 1.0f);
     if (ImGui::Button("Add Sphere")) {
-        my_scene.add_sphere(Sphere({10,0,0},1,{1,0,0,1}));;
+        my_scene.add_sphere(Sphere({10,0,0},1,{1,0,0}));;
     }
-    ImGui::Spacing();
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Spheres"))
     {
         for (int i = 0; i < my_scene.spheres.size(); i++)
@@ -74,8 +71,9 @@ void RayTracer::Update()
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode((void*)(intptr_t)i, "Sphere %d", i))
             {
-                ImGui::ColorEdit4("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse));
-                ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center));
+                ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
+                ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
                 if (ImGui::Button("Remove"))
                 {
                     my_scene.remove_sphere(i);
@@ -87,5 +85,7 @@ void RayTracer::Update()
     }
 
     ImGui::End();
+
+
 
 };

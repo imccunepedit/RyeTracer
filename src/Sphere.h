@@ -2,7 +2,6 @@
 #define SPHERE_H_
 
 #include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <glm/geometric.hpp>
 
 #include "Ray.h"
@@ -11,13 +10,13 @@
 
 class Sphere {
     public:
-        Sphere(glm::vec3 c, float r, glm::vec4 co) {
+        Sphere(glm::vec3 c, float r, glm::vec3 co) {
             center = c;
             radius = r;
             material.diffuse = co;
         }
 
-        Hit hit(const Ray &ray);
+        bool hit(const Ray &ray, Hit& hit);
 
     public:
         glm::vec3 center;

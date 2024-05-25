@@ -14,7 +14,7 @@
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFUALT_WINDOW_HEIGHT 720
 
-
+#include "tracy/Tracy.hpp"
 
 void App::Run()
 {
@@ -62,6 +62,7 @@ void App::Run()
 
         // swap the currently displayed buffer with the one that was just rendered
         glfwSwapBuffers(window);
+        FrameMark;
 
     }
 
