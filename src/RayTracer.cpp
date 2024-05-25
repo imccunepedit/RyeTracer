@@ -37,7 +37,8 @@ void RayTracer::Update()
 
     ImGui::SeparatorText("Camera");
     ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
-    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.local_forward), 0.1f);
+    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.look_dir), 0.1f);
+    ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
     ImGui::DragFloat("Focal Distance", &cam.focal_dist, 0.1f);
     if (ImGui::Button("Render"))
     {
@@ -55,6 +56,8 @@ void RayTracer::Update()
         cam.reset_accumulator();
 
     ImGui::End();
+
+    cam.debug_window();
 
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);

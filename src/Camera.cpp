@@ -120,6 +120,20 @@ void Camera::reset_accumulator()
     memset(accumulation_data, 0, viewport_pixel_width*viewport_pixel_height*sizeof(glm::vec3));
 }
 
+
+void Camera::calculate_camera_directions()
+{
+    if (use_look_at)
+        w = glm::normalize(position-look_point);
+    else
+        w = glm::normalize(-look_dir);
+
+    u = glm::normalize(glm::cross(up,w));
+    v = glm::cross(w,u);
+
+}
+
+
 void Camera::calculate_viewport_size(Image* image)
 {
     ZoneScoped;
@@ -142,14 +156,34 @@ void Camera::calculate_viewport_size(Image* image)
 
     aspect_ratio = float(viewport_pixel_width) / viewport_pixel_height;
 
-    viewport_width = tan(glm::radians(fov)/2.0) * focal_dist * 2;
-    viewport_height = viewport_width / aspect_ratio;
+    viewport_width = tan(glm::radians(fov) * 0.5f) * focal_dist * 2;
+    viewport_height = viewport_width * 1.0f / aspect_ratio;
 
-    viewport_u = viewport_width * local_right;
-    viewport_v = -viewport_height * local_up;
+    calculate_camera_directions();
+
+    viewport_u = viewport_width * u;
+    viewport_v = -viewport_height * v;
 
     viewport_du = viewport_u/float(viewport_pixel_width);
     viewport_dv = viewport_v/float(viewport_pixel_height);
 
-    viewport_origin = (position + local_forward*focal_dist) - 0.5f*viewport_v - 0.5f*viewport_u;
+    viewport_origin = (position - w*focal_dist) - 0.5f*viewport_v - 0.5f*viewport_u;
+}
+
+
+void Camera::debug_window()
+{
+    ImGui::Begin("Camera Debug");
+    ImGui::Text("u (right):       % f, % f, % f", u.x, u.y, u.z);
+    ImGui::Text("v (up):          % f, % f, % f", v.x, v.y, v.z);
+    ImGui::Text("w (backwards):   % f, % f, % f", w.x, w.y, w.z);
+    ImGui::Separator();
+    ImGui::Text("Viewport origin: % f, % f, % f", viewport_origin.x, viewport_origin.y, viewport_origin.z);
+    ImGui::Text("Viewport du:     % f, % f, % f", viewport_du.x, viewport_du.y, viewport_du.z);
+    ImGui::Text("Viewport dv:     % f, % f, % f", viewport_dv.x, viewport_dv.y, viewport_dv.z);
+    ImGui::Separator();
+    ImGui::Text("Viewport size:   % f, % f", viewport_width, viewport_height);
+    ImGui::Text("Focal dist:      % f", focal_dist);
+    ImGui::Text("Horizontal fov:  % f", fov);
+    ImGui::End();
 }

@@ -12,7 +12,7 @@ class RayTracer : public App
         void Update() override;
 
     private:
-        bool render_every_frame = false;
+        bool render_every_frame = true;
 
         Image* image;
         Camera cam;

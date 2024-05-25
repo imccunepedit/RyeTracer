@@ -55,11 +55,9 @@ bool Scene::hit(const Ray& ray, Hit& hit) const
 
 void Scene::load_default()
 {
-    directional_light_direction = glm::vec3(0.0f, 1.0f, -1.0f);
-    add_sphere(Sphere(glm::vec3(4,0,0), 1, glm::vec3(0.1f)));
-    add_sphere(Sphere(glm::vec3(4,0,-100), 99, glm::vec3(0.1f)));
-    // add_sphere(Sphere(glm::vec3(4,2,0), 1, glm::vec3(0,0,1)));
-    // add_sphere(Sphere(glm::vec3(4,-2,0), 1, glm::vec3(1,0,1)));
+    directional_light_direction = glm::vec3(1, 0, -1);
+    add_sphere(Sphere(glm::vec3(0,4,0), 1, glm::vec3(0.1f)));
+    add_sphere(Sphere(glm::vec3(0,4,-100), 99, glm::vec3(0.1f)));
 }
 
 void Scene::add_sphere(Sphere s)
