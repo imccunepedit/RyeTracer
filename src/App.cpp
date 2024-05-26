@@ -19,7 +19,7 @@
 void App::Run()
 {
 
-    while (!glfwWindowShouldClose(window) && !should_quit)
+    while (!glfwWindowShouldClose(window_handle) && !should_quit)
     {
         // tell glfw to look for events
         glfwPollEvents();
@@ -49,6 +49,8 @@ void App::Run()
                 ImGui::MenuItem("Quit", NULL, &should_quit);
                 ImGui::EndMenu();
             }
+
+            app_menu();
             ImGui::EndMainMenuBar();
         }
 
@@ -61,7 +63,7 @@ void App::Run()
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // swap the currently displayed buffer with the one that was just rendered
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window_handle);
         FrameMark;
 
     }
@@ -83,15 +85,15 @@ App::App()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window size x,y,title,not full screen
-    window = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFUALT_WINDOW_HEIGHT, "m_floating Renderer", nullptr, nullptr);
+    window_handle = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFUALT_WINDOW_HEIGHT, "m_floating Renderer", nullptr, nullptr);
 
 
     // make sure window exists
-    if (window == nullptr)
+    if (window_handle == nullptr)
         std::exit(1);
 
     // tell glfw that we want to use our window
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window_handle);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -102,7 +104,7 @@ App::App()
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window_handle, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -114,6 +116,6 @@ App::~App() {
     ImGui::DestroyContext();
 
     // tell glfw to kill our window and kill its self
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(window_handle);
     glfwTerminate();
 }

@@ -8,32 +8,31 @@
 #include <GL/gl.h>
 
 #include "Camera.h"
-#include "Ray.h"
 #include "Hit.h"
 #include "Random.h"
 
 #include "tracy/Tracy.hpp"
 
 
+void Camera::initialize(Image *image)
+{
+    if (initialized)
+        return;
 
-void Camera::render(const Scene &s, Image* image)
+    initialized = true;
+    out_image = image;
+    resize();
+    calculate_camera_directions();
+    calculate_viewport_vectors();
+}
+
+void Camera::render(const Scene &s)
 {
     ZoneScoped;
     // initilize our camera with the info from our output image
-    calculate_viewport_size(image);
 
-#if 0
-    for (int j=0; j < viewport_pixel_height; j++)
-    {
-        for (int i = 0; i < viewport_pixel_width; i++)
-        {
-            // std::cout << i + j* viewport_pixel_width << "\n";
-            per_pixel(i, j, s);
-        }
-    }
-
-#else
-
+#define MT
+#ifdef MT
     oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_height), [this,s](size_t j)
     {
         oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_width), [this,s,j](size_t i){
@@ -41,10 +40,17 @@ void Camera::render(const Scene &s, Image* image)
         });
     });
 
-
+#else
+    for (int j=0; j < viewport_pixel_height; j++)
+    {
+        for (int i = 0; i < viewport_pixel_width; i++)
+        {
+            per_pixel(i, j, s);
+        }
+    }
 #endif
 
-    image->set_image(image_data);
+    out_image->set_image(image_data);
     frame_index ++;
 }
 
@@ -53,10 +59,10 @@ void Camera::per_pixel(int x, int y, const Scene &scene)
     ZoneScoped;
 
     // generate an offset so we cover more of our pixels area with rays
-    uint32_t seed = x + y * viewport_pixel_width;
+    uint32_t seed = x + y * viewport_pixel_width + out_image->texture*7919;
 
     seed *= frame_index;
-    glm::vec3 offset = viewport_du*utils::random_float(seed) + viewport_dv*utils::random_float(seed);
+    glm::vec3 offset = viewport_du*raytracing::random::random_float(seed) + viewport_dv*raytracing::random::random_float(seed);
 
     glm::vec3 pixel = viewport_origin + offset + float(x) * viewport_du + float(y) * viewport_dv;
     glm::vec3 direction = glm::normalize(pixel - position);
@@ -83,7 +89,7 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
 
     float offset = 0.001f;
 
-    Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + utils::random_on_sphere(rseed));
+    Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + raytracing::random::random_on_sphere(rseed));
     glm::vec3 bounced_light = trace_ray(next_ray, scene, depth-1, rseed);
 
     next_ray.direction = -scene.directional_light_direction;
@@ -123,46 +129,40 @@ void Camera::reset_accumulator()
 
 void Camera::calculate_camera_directions()
 {
-    if (use_look_at)
-        w = glm::normalize(position-look_point);
-    else
-        w = glm::normalize(-look_dir);
-
+    w = glm::normalize(-look_dir); // -forward
     u = glm::normalize(glm::cross(up,w));
     v = glm::cross(w,u);
 
 }
 
 
-void Camera::calculate_viewport_size(Image* image)
+void Camera::resize()
 {
-    ZoneScoped;
+    if (out_image->height == viewport_pixel_height && out_image->width == viewport_pixel_width)
+        return;
 
-    if (viewport_pixel_width == image->width &&
-        viewport_pixel_height == image->height)
-            return;
-
-
-    viewport_pixel_height = image->height;
-    viewport_pixel_width = image->width;
-
-
-    delete[] accumulation_data;
-    accumulation_data = new glm::vec3[viewport_pixel_width*viewport_pixel_height];
-    reset_accumulator();
+    viewport_pixel_height = out_image->height;
+    viewport_pixel_width = out_image->width;
 
     delete[] image_data;
     image_data = new uint32_t[viewport_pixel_width*viewport_pixel_height];
 
-    aspect_ratio = float(viewport_pixel_width) / viewport_pixel_height;
+    delete[] accumulation_data;
+    accumulation_data = new glm::vec3[viewport_pixel_width*viewport_pixel_height];
 
-    viewport_width = tan(glm::radians(fov) * 0.5f) * focal_dist * 2;
-    viewport_height = viewport_width * 1.0f / aspect_ratio;
+    reset_accumulator();
+}
 
-    calculate_camera_directions();
 
-    viewport_u = viewport_width * u;
-    viewport_v = -viewport_height * v;
+void Camera::calculate_viewport_vectors()
+{
+    float aspect_ratio = float(viewport_pixel_width) / viewport_pixel_height;
+
+    float viewport_world_width = tan(glm::radians(fov) * 0.5f) * focal_dist * 2;
+    float viewport_world_height = viewport_world_width * 1.0f / aspect_ratio;
+
+    glm::vec3 viewport_u = viewport_world_width * u;
+    glm::vec3 viewport_v = -viewport_world_height * v;
 
     viewport_du = viewport_u/float(viewport_pixel_width);
     viewport_dv = viewport_v/float(viewport_pixel_height);
@@ -171,9 +171,53 @@ void Camera::calculate_viewport_size(Image* image)
 }
 
 
+void Camera::rotate(GLFWwindow* window, float delta)
+{
+
+}
+
+void Camera::move(GLFWwindow* window, float delta)
+{
+
+    float speed = 4;
+    bool has_moved = false;
+
+    if (glfwGetKey(window, GLFW_KEY_W))
+    {
+        has_moved = true;
+        position += -w*speed*delta;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_S))
+    {
+        has_moved = true;
+        position += w*speed*delta;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D))
+    {
+        has_moved = true;
+        position += u*speed*delta;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_A))
+    {
+        has_moved = true;
+        position += -u*speed*delta;
+    }
+
+
+    if (has_moved)
+    {
+        reset_accumulator();
+        calculate_viewport_vectors();
+    }
+
+}
+
+
+
+
 void Camera::debug_window()
 {
-    ImGui::Begin("Camera Debug");
+    ImGui::Begin("Camera Debug", NULL, ImGuiWindowFlags_NoCollapse);
     ImGui::Text("u (right):       % f, % f, % f", u.x, u.y, u.z);
     ImGui::Text("v (up):          % f, % f, % f", v.x, v.y, v.z);
     ImGui::Text("w (backwards):   % f, % f, % f", w.x, w.y, w.z);
@@ -182,7 +226,7 @@ void Camera::debug_window()
     ImGui::Text("Viewport du:     % f, % f, % f", viewport_du.x, viewport_du.y, viewport_du.z);
     ImGui::Text("Viewport dv:     % f, % f, % f", viewport_dv.x, viewport_dv.y, viewport_dv.z);
     ImGui::Separator();
-    ImGui::Text("Viewport size:   % f, % f", viewport_width, viewport_height);
+    // ImGui::Text("Viewport size:   % f, % f", viewport_width, viewport_height);
     ImGui::Text("Focal dist:      % f", focal_dist);
     ImGui::Text("Horizontal fov:  % f", fov);
     ImGui::End();

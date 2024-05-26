@@ -12,8 +12,6 @@ class Image {
 
         int width_last, height_last;
         int width, height;
-
-    private:
         GLuint texture;
 
 };

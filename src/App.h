@@ -14,10 +14,12 @@ class App {
 
         void Run();
 
+    public:
+        GLFWwindow* window_handle;
     private:
         virtual void Update() {};
+        virtual void app_menu() {};
 
-        GLFWwindow* window;
         bool show_demo_window = false;
         bool should_quit = false;
         ImVec4 clear_color = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);

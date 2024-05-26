@@ -17,6 +17,7 @@ RayTracer::RayTracer ()
 {
     image = new Image();
     my_scene.load_default();
+    cam.initialize(image);
 }
 
 RayTracer::~RayTracer()
@@ -24,11 +25,32 @@ RayTracer::~RayTracer()
     delete image;
 }
 
+void RayTracer::app_menu()
+{
+    if (ImGui::BeginMenu("Info"))
+    {
+        ImGui::MenuItem("camera debug", NULL, &show_camera_debug);
+        ImGui::EndMenu();
+    }
+}
+
 void RayTracer::Update()
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    image->draw_image();
+    cam.resize();
+    cam.calculate_viewport_vectors();
+
+
+    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    {
+        cam.rotate(window_handle, io.DeltaTime);
+        cam.move(window_handle, io.DeltaTime);
+    }
+
+
+    if (show_camera_debug)
+        cam.debug_window();
 
     ImGui::Begin("Controls");
     ImGui::SeparatorText("Info");
@@ -38,18 +60,18 @@ void RayTracer::Update()
     ImGui::SeparatorText("Camera");
     ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
     ImGui::DragFloat3("Look direction", glm::value_ptr(cam.look_dir), 0.1f);
-    ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
+    // ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
     ImGui::DragFloat("Focal Distance", &cam.focal_dist, 0.1f);
     if (ImGui::Button("Render"))
     {
-        cam.render(my_scene, image);
+        cam.render(my_scene);
         // std::thread render_thread(&Camera::render, &cam, my_scene, image);
         // render_thread.join();
     }
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &render_every_frame);
     if (render_every_frame) {
-        cam.render(my_scene, image);
+        cam.render(my_scene);
     }
 
     if (ImGui::Button("Reset accumulator"))
@@ -57,7 +79,6 @@ void RayTracer::Update()
 
     ImGui::End();
 
-    cam.debug_window();
 
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);
@@ -89,6 +110,7 @@ void RayTracer::Update()
 
     ImGui::End();
 
-
+    // draw our rendered image to the viewport
+    image->draw_image();
 
 };

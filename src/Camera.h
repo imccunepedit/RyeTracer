@@ -1,6 +1,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
+#include <GLFW/glfw3.h>
 #include <cstdint>
 #include <vector>
 
@@ -18,12 +19,17 @@
 
 class Camera {
     public:
-        void calculate_camera_directions();
-        void calculate_viewport_size(Image* image);
-        void debug_window();
+        void render(const Scene &scene);
+        void initialize(Image* image);
 
-        void render(const Scene &scene, Image* image);
+        void resize();
+        void calculate_camera_directions();
+        void calculate_viewport_vectors();
         void reset_accumulator();
+
+        void debug_window();
+        void move(GLFWwindow* window, float delta);
+        void rotate(GLFWwindow* window, float delta);
 
     private:
         void per_pixel(int x, int y, const Scene& scene);
@@ -38,28 +44,28 @@ class Camera {
 
         glm::vec3 position = glm::vec3(0,0,0);
         glm::vec3 up = glm::vec3(0,0,1);
-        glm::vec3 look_point = glm::vec3(0,1,0);
+        // glm::vec3 look_point = glm::vec3(0,1,0);
         glm::vec3 look_dir = glm::vec3(0,1,0);
         float focal_dist = 1.0;
 
         bool gamma_correction = true;
 
-        bool use_look_at = true;
-
     private:
+        bool initialized = false;
+
         glm::vec3 v,u,w;
-        float aspect_ratio;
         float fov = 90;
 
         uint32_t frame_index = 1;
 
-        glm::vec3 viewport_origin; //top left of top left pixel
         int viewport_pixel_width = 0;
         int viewport_pixel_height = 0;
-        float viewport_width, viewport_height;
-        glm::vec3 viewport_u, viewport_v;
-        glm::vec3 viewport_du, viewport_dv;
 
+        glm::vec3 viewport_origin; //top left of top left pixel
+        glm::vec3 viewport_du, viewport_dv;
+        // glm::vec3 viewport_u, viewport_v;
+
+        Image* out_image;
         uint32_t* image_data = nullptr;
         glm::vec3* accumulation_data = nullptr;
 };

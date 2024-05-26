@@ -10,9 +10,11 @@ class RayTracer : public App
         ~RayTracer();
     private:
         void Update() override;
+        void app_menu() override;
 
     private:
         bool render_every_frame = true;
+        bool show_camera_debug = false;
 
         Image* image;
         Camera cam;
