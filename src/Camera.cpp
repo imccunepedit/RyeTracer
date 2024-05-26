@@ -85,7 +85,7 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
     bool is_hit = scene.hit(ray, hit);
 
     if (!is_hit)
-        return hit.light;
+        return hit.material.emissive;
 
     float offset = 0.001f;
 
@@ -102,19 +102,19 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
         light = scene.directional_light_color * fmaxf(glm::dot(hit.normal, -glm::normalize(scene.directional_light_direction)), 0.f);
     }
 
-    return hit.light * (bounced_light + light);
+    return hit.material.diffuse * (bounced_light + light) + hit.material.emissive*hit.material.emissive_strength;
 
 }
 
 
 uint32_t Camera::process_color(glm::vec3 color)
 {
-    color = glm::clamp(color, glm::vec3(0), glm::vec3(0.99999));
+    color = glm::max(color, glm::vec3(0));
     if (gamma_correction)
         color = glm::sqrt(color);
-    uint8_t r = color.r*255;
-    uint8_t g = color.g*255;
-    uint8_t b = color.b*255;
+    uint8_t r = fminf(color.r, 0.99999f)*256;
+    uint8_t g = fminf(color.g, 0.99999f)*256;
+    uint8_t b = fminf(color.b, 0.99999f)*256;
     uint8_t a = 255;
     return (a << 24) | (b << 16) | (g << 8) | r;
 }

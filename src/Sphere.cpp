@@ -29,7 +29,7 @@ bool Sphere::hit(const Ray &ray, Hit& hit) {
     hit.distance = t;
     hit.point = ray.at(t);
     hit.normal = (hit.point - center) / radius;
-    hit.light = material.diffuse;
+    hit.material = material;
 
     return true;
 

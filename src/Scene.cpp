@@ -13,7 +13,7 @@
 bool Scene::hit(const Ray& ray, Hit& hit) const
 {
     ZoneScoped;
-    hit.light = sky_color;
+    hit.material = sky_material;
     // closest_hit.color = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     // if there isn't anything in the scene return skycolor
     if (spheres.size() == 0)
@@ -56,8 +56,10 @@ bool Scene::hit(const Ray& ray, Hit& hit) const
 void Scene::load_default()
 {
     directional_light_direction = glm::vec3(1, 0, -1);
-    add_sphere(Sphere(glm::vec3(0,4,0), 1, glm::vec3(0.1f)));
-    add_sphere(Sphere(glm::vec3(0,4,-100), 99, glm::vec3(0.1f)));
+    sky_material.emissive = glm::vec3(0,0,0.5);
+    Material mat;
+    add_sphere(Sphere(glm::vec3(0,4,0), 1, mat));
+    add_sphere(Sphere(glm::vec3(0,4,-100), 99, mat));
 }
 
 void Scene::add_sphere(Sphere s)

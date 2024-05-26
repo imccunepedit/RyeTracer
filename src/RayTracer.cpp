@@ -22,7 +22,7 @@ RayTracer::RayTracer ()
 
 RayTracer::~RayTracer()
 {
-    delete image;
+    delete(image);
 }
 
 void RayTracer::app_menu()
@@ -77,11 +77,11 @@ void RayTracer::Update()
 
 
     ImGui::Begin("Scene");
-    ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_color), ImGuiColorEditFlags_Float);
+    ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_material.emissive), ImGuiColorEditFlags_Float);
     ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.directional_light_color), ImGuiColorEditFlags_Float);
     ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.directional_light_direction), 0.1f, -1.0f, 1.0f);
     if (ImGui::Button("Add Sphere")) {
-        my_scene.add_sphere(Sphere({10,0,0},1,{1,0,0}));;
+        my_scene.add_sphere(Sphere({10,0,0},1,Material()));;
     }
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Spheres"))
@@ -92,6 +92,8 @@ void RayTracer::Update()
             if (ImGui::TreeNode((void*)(intptr_t)i, "Sphere %d", i))
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
+                ImGui::ColorEdit3("Emission", glm::value_ptr(my_scene.spheres[i].material.emissive), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat("Strength", &my_scene.spheres[i].material.emissive_strength, 0.1f);
                 ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
                 ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
                 if (ImGui::Button("Remove"))

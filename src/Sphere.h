@@ -10,11 +10,7 @@
 
 class Sphere {
     public:
-        Sphere(glm::vec3 c, float r, glm::vec3 co) {
-            center = c;
-            radius = r;
-            material.diffuse = co;
-        }
+        Sphere(glm::vec3 c, float r, Material material) : center(c), radius(r), material(material) {}
 
         bool hit(const Ray &ray, Hit& hit);
 
