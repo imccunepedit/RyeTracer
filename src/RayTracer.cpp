@@ -92,8 +92,9 @@ void RayTracer::Update()
             if (ImGui::TreeNode((void*)(intptr_t)i, "Sphere %d", i))
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat("Roughnes", &my_scene.spheres[i].material.roughness, 0.001f, 0.0f, 1.0f);
                 ImGui::ColorEdit3("Emission", glm::value_ptr(my_scene.spheres[i].material.emissive), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Strength", &my_scene.spheres[i].material.emissive_strength, 0.1f);
+                ImGui::DragFloat("Strength", &my_scene.spheres[i].material.emissive_strength, 0.1f, 0.0f,);
                 ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
                 ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
                 if (ImGui::Button("Remove"))

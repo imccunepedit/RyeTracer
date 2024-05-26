@@ -90,6 +90,9 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
     float offset = 0.001f;
 
     Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + raytracing::random::random_on_sphere(rseed));
+    if (raytracing::random::random_float(rseed) > hit.material.roughness)
+        next_ray.direction = glm::reflect(ray.direction, hit.normal);
+
     glm::vec3 bounced_light = trace_ray(next_ray, scene, depth-1, rseed);
 
     next_ray.direction = -scene.directional_light_direction;
@@ -174,7 +177,7 @@ void Camera::calculate_viewport_vectors()
 void Camera::rotate(GLFWwindow* window, float delta)
 {
 
-    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsKeyDown(ImGuiKey_LeftAlt)))
     {
         mouse_first = true;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -213,27 +216,28 @@ void Camera::rotate(GLFWwindow* window, float delta)
 void Camera::move(GLFWwindow* window, float delta)
 {
 
-    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsKeyDown(ImGuiKey_LeftAlt)))
         return;
     float speed = 4;
     bool has_moved = false;
 
-    if (glfwGetKey(window, GLFW_KEY_W))
+    // if (glfwGetKey(window, GLFW_KEY_W))
+    if (ImGui::IsKeyDown(ImGuiKey_W))
     {
         has_moved = true;
         position += -w*speed*delta;
     }
-    else if (glfwGetKey(window, GLFW_KEY_S))
+    else if (ImGui::IsKeyDown(ImGuiKey_S))
     {
         has_moved = true;
         position += w*speed*delta;
     }
-    if (glfwGetKey(window, GLFW_KEY_D))
+    if (ImGui::IsKeyDown(ImGuiKey_D))
     {
         has_moved = true;
         position += u*speed*delta;
     }
-    else if (glfwGetKey(window, GLFW_KEY_A))
+    else if (ImGui::IsKeyDown(ImGuiKey_A))
     {
         has_moved = true;
         position += -u*speed*delta;
