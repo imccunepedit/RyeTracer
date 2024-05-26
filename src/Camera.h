@@ -6,9 +6,13 @@
 #include <vector>
 
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/random.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <GL/gl.h>
 
@@ -52,6 +56,10 @@ class Camera {
 
     private:
         bool initialized = false;
+
+        glm::dvec2  mouse_position;
+        glm::dvec2 last_mouse_position;
+        bool mouse_first = true;
 
         glm::vec3 v,u,w;
         float fov = 90;

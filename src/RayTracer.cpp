@@ -42,12 +42,8 @@ void RayTracer::Update()
     cam.calculate_viewport_vectors();
 
 
-    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
-    {
-        cam.rotate(window_handle, io.DeltaTime);
-        cam.move(window_handle, io.DeltaTime);
-    }
-
+    cam.rotate(window_handle, io.DeltaTime);
+    cam.move(window_handle, io.DeltaTime);
 
     if (show_camera_debug)
         cam.debug_window();

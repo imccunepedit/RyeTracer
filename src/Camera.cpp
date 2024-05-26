@@ -1,6 +1,4 @@
 #include <cstdint>
-#include <glm/common.hpp>
-#include <glm/geometric.hpp>
 #include <iostream>
 
 #include <oneapi/tbb/parallel_for.h>
@@ -10,6 +8,8 @@
 #include "Camera.h"
 #include "Hit.h"
 #include "Random.h"
+
+#include "GLFW/glfw3.h"
 
 #include "tracy/Tracy.hpp"
 
@@ -174,11 +174,47 @@ void Camera::calculate_viewport_vectors()
 void Camera::rotate(GLFWwindow* window, float delta)
 {
 
+    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    {
+        mouse_first = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        return;
+    }
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    if (mouse_first)
+    {
+        glfwGetCursorPos(window, &mouse_position.x, &mouse_position.y);
+        mouse_first = false;
+    }
+
+    last_mouse_position = mouse_position;
+
+    glfwGetCursorPos(window, &mouse_position.x, &mouse_position.y);
+
+    glm::vec2 mouse_delta = mouse_position - last_mouse_position;
+
+    if (glm::dot(mouse_delta, mouse_delta) < 0.01)
+        return;
+
+    glm::vec2 sensitivity(-0.1f);
+
+    look_dir = glm::rotateZ(look_dir, mouse_delta.x * sensitivity.x*delta);
+
+    calculate_camera_directions();
+    calculate_viewport_vectors();
+    reset_accumulator();
 }
 
 void Camera::move(GLFWwindow* window, float delta)
 {
 
+    if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+        return;
     float speed = 4;
     bool has_moved = false;
 
