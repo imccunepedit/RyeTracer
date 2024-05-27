@@ -21,8 +21,8 @@ void Image::draw_image()
     ImVec2 image_size = ImVec2(width, height);
 
     // tell ImGui how to orient our image
-    ImVec2 uv0 = ImVec2(0.0f,0.0f);
-    ImVec2 uv1 = ImVec2(1.0f,1.0f);
+    ImVec2 uv0 = ImVec2(0.0f,1.0f);
+    ImVec2 uv1 = ImVec2(1.0f,0.0f);
 
     // draw the image into the viewport
     ImGui::Image((ImTextureID) texture, image_size, uv0, uv1);

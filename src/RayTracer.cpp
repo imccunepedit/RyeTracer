@@ -39,10 +39,9 @@ void RayTracer::Update()
     ImGuiIO& io = ImGui::GetIO();
 
     cam.resize();
-    cam.calculate_viewport_vectors();
+    // cam.calculate_projection();
 
 
-    cam.rotate(window_handle, io.DeltaTime);
     cam.move(window_handle, io.DeltaTime);
 
     if (show_camera_debug)
@@ -55,7 +54,7 @@ void RayTracer::Update()
 
     ImGui::SeparatorText("Camera");
     ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
-    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.look_dir), 0.1f);
+    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.forward), 0.1f);
     // ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
     ImGui::DragFloat("Focal Distance", &cam.focal_dist, 0.1f);
     if (ImGui::Button("Render"))
@@ -94,7 +93,7 @@ void RayTracer::Update()
                 ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
                 ImGui::DragFloat("Roughnes", &my_scene.spheres[i].material.roughness, 0.001f, 0.0f, 1.0f);
                 ImGui::ColorEdit3("Emission", glm::value_ptr(my_scene.spheres[i].material.emissive), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Strength", &my_scene.spheres[i].material.emissive_strength, 0.1f, 0.0f,);
+                ImGui::DragFloat("Strength", &my_scene.spheres[i].material.emissive_strength, 0.1f, 0.0f);
                 ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
                 ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
                 if (ImGui::Button("Remove"))

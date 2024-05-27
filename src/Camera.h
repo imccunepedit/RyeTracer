@@ -10,6 +10,9 @@
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/random.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/rotate_vector.hpp>
@@ -27,8 +30,8 @@ class Camera {
         void initialize(Image* image);
 
         void resize();
-        void calculate_camera_directions();
-        void calculate_viewport_vectors();
+        void calculate_view();
+        void calculate_projection();
         void reset_accumulator();
 
         void debug_window();
@@ -36,7 +39,7 @@ class Camera {
         void rotate(GLFWwindow* window, float delta);
 
     private:
-        void per_pixel(int x, int y, const Scene& scene);
+        void per_color(int x, int y, const Scene& scene);
         Ray get_ray(int x, int y);
         glm::vec3 trace_ray(const Ray &ray, const Scene &scene, int depth, uint32_t& rseed);
         uint32_t process_color(glm::vec3 color);
@@ -49,7 +52,8 @@ class Camera {
         glm::vec3 position = glm::vec3(0,0,0);
         glm::vec3 up = glm::vec3(0,0,1);
         // glm::vec3 look_point = glm::vec3(0,1,0);
-        glm::vec3 look_dir = glm::vec3(0,1,0);
+        glm::vec3 forward = glm::vec3(0,1,0);
+        glm::vec3 right = glm::cross(forward, up);
         float focal_dist = 1.0;
 
         bool gamma_correction = true;
@@ -61,17 +65,15 @@ class Camera {
         glm::dvec2 last_mouse_position;
         bool mouse_first = true;
 
-        glm::vec3 v,u,w;
-        float fov = 90;
+        glm::mat4 view, inv_view, projection, inv_projection;
+
+        float vfov = 45;
 
         uint32_t frame_index = 1;
 
-        int viewport_pixel_width = 0;
-        int viewport_pixel_height = 0;
+        int viewport_pixel_width = 1;
+        int viewport_pixel_height = 1;
 
-        glm::vec3 viewport_origin; //top left of top left pixel
-        glm::vec3 viewport_du, viewport_dv;
-        // glm::vec3 viewport_u, viewport_v;
 
         Image* out_image;
         uint32_t* image_data = nullptr;
