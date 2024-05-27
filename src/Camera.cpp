@@ -172,28 +172,8 @@ void Camera::calculate_projection()
 }
 
 
-void Camera::move(GLFWwindow* window, float delta)
+void Camera::move(GLFWwindow* window, float time_delta)
 {
-    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
-    {
-        mouse_first = true;
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        return;
-    }
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    float speed = 4;
-    bool has_moved = false;
-
-    if (glfwRawMouseMotionSupported())
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-    if (mouse_first)
-    {
-        glfwGetCursorPos(window, &mouse_position.x, &mouse_position.y);
-        mouse_first = false;
-    }
 
     last_mouse_position = mouse_position;
 
@@ -201,17 +181,26 @@ void Camera::move(GLFWwindow* window, float delta)
 
     glm::vec2 mouse_delta = mouse_position - last_mouse_position;
 
-    if (glm::dot(mouse_delta, mouse_delta) > 0.01)
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
-        glm::vec2 sensitivity(0.1f);
-        glm::quat qyaw = glm::angleAxis(mouse_delta.x*sensitivity.x*delta, up);
-        glm::quat qpitch = glm::angleAxis(mouse_delta.y*sensitivity.y*delta, right);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        return;
+    }
 
-        forward = forward * qyaw;
-        forward = forward * qpitch;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+
+    bool has_moved = false;
+
+    if (glm::dot(mouse_delta, mouse_delta) > 0.0f)
+    {
+
+        forward = forward * glm::angleAxis(mouse_delta.y*sensitivity.y*time_delta, right);
+        forward = forward * glm::angleAxis(mouse_delta.x*sensitivity.x*time_delta, up);
 
         has_moved = true;
-
     }
 
 
@@ -219,33 +208,32 @@ void Camera::move(GLFWwindow* window, float delta)
     glm::vec3 translate = glm::vec3(0);
     if (ImGui::IsKeyDown(ImGuiKey_W))
     {
-        translate += forward*speed*delta;
+        position += forward*speed*time_delta;
+        has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_S))
     {
-        translate += -forward*speed*delta;
+        position += -forward*speed*time_delta;
+        has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D))
     {
-        translate += right*speed*delta;
+        position += right*speed*time_delta;
+        has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_A))
     {
-        translate += -right*speed*delta;
+        position += -right*speed*time_delta;
+        has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_E))
     {
-        translate += up*speed*delta;
+        position += up*speed*time_delta;
+        has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_Q))
     {
-        translate += -up*speed*delta;
-    }
-
-
-    if (glm::dot(translate, translate) > 0)
-    {
-        position += translate;
+        position += -up*speed*time_delta;
         has_moved = true;
     }
 
@@ -265,7 +253,6 @@ void Camera::debug_window()
 {
     ImGui::Begin("Camera Debug", NULL, ImGuiWindowFlags_NoCollapse);
     // ImGui::Text("Viewport size:   % f, % f", viewport_width, viewport_height);
-    ImGui::Text("Focal dist:      % f", focal_dist);
     ImGui::Text("vertical fov:  % f", vfov);
     ImGui::End();
 }

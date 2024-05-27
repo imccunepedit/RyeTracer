@@ -54,20 +54,21 @@ class Camera {
         // glm::vec3 look_point = glm::vec3(0,1,0);
         glm::vec3 forward = glm::vec3(0,1,0);
         glm::vec3 right = glm::cross(forward, up);
-        float focal_dist = 1.0;
+        float vfov = 45;
 
         bool gamma_correction = true;
+
+        float speed = 4;
+        glm::vec2 sensitivity = glm::vec2(0.2);
 
     private:
         bool initialized = false;
 
         glm::dvec2  mouse_position;
         glm::dvec2 last_mouse_position;
-        bool mouse_first = true;
 
         glm::mat4 view, inv_view, projection, inv_projection;
 
-        float vfov = 45;
 
         uint32_t frame_index = 1;
 

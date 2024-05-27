@@ -56,7 +56,9 @@ void RayTracer::Update()
     ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
     ImGui::DragFloat3("Look direction", glm::value_ptr(cam.forward), 0.1f);
     // ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
-    ImGui::DragFloat("Focal Distance", &cam.focal_dist, 0.1f);
+    ImGui::DragFloat("Vertical fov", &cam.vfov, 0.1f, 1.0f, 100.0f);
+    ImGui::DragFloat("Speed", &cam.speed, 0.1f);
+    ImGui::DragFloat2("Sensitivity", glm::value_ptr(cam.sensitivity), 0.1f);
     if (ImGui::Button("Render"))
     {
         cam.render(my_scene);
