@@ -13,17 +13,16 @@
 
 #include "tracy/Tracy.hpp"
 
+#include <glm/gtc/quaternion.hpp>
 
-void Camera::initialize(Image *image)
+
+void Camera::recalulate_all(Image *image)
 {
-    if (initialized)
-        return;
-
-    initialized = true;
     out_image = image;
     resize();
     calculate_view();
     calculate_projection();
+    reset_accumulator();
 }
 
 void Camera::render(const Scene &s)
@@ -62,10 +61,10 @@ void Camera::per_color(int x, int y, const Scene &scene)
     uint32_t seed = x + y * viewport_pixel_width + out_image->texture*7919;
     seed *= frame_index;
 
-    glm::vec2 ray_pixel_target = glm::vec2((x + raytracing::random::random_float(seed))/viewport_pixel_width,
-                                        (y + raytracing::random::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
+    glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
+                                           (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
 
-    glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_pixel_target, 1, 1);
+    glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
     glm::vec3 ray_world_direction = glm::normalize(glm::vec3(inv_view * ray_world_target));
 
     Ray ray = Ray(position, ray_world_direction);
@@ -91,8 +90,8 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
 
     float offset = 0.001f;
 
-    Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + raytracing::random::random_on_sphere(rseed));
-    if (raytracing::random::random_float(rseed) > hit.material.roughness)
+    Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + raytracing::random_on_sphere(rseed));
+    if (raytracing::random_float(rseed) > hit.material.roughness)
         next_ray.direction = glm::reflect(ray.direction, hit.normal);
 
     glm::vec3 bounced_light = trace_ray(next_ray, scene, depth-1, rseed);
@@ -132,15 +131,6 @@ void Camera::reset_accumulator()
 }
 
 
-
-void Camera::calculate_view()
-{
-    view = glm::lookAt(position, position+forward, up);
-    inv_view = glm::inverse(view);
-
-}
-
-
 void Camera::resize()
 {
     if (out_image->height == viewport_pixel_height && out_image->width == viewport_pixel_width)
@@ -159,6 +149,16 @@ void Camera::resize()
     reset_accumulator();
 }
 
+void Camera::calculate_view()
+{
+    view = glm::lookAt(position, position+forward, up);
+    inv_view = glm::inverse(view);
+
+    right = glm::vec3(view[0][0], view[1][0], view[2][0]);
+}
+
+
+
 
 void Camera::calculate_projection()
 {
@@ -174,7 +174,7 @@ void Camera::calculate_projection()
 
 void Camera::move(GLFWwindow* window, float delta)
 {
-    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsKeyDown(ImGuiKey_LeftAlt)))
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
         mouse_first = true;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -203,34 +203,51 @@ void Camera::move(GLFWwindow* window, float delta)
 
     if (glm::dot(mouse_delta, mouse_delta) > 0.01)
     {
-        glm::vec2 sensitivity(-0.1f);
-        forward = glm::rotateZ(forward, mouse_delta.x * sensitivity.x*delta);
+        glm::vec2 sensitivity(0.1f);
+        glm::quat qyaw = glm::angleAxis(mouse_delta.x*sensitivity.x*delta, up);
+        glm::quat qpitch = glm::angleAxis(mouse_delta.y*sensitivity.y*delta, right);
+
+        forward = forward * qyaw;
+        forward = forward * qpitch;
+
         has_moved = true;
+
     }
 
 
     // if (glfwGetKey(window, GLFW_KEY_W))
+    glm::vec3 translate = glm::vec3(0);
     if (ImGui::IsKeyDown(ImGuiKey_W))
     {
-        has_moved = true;
-        position += forward*speed*delta;
+        translate += forward*speed*delta;
     }
-    else if (ImGui::IsKeyDown(ImGuiKey_S))
+    if (ImGui::IsKeyDown(ImGuiKey_S))
     {
-        has_moved = true;
-        position += -forward*speed*delta;
+        translate += -forward*speed*delta;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D))
     {
-        has_moved = true;
-        position += right*speed*delta;
+        translate += right*speed*delta;
     }
-    else if (ImGui::IsKeyDown(ImGuiKey_A))
+    if (ImGui::IsKeyDown(ImGuiKey_A))
     {
-        has_moved = true;
-        position += -right*speed*delta;
+        translate += -right*speed*delta;
+    }
+    if (ImGui::IsKeyDown(ImGuiKey_E))
+    {
+        translate += up*speed*delta;
+    }
+    if (ImGui::IsKeyDown(ImGuiKey_Q))
+    {
+        translate += -up*speed*delta;
     }
 
+
+    if (glm::dot(translate, translate) > 0)
+    {
+        position += translate;
+        has_moved = true;
+    }
 
     if (has_moved)
     {

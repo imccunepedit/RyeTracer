@@ -27,7 +27,7 @@
 class Camera {
     public:
         void render(const Scene &scene);
-        void initialize(Image* image);
+        void recalulate_all(Image* image);
 
         void resize();
         void calculate_view();

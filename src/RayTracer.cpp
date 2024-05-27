@@ -17,7 +17,7 @@ RayTracer::RayTracer ()
 {
     image = new Image();
     my_scene.load_default();
-    cam.initialize(image);
+    cam.recalulate_all(image);
 }
 
 RayTracer::~RayTracer()
@@ -69,8 +69,8 @@ void RayTracer::Update()
         cam.render(my_scene);
     }
 
-    if (ImGui::Button("Reset accumulator"))
-        cam.reset_accumulator();
+    if (ImGui::Button("Recalculate camera"))
+        cam.recalulate_all(image);
 
     ImGui::End();
 
