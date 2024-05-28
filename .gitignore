@@ -4,3 +4,6 @@
 /Makefile
 /compile_commands.json
 /.cache/
+/imgui.ini
+/callgrind.out.148602
+/lib/stb_image.h

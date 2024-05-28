@@ -1,0 +1,4 @@
+#+title: Readme
+
+* Raytracer
+A ray tracer using DearImGUI. uses oneapi for multithreading for loop.

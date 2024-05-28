@@ -39,11 +39,12 @@ void RayTracer::Update()
     ImGuiIO& io = ImGui::GetIO();
 
     cam.resize();
-    // cam.calculate_projection();
-
 
     cam.move(window_handle, io.DeltaTime);
 
+    if (render_every_frame) {
+        cam.render(my_scene);
+    }
     if (show_camera_debug)
         cam.debug_window();
 
@@ -53,23 +54,15 @@ void RayTracer::Update()
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
 
     ImGui::SeparatorText("Camera");
-    ImGui::DragFloat3("Position", glm::value_ptr(cam.position), 0.1f);
-    ImGui::DragFloat3("Look direction", glm::value_ptr(cam.forward), 0.1f);
-    // ImGui::DragFloat3("Look point", glm::value_ptr(cam.look_point), 0.1f);
     ImGui::DragFloat("Vertical fov", &cam.vfov, 0.1f, 1.0f, 100.0f);
     ImGui::DragFloat("Speed", &cam.speed, 0.1f);
     ImGui::DragFloat2("Sensitivity", glm::value_ptr(cam.sensitivity), 0.1f);
     if (ImGui::Button("Render"))
     {
         cam.render(my_scene);
-        // std::thread render_thread(&Camera::render, &cam, my_scene, image);
-        // render_thread.join();
     }
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &render_every_frame);
-    if (render_every_frame) {
-        cam.render(my_scene);
-    }
 
     if (ImGui::Button("Recalculate camera"))
         cam.recalulate_all(image);
