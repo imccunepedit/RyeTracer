@@ -103,7 +103,7 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
     glm::vec3 light = glm::vec3(0.0f);
     if (!is_hit)
     {
-        light = scene.directional_light_color * fmaxf(glm::dot(hit.normal, -glm::normalize(scene.directional_light_direction)), 0.f);
+        light = hit.material.roughness*scene.directional_light_color * fmaxf(glm::dot(hit.normal, -glm::normalize(scene.directional_light_direction)), 0.f);
     }
 
     return hit.material.diffuse * (bounced_light + light) + hit.material.emissive*hit.material.emissive_strength;
