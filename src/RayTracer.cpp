@@ -71,7 +71,6 @@ void RayTracer::Update()
 
 
     ImGui::Begin("Scene");
-    ImGui::ColorEdit3("Sky color", glm::value_ptr(my_scene.sky_material.emissive), ImGuiColorEditFlags_Float);
     ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.directional_light_color), ImGuiColorEditFlags_Float);
     ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.directional_light_direction), 0.1f, -1.0f, 1.0f);
     if (ImGui::Button("Add Sphere")) {

@@ -19,9 +19,8 @@ class Scene {
 
     public:
         std::vector<Sphere> spheres;
-        Material sky_material;
-        glm::vec3 directional_light_direction = glm::vec3(0.0f,0.0f,0.0f);
-        glm::vec3 directional_light_color = sky_material.emissive;
+        glm::vec3 directional_light_direction = glm::vec3(1.0f,0.0f,-1.0f);
+        glm::vec3 directional_light_color = glm::vec3(1.0f,0.8f,0.6f);
 };
 
 #endif // SCENE_H_
