@@ -32,9 +32,11 @@ void Camera::render(const Scene &s)
 
 #define MT
 #ifdef MT
-    oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_height), [this,s](size_t j)
+    using oneapi::tbb::parallel_for;
+
+    parallel_for(size_t(0), size_t(viewport_pixel_height), [this,s](size_t j)
     {
-        oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_width), [this,s,j](size_t i){
+        parallel_for(size_t(0), size_t(viewport_pixel_width), [this,s,j](size_t i){
             pixel_color(i, j, s);
         });
     });
@@ -62,7 +64,7 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
     seed *= frame_index;
 
     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
-                                           (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
+                                            (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
 
     glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
     glm::vec3 ray_world_direction = glm::normalize(glm::vec3(inv_view * ray_world_target));
@@ -90,7 +92,7 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
 
     float offset = 0.001f;
 
-    Ray next_ray = Ray(hit.point + hit.normal * offset, hit.normal + raytracing::random_on_sphere(rseed));
+    Ray next_ray = Ray(hit.point + hit.normal * offset, glm::normalize(hit.normal + raytracing::random_on_sphere(rseed)));
     if (raytracing::random_float(rseed) > hit.material.roughness)
         next_ray.direction = glm::reflect(ray.direction, hit.normal);
 
