@@ -12,6 +12,7 @@ class Hit {
         // glm::vec3 light;
         Material material;
         float distance = std::numeric_limits<float>::max();
+        bool inside = false;
 };
 
 #endif // HIT_H_

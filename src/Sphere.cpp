@@ -23,7 +23,15 @@ bool Sphere::hit(const Ray &ray, Hit& hit) {
     // we don't want to be able to see behind use
     float t = (-b - std::sqrt(discriminant)) / (2*a);
     if (t < 0)
-        return false;
+    {
+        // if the first t was negative that means that it hit something behind us, we can now check
+        // if the second point is also behind us
+        float t = (-b + std::sqrt(discriminant)) / (2*a);
+        if (t < 0)
+            return false;
+        // if the point isn't behind us we are inside the sphere so we tell our hit that.
+        hit.inside = true;
+    }
 
     // otherwise calculate hit position
     hit.distance = t;

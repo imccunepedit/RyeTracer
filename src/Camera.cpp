@@ -172,7 +172,7 @@ void Camera::calculate_projection()
 }
 
 
-void Camera::move(GLFWwindow* window, float time_delta)
+void Camera::move(GLFWwindow* window, float time_step)
 {
 
     last_mouse_position = mouse_position;
@@ -183,9 +183,12 @@ void Camera::move(GLFWwindow* window, float time_delta)
 
     if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
+        max_depth = max_stationary_depth;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         return;
     }
+
+    max_depth = max_moving_depth;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (glfwRawMouseMotionSupported())
@@ -197,8 +200,8 @@ void Camera::move(GLFWwindow* window, float time_delta)
     if (glm::dot(mouse_delta, mouse_delta) > 0.0f)
     {
 
-        forward = forward * glm::angleAxis(mouse_delta.y*sensitivity.y*time_delta, right);
-        forward = forward * glm::angleAxis(mouse_delta.x*sensitivity.x*time_delta, up);
+        forward = forward * glm::angleAxis(mouse_delta.y*sensitivity.y*time_step, right);
+        forward = forward * glm::angleAxis(mouse_delta.x*sensitivity.x*time_step, up);
 
         has_moved = true;
     }
@@ -208,32 +211,32 @@ void Camera::move(GLFWwindow* window, float time_delta)
     glm::vec3 translate = glm::vec3(0);
     if (ImGui::IsKeyDown(ImGuiKey_W))
     {
-        position += forward*speed*time_delta;
+        position += forward*speed*time_step;
         has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_S))
     {
-        position += -forward*speed*time_delta;
+        position += -forward*speed*time_step;
         has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D))
     {
-        position += right*speed*time_delta;
+        position += right*speed*time_step;
         has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_A))
     {
-        position += -right*speed*time_delta;
+        position += -right*speed*time_step;
         has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_E))
     {
-        position += up*speed*time_delta;
+        position += up*speed*time_step;
         has_moved = true;
     }
     if (ImGui::IsKeyDown(ImGuiKey_Q))
     {
-        position += -up*speed*time_delta;
+        position += -up*speed*time_step;
         has_moved = true;
     }
 
