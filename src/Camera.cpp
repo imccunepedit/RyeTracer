@@ -35,7 +35,7 @@ void Camera::render(const Scene &s)
     oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_height), [this,s](size_t j)
     {
         oneapi::tbb::parallel_for(size_t(0), size_t(viewport_pixel_width), [this,s,j](size_t i){
-            per_color(i, j, s);
+            pixel_color(i, j, s);
         });
     });
 
@@ -53,7 +53,7 @@ void Camera::render(const Scene &s)
     frame_index ++;
 }
 
-void Camera::per_color(int x, int y, const Scene &scene)
+void Camera::pixel_color(int x, int y, const Scene &scene)
 {
     ZoneScoped;
 

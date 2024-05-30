@@ -39,7 +39,7 @@ class Camera {
         void rotate(GLFWwindow* window, float delta);
 
     private:
-        void per_color(int x, int y, const Scene& scene);
+        void pixel_color(int x, int y, const Scene& scene);
         Ray get_ray(int x, int y);
         glm::vec3 trace_ray(const Ray &ray, const Scene &scene, int depth, uint32_t& rseed);
         uint32_t process_color(glm::vec3 color);
