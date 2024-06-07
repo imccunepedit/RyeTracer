@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 class Ray {
     public:
+        Ray() {}
         Ray(glm::vec3 orig, glm::vec3 dir) : origin(orig), direction(dir) {}
 
         glm::vec3 at(float t) const{

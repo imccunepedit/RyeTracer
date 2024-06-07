@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Hit.h"
 #include "Random.h"
+#include "bsdf.h"
 
 #include "GLFW/glfw3.h"
 
@@ -80,28 +81,27 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
         return glm::vec3(0.0f);
 
     Hit hit;
-    bool is_hit = scene.hit(ray, hit);
-
-    if (!is_hit)
+    if (!scene.trace(ray, hit))
         return scene.ambient_color;
 
-    float offset = 0.01f;
+
+
+    float offset = 0.001f;
 
     // Ray scatter_ray = Ray(hit.point + hit.normal * offset, glm::reflect(ray.direction, hit.normal));
-    Ray scatter_ray = Ray(hit.point + hit.normal * offset, glm::normalize(hit.normal+raytracing::random_on_sphere(rseed)));
-    Ray shadow_ray = Ray(hit.point + hit.normal * offset, glm::normalize(-scene.light_direction));
+    hit.rseed = rseed;
 
+    Ray scatter_ray;
+
+    scene.materials.at(hit.material_id)->scatter(ray, hit, scatter_ray);
     glm::vec3 light = trace_ray(scatter_ray, scene, depth-1, rseed);
 
     Hit light_hit;
-    is_hit = scene.hit(shadow_ray, light_hit);
-
-    if (!is_hit)
-    {
+    Ray shadow_ray = Ray(hit.point + hit.normal * offset, glm::normalize(-scene.light_direction));
+    if (!scene.trace(shadow_ray, light_hit))
         light += scene.light_color * fmaxf(glm::dot(hit.normal, glm::normalize(-scene.light_direction)), 0.0f);
-    }
 
-    return hit.material.diffuse * light;
+    return hit.color * light;
 
 }
 

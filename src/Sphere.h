@@ -18,6 +18,7 @@ class Sphere {
         glm::vec3 center;
         float radius;
         Material material;
+        uint32_t material_id = 0;
 };
 
 #endif // SPHERE_H_

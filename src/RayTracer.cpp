@@ -87,6 +87,7 @@ void RayTracer::Update()
                 ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
                 ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
                 ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
+                ImGui::DragInt("Material index", (int*)&my_scene.spheres[i].material_id);
                 if (ImGui::Button("Remove"))
                 {
                     my_scene.remove_sphere(i);

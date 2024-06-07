@@ -7,13 +7,11 @@
 
 #include <iostream>
 
-#include "tracy/Tracy.hpp"
 
 
-bool Scene::hit(const Ray& ray, Hit& hit) const
+bool Scene::trace(const Ray& ray, Hit& hit) const
 {
-    ZoneScoped;
-    hit.material = Material();
+    hit.color = glm::vec3(0,0,0);
     // closest_hit.color = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     // if there isn't anything in the scene return skycolor
     if (spheres.size() == 0)
@@ -59,6 +57,7 @@ void Scene::load_default()
     add_sphere(Sphere(glm::vec3(-2,4,0), 1, mat));
     add_sphere(Sphere(glm::vec3(0,4,-1000), 999, mat));
     add_sphere(Sphere(glm::vec3(2,4,0), 1, mat));
+    add_material(std::make_shared<lambertian_bsdf>());
 }
 
 void Scene::add_sphere(Sphere s)
@@ -69,4 +68,14 @@ void Scene::add_sphere(Sphere s)
 void Scene::remove_sphere(const int& i)
 {
     spheres.erase(std::next(spheres.begin(), i));
+}
+
+void Scene::add_material(std::shared_ptr<bsdf> m)
+{
+    materials.push_back(m);
+}
+
+void Scene::remove_material(const int& i)
+{
+    materials.erase(std::next(materials.begin(), i));
 }

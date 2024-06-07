@@ -1,9 +1,7 @@
 #include "Sphere.h"
 
-#include "tracy/Tracy.hpp"
 
 bool Sphere::hit(const Ray &ray, Hit& hit) {
-    ZoneScoped;
 
     // calculate a b and c for the quadratic fomula
     // see docs/raytracing.org for explanation
@@ -41,6 +39,7 @@ bool Sphere::hit(const Ray &ray, Hit& hit) {
     hit.point = ray.at(t);
     hit.normal = (hit.point - center) / radius;
     hit.material = material;
+    hit.material_id = material_id;
 
     return true;
 
