@@ -4,6 +4,7 @@
 
 bool Sphere::hit(const Ray &ray, Hit& hit) {
     ZoneScoped;
+
     // calculate a b and c for the quadratic fomula
     // see docs/raytracing.org for explanation
     //

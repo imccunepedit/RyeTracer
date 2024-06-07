@@ -58,7 +58,6 @@ void Scene::load_default()
     Material mat;
     add_sphere(Sphere(glm::vec3(-2,4,0), 1, mat));
     add_sphere(Sphere(glm::vec3(0,4,-1000), 999, mat));
-    mat.roughness = 0.0f;
     add_sphere(Sphere(glm::vec3(2,4,0), 1, mat));
 }
 

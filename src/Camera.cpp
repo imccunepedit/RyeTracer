@@ -11,8 +11,6 @@
 
 #include "GLFW/glfw3.h"
 
-#include "tracy/Tracy.hpp"
-
 #include <glm/gtc/quaternion.hpp>
 
 
@@ -27,7 +25,6 @@ void Camera::recalulate_all(Image *image)
 
 void Camera::render(const Scene &s)
 {
-    ZoneScoped;
     // initilize our camera with the info from our output image
 
 #define MT
@@ -57,7 +54,6 @@ void Camera::render(const Scene &s)
 
 void Camera::pixel_color(int x, int y, const Scene &scene)
 {
-    ZoneScoped;
 
     // generate an offset so we cover more of our pixels area with rays
     uint32_t seed = x + y * viewport_pixel_width + out_image->texture*7919;
@@ -80,7 +76,6 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
 
 glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint32_t& rseed)
 {
-    ZoneScoped;
     if (depth < 1)
         return glm::vec3(0.0f);
 
@@ -88,27 +83,25 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
     bool is_hit = scene.hit(ray, hit);
 
     if (!is_hit)
-        return hit.material.emissive;
+        return scene.ambient_color;
 
-    float offset = 0.001f;
+    float offset = 0.01f;
 
-    Ray next_ray = Ray(hit.point + hit.normal * offset, glm::normalize(hit.normal + raytracing::random_on_sphere(rseed)));
-    if (raytracing::random_float(rseed) > hit.material.roughness)
-        next_ray.direction = glm::reflect(ray.direction, hit.normal);
+    // Ray scatter_ray = Ray(hit.point + hit.normal * offset, glm::reflect(ray.direction, hit.normal));
+    Ray scatter_ray = Ray(hit.point + hit.normal * offset, glm::normalize(hit.normal+raytracing::random_on_sphere(rseed)));
+    Ray shadow_ray = Ray(hit.point + hit.normal * offset, glm::normalize(-scene.light_direction));
 
-    glm::vec3 bounced_light = trace_ray(next_ray, scene, depth-1, rseed);
+    glm::vec3 light = trace_ray(scatter_ray, scene, depth-1, rseed);
 
-    next_ray.direction = -scene.directional_light_direction;
     Hit light_hit;
+    is_hit = scene.hit(shadow_ray, light_hit);
 
-    is_hit = scene.hit(next_ray, light_hit);
-    glm::vec3 light = glm::vec3(0.0f);
     if (!is_hit)
     {
-        light = hit.material.roughness*scene.directional_light_color * fmaxf(glm::dot(hit.normal, -glm::normalize(scene.directional_light_direction)), 0.f);
+        light += scene.light_color * fmaxf(glm::dot(hit.normal, glm::normalize(-scene.light_direction)), 0.0f);
     }
 
-    return hit.material.diffuse * (bounced_light + light) + hit.material.emissive*hit.material.emissive_strength;
+    return hit.material.diffuse * light;
 
 }
 
