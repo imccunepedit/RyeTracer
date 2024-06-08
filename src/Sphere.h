@@ -14,6 +14,7 @@ class Sphere : public Object {
         Sphere(glm::vec3 c, float r, uint32_t m_id) : position(c), radius(r), material_id(m_id) {}
 
         bool hit(const Ray &ray, Hit& hit) const override;
+        bool draw_attributes() override;
 
     public:
         glm::vec3 position;

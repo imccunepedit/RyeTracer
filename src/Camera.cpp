@@ -57,13 +57,13 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
 {
 
     // generate an offset so we cover more of our pixels area with rays
-    uint32_t seed = x + y * viewport_pixel_width + out_image->texture*7919;
-    seed *= frame_index;
+    uint32_t seed = x * viewport_pixel_height*719345 + y * viewport_pixel_width * 983571 + out_image->texture*frame_index;
 
     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
                                             (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
 
     Ray ray;
+    ray.seed = seed;
     ray.origin = position;
 
     glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
@@ -71,13 +71,13 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
 
 
     // glm::vec3 color = trace_ray(ray, scene, max_depth);
-    accumulation_data[x + y *viewport_pixel_width] += trace_ray(ray, scene, max_depth, seed);
+    accumulation_data[x + y *viewport_pixel_width] += trace_ray(ray, scene, max_depth);
 
     glm::vec3 color = accumulation_data[x+y*viewport_pixel_width] / (float)frame_index;
     image_data[x + y*viewport_pixel_width] = process_color(color);
 }
 
-glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint32_t& rseed)
+glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth)
 {
     // if we are at the max depth of the scene return a black color since with enough bounces almost all light would be absorbed
     if (depth < 1)
@@ -92,15 +92,15 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint3
     // we need to offset new rays by a small amount since floating point error could mean the origin of our new ray is behind the face we just hit
     float offset = 0.001f;
 
-    // needed when scattering a ray
-    hit.rseed = rseed;
-
     // create a ray to scatter and ask materials bsdf we just hit what the new ray should be
     Ray scatter_ray;
-    scene.materials.at(hit.material_id)->scatter(ray, hit, scatter_ray);
+    glm::vec3 light;
+    if (scene.materials.at(hit.material_id)->scatter(ray, hit, scatter_ray))
+        light = trace_ray(scatter_ray, scene, depth-1);
+    else
+        light = scene.materials.at(hit.material_id)->emissive(ray, hit);
 
     // get the color from this new ray
-    glm::vec3 light = trace_ray(scatter_ray, scene, depth-1, rseed);
 
 
     return hit.color * light;

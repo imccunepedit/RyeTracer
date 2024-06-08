@@ -2,6 +2,9 @@
 
 #include <glm/geometric.hpp>
 
+#include <glm/gtc/type_ptr.hpp>
+#include "imgui.h"
+
 bool Sphere::hit(const Ray &ray, Hit& hit) const {
 
     // calculate a b and c for the quadratic fomula
@@ -43,4 +46,18 @@ bool Sphere::hit(const Ray &ray, Hit& hit) const {
 
     return true;
 
+}
+
+
+bool Sphere::draw_attributes()
+{
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::TreeNode("Object"))
+    {
+        ImGui::DragFloat3("Position", glm::value_ptr(position), 0.1f);
+        ImGui::DragFloat("radius", &radius, 0.1f);
+        ImGui::InputInt("Material index", (int*)&material_id, 1, 0);
+        ImGui::TreePop();
+    }
+    return true;
 }

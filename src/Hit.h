@@ -9,7 +9,6 @@ struct Hit {
     glm::vec3 color;
     float distance = std::numeric_limits<float>::max();
     bool inside = false;
-    uint32_t rseed = 1; // sometimes we need to generate random values, seems to be an easy enough way to pass the seed forward
     uint32_t material_id = 0;
 
 };

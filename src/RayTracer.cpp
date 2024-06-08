@@ -78,18 +78,20 @@ void RayTracer::Update()
         my_scene.add_object(std::make_shared<Sphere>(glm::vec3(10,0,0),1,0));;
     }
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Spheres"))
+    if (ImGui::TreeNode("Objects"))
     {
         for (auto object : my_scene.objects)
         {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode("Sphere"))
-            {
-                ImGui::DragFloat3("Position", glm::value_ptr(object->position), 0.1f);
-                // ImGui::DragFloat("radius", &object->radius, 0.1f);
-                ImGui::DragInt("Material index", (int*)&object->material_id, 1, 0, my_scene.material_count-1);
-                ImGui::TreePop();
-            }
+                object->draw_attributes();
+        }
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Materials"))
+    {
+        for (auto material : my_scene.materials)
+        {
+                material->draw_attributes();
         }
         ImGui::TreePop();
     }

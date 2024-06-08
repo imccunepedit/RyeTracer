@@ -12,6 +12,7 @@ class Ray {
 
         glm::vec3 origin;
         glm::vec3 direction;
+        uint32_t seed;
 };
 
 #endif // RAY_H_

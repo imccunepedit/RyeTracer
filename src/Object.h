@@ -6,10 +6,8 @@
 
 class Object {
     public:
-        virtual bool hit(const Ray& ray, Hit& hit) const
-        {
-            return false;
-        }
+        virtual bool hit(const Ray& ray, Hit& hit) const { return false; }
+        virtual bool draw_attributes() { return false; }
         glm::vec3 position = glm::vec3(0.0f);
         uint32_t material_id = 0;
 };
