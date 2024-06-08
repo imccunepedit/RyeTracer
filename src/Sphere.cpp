@@ -1,15 +1,16 @@
 #include "Sphere.h"
 
+#include <glm/geometric.hpp>
 
-bool Sphere::hit(const Ray &ray, Hit& hit) {
+bool Sphere::hit(const Ray &ray, Hit& hit) const {
 
     // calculate a b and c for the quadratic fomula
     // see docs/raytracing.org for explanation
     //
     // since the ray direction should be normalized a should always be equal to 1
     // float a = glm::dot(ray.direction, ray.direction);
-    float b = 2.0 * glm::dot(ray.direction, ray.origin - center);
-    float c = glm::dot(center - ray.origin,center - ray.origin) - radius * radius;
+    float b = 2.0 * glm::dot(ray.direction, ray.origin - position);
+    float c = glm::dot(position - ray.origin,position - ray.origin) - radius * radius;
 
     // calculate the discriminant
     float discriminant = b*b - 4*c;
@@ -37,8 +38,7 @@ bool Sphere::hit(const Ray &ray, Hit& hit) {
     // otherwise calculate hit position
     hit.distance = t;
     hit.point = ray.at(t);
-    hit.normal = (hit.point - center) / radius;
-    hit.material = material;
+    hit.normal = (hit.point - position) / radius;
     hit.material_id = material_id;
 
     return true;

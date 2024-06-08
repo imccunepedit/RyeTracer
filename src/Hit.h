@@ -3,8 +3,6 @@
 
 #include "glm/vec3.hpp"
 
-#include "Material.h"
-
 struct Hit {
     glm::vec3 point;
     glm::vec3 normal;
@@ -14,7 +12,6 @@ struct Hit {
     uint32_t rseed = 1; // sometimes we need to generate random values, seems to be an easy enough way to pass the seed forward
     uint32_t material_id = 0;
 
-    Material material;
 };
 
 #endif // HIT_H_

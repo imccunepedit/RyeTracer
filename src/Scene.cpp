@@ -2,6 +2,7 @@
 #include "Hit.h"
 #include "Ray.h"
 #include "imgui.h"
+#include "Sphere.h"
 
 #include "glm/gtc/type_ptr.hpp"
 
@@ -9,25 +10,23 @@
 
 
 
-bool Scene::trace(const Ray& ray, Hit& hit) const
+bool Scene::hit(const Ray& ray, Hit& hit) const
 {
     hit.color = glm::vec3(0,0,0);
     // closest_hit.color = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     // if there isn't anything in the scene return skycolor
-    if (spheres.size() == 0)
+    if (objects.size() == 0)
     {
         return false;
     }
 
     // try and find our closeset hit, loop over spheres
-    for (int i = 0; i < spheres.size(); i++)
+    for (auto object : objects)
     {
-        // get a sphere to check if our ray hits it
-        Sphere sphere = spheres.at(i);
         Hit temp_hit;
 
         // get a hit from our sphere
-        bool is_hit = sphere.hit(ray, temp_hit);
+        bool is_hit = object->hit(ray, temp_hit);
 
         // if distance is infinite/max, we haven't hit anything so check the next sphere
         if (!is_hit) // didn't hit anything
@@ -53,29 +52,32 @@ bool Scene::trace(const Ray& ray, Hit& hit) const
 
 void Scene::load_default()
 {
-    Material mat;
-    add_sphere(Sphere(glm::vec3(-2,4,0), 1, mat));
-    add_sphere(Sphere(glm::vec3(0,4,-1000), 999, mat));
-    add_sphere(Sphere(glm::vec3(2,4,0), 1, mat));
+    ambient_color = glm::vec3(0.6f,0.7f,0.75f);
+    add_object(std::make_shared<Sphere>(glm::vec3(-2,4,0), 1, 0));
+    add_object(std::make_shared<Sphere>(glm::vec3(0,4,-1000), 999, 0));
+    add_object(std::make_shared<Sphere>(glm::vec3(2,4,0), 1, 1));
     add_material(std::make_shared<lambertian_bsdf>());
+    add_material(std::make_shared<metalic_bsdf>());
 }
 
-void Scene::add_sphere(Sphere s)
+void Scene::add_object(std::shared_ptr<Object> o)
 {
-    spheres.push_back(s);
+    objects.push_back(o);
 }
 
-void Scene::remove_sphere(const int& i)
+void Scene::remove_object(const int& i)
 {
-    spheres.erase(std::next(spheres.begin(), i));
+    objects.erase(std::next(objects.begin(), i));
 }
 
 void Scene::add_material(std::shared_ptr<bsdf> m)
 {
     materials.push_back(m);
+    material_count ++;
 }
 
 void Scene::remove_material(const int& i)
 {
     materials.erase(std::next(materials.begin(), i));
+    material_count --;
 }

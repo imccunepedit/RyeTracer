@@ -63,10 +63,12 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
                                             (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
 
-    glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
-    glm::vec3 ray_world_direction = glm::normalize(glm::vec3(inv_view * ray_world_target));
+    Ray ray;
+    ray.origin = position;
 
-    Ray ray = Ray(position, ray_world_direction);
+    glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
+    ray.direction = glm::normalize(glm::vec3(inv_view * ray_world_target));
+
 
     // glm::vec3 color = trace_ray(ray, scene, max_depth);
     accumulation_data[x + y *viewport_pixel_width] += trace_ray(ray, scene, max_depth, seed);
@@ -77,31 +79,46 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
 
 glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth, uint32_t& rseed)
 {
+    // if we are at the max depth of the scene return a black color since with enough bounces almost all light would be absorbed
     if (depth < 1)
         return glm::vec3(0.0f);
 
+    // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
     Hit hit;
-    if (!scene.trace(ray, hit))
+    if (!scene.hit(ray, hit))
         return scene.ambient_color;
 
 
-
+    // we need to offset new rays by a small amount since floating point error could mean the origin of our new ray is behind the face we just hit
     float offset = 0.001f;
 
-    // Ray scatter_ray = Ray(hit.point + hit.normal * offset, glm::reflect(ray.direction, hit.normal));
+    // needed when scattering a ray
     hit.rseed = rseed;
 
+    // create a ray to scatter and ask materials bsdf we just hit what the new ray should be
     Ray scatter_ray;
-
     scene.materials.at(hit.material_id)->scatter(ray, hit, scatter_ray);
+
+    // get the color from this new ray
     glm::vec3 light = trace_ray(scatter_ray, scene, depth-1, rseed);
 
-    Hit light_hit;
-    Ray shadow_ray = Ray(hit.point + hit.normal * offset, glm::normalize(-scene.light_direction));
-    if (!scene.trace(shadow_ray, light_hit))
-        light += scene.light_color * fmaxf(glm::dot(hit.normal, glm::normalize(-scene.light_direction)), 0.0f);
 
     return hit.color * light;
+
+    /*
+    // not supported right now, useful as a sun light but create complications with some materials
+    // TODO could be implemented as some info into the hit record so the bsdf can operate on it
+    // calculate directional light
+    Ray shadow_ray;
+    Hit light_hit;
+    shadow_ray.origin = hit.point + hit.normal * offset;
+    shadow_ray.direction = glm::normalize(-scene.light_direction);
+
+
+    if (!scene.trace(shadow_ray, light_hit))
+        light += scene.light_color * fmaxf(glm::dot(hit.normal, glm::normalize(-scene.light_direction)), 0.0f);
+     */
+
 
 }
 

@@ -71,27 +71,23 @@ void RayTracer::Update()
 
 
     ImGui::Begin("Scene");
-    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.light_color), ImGuiColorEditFlags_Float);
-    ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.light_direction), 0.1f, -1.0f, 1.0f);
+    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.ambient_color), ImGuiColorEditFlags_Float);
+    // ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.light_color), ImGuiColorEditFlags_Float);
+    // ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.light_direction), 0.1f, -1.0f, 1.0f);
     if (ImGui::Button("Add Sphere")) {
-        my_scene.add_sphere(Sphere({10,0,0},1,Material()));;
+        my_scene.add_object(std::make_shared<Sphere>(glm::vec3(10,0,0),1,0));;
     }
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Spheres"))
     {
-        for (int i = 0; i < my_scene.spheres.size(); i++)
+        for (auto object : my_scene.objects)
         {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode((void*)(intptr_t)i, "Sphere %d", i))
+            if (ImGui::TreeNode("Sphere"))
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(my_scene.spheres[i].material.diffuse), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat3("Position", glm::value_ptr(my_scene.spheres[i].center), 0.1f);
-                ImGui::DragFloat("radius", &my_scene.spheres[i].radius, 0.1f);
-                ImGui::DragInt("Material index", (int*)&my_scene.spheres[i].material_id);
-                if (ImGui::Button("Remove"))
-                {
-                    my_scene.remove_sphere(i);
-                }
+                ImGui::DragFloat3("Position", glm::value_ptr(object->position), 0.1f);
+                // ImGui::DragFloat("radius", &object->radius, 0.1f);
+                ImGui::DragInt("Material index", (int*)&object->material_id, 1, 0, my_scene.material_count-1);
                 ImGui::TreePop();
             }
         }
