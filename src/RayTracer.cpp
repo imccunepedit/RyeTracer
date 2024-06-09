@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <iostream>
 
 #include "glm/gtc/type_ptr.hpp"
 
@@ -52,6 +53,7 @@ void RayTracer::Update()
     ImGui::SeparatorText("Info");
     ImGui::Text("Viewport size: %d x %d", image->width, image->height);
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
+    ImGui::Text("Samples: %d", cam.samples);
 
     ImGui::SeparatorText("Camera");
     ImGui::DragFloat("Vertical fov", &cam.vfov, 0.1f, 1.0f, 100.0f);
@@ -80,18 +82,25 @@ void RayTracer::Update()
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Objects"))
     {
-        for (auto object : my_scene.objects)
+        for (size_t i = 0; i < my_scene.objects.size(); i++)
         {
-                object->draw_attributes();
+            auto object = my_scene.objects.at(i);
+            ImGui::PushID(i);
+            object->draw_attributes();
+            // ImGui::DragFloat3("radius", glm::value_ptr(o.position));
+            ImGui::PopID();
         }
         ImGui::TreePop();
     }
 
     if (ImGui::TreeNode("Materials"))
     {
-        for (auto material : my_scene.materials)
+        for (size_t i = 0; i < my_scene.materials.size(); i++)
         {
-                material->draw_attributes();
+            ImGui::PushID(i);
+            auto material = my_scene.materials.at(i);
+            material->draw_attributes();
+            ImGui::PopID();
         }
         ImGui::TreePop();
     }

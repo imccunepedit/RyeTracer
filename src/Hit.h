@@ -6,7 +6,7 @@
 struct Hit {
     glm::vec3 point;
     glm::vec3 normal;
-    glm::vec3 color;
+    glm::vec3 color = glm::vec3(0);
     float distance = std::numeric_limits<float>::max();
     bool inside = false;
     uint32_t material_id = 0;

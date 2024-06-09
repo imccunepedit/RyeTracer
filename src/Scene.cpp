@@ -9,6 +9,10 @@
 #include <iostream>
 
 
+#include "Materials/Emission.h"
+#include "Materials/Lambertian.h"
+#include "Materials/Metallic.h"
+
 
 bool Scene::hit(const Ray& ray, Hit& hit) const
 {
@@ -53,17 +57,21 @@ bool Scene::hit(const Ray& ray, Hit& hit) const
 void Scene::load_default()
 {
     // ambient_color = glm::vec3(0.6f,0.7f,0.75f);
-    add_object(std::make_shared<Sphere>(glm::vec3(-2,4,0), 1, 1));
-    add_object(std::make_shared<Sphere>(glm::vec3(0,4,-1000), 999, 0));
-    add_object(std::make_shared<Sphere>(glm::vec3(2,4,0), 1, 2));
+    // sunlike thing
+    add_material(std::make_shared<emission>(glm::vec3(1.0f,0.9f,0.8f), 100.0f));
+    // add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,0,50), 10, 0)));
+
+    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,4,-1000), 999, 1)));
+    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(-2,4,0), 1, 3)));
+    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(2,4,0), 1, 2)));
     add_material(std::make_shared<lambertian_bsdf>());
     add_material(std::make_shared<metallic_bsdf>());
-    add_material(std::make_shared<emission_bsdf>(glm::vec3(1.0f,0.1f,0.1f), 10.0f));
+    add_material(std::make_shared<emission>(glm::vec3(1.0f,0.1f,0.1f), 10.0f));
 }
 
 void Scene::add_object(std::shared_ptr<Object> o)
 {
-    objects.push_back(o);
+    objects.push_back(std::move(o));
 }
 
 void Scene::remove_object(const int& i)
@@ -71,9 +79,9 @@ void Scene::remove_object(const int& i)
     objects.erase(std::next(objects.begin(), i));
 }
 
-void Scene::add_material(std::shared_ptr<bsdf> m)
+void Scene::add_material(std::shared_ptr<Material> m)
 {
-    materials.push_back(m);
+    materials.push_back(std::move(m));
     material_count ++;
 }
 

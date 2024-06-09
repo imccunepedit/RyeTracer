@@ -1,8 +1,8 @@
 #include "Sphere.h"
 
 #include <glm/geometric.hpp>
-
 #include <glm/gtc/type_ptr.hpp>
+
 #include "imgui.h"
 
 bool Sphere::hit(const Ray &ray, Hit& hit) const {
@@ -52,7 +52,7 @@ bool Sphere::hit(const Ray &ray, Hit& hit) const {
 bool Sphere::draw_attributes()
 {
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Object"))
+    if (ImGui::TreeNode("Object %f"))
     {
         ImGui::DragFloat3("Position", glm::value_ptr(position), 0.1f);
         ImGui::DragFloat("radius", &radius, 0.1f);

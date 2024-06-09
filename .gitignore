@@ -6,3 +6,4 @@
 /.cache/
 /callgrind.out.148602
 /lib/stb_image.h
+/imgui.ini

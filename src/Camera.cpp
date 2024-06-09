@@ -8,7 +8,7 @@
 #include "Camera.h"
 #include "Hit.h"
 #include "Random.h"
-#include "bsdf.h"
+#include "Material.h"
 
 #include "GLFW/glfw3.h"
 
@@ -50,14 +50,14 @@ void Camera::render(const Scene &s)
 #endif
 
     out_image->set_image(image_data);
-    frame_index ++;
+    samples ++;
 }
 
 void Camera::pixel_color(int x, int y, const Scene &scene)
 {
 
     // generate an offset so we cover more of our pixels area with rays
-    uint32_t seed = x * viewport_pixel_height*719345 + y * viewport_pixel_width * 983571 + out_image->texture*frame_index;
+    uint32_t seed = x * viewport_pixel_height*719345 + y * viewport_pixel_width * 983571 + out_image->texture*samples;
 
     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
                                             (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
@@ -73,7 +73,7 @@ void Camera::pixel_color(int x, int y, const Scene &scene)
     // glm::vec3 color = trace_ray(ray, scene, max_depth);
     accumulation_data[x + y *viewport_pixel_width] += trace_ray(ray, scene, max_depth);
 
-    glm::vec3 color = accumulation_data[x+y*viewport_pixel_width] / (float)frame_index;
+    glm::vec3 color = accumulation_data[x+y*viewport_pixel_width] / (float)samples;
     image_data[x + y*viewport_pixel_width] = process_color(color);
 }
 
@@ -86,7 +86,13 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth)
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
     Hit hit;
     if (!scene.hit(ray, hit))
+    {
+        // float dirli = glm::dot(ray.direction, glm::normalize(-scene.light_direction));
+        // float threshold = 0.999;
+        // if (dirli > threshold)
+        //     return scene.light_color / (1-threshold*threshold);
         return scene.ambient_color;
+    }
 
 
     // we need to offset new rays by a small amount since floating point error could mean the origin of our new ray is behind the face we just hit
@@ -95,10 +101,11 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth)
     // create a ray to scatter and ask materials bsdf we just hit what the new ray should be
     Ray scatter_ray;
     glm::vec3 light;
-    if (scene.materials.at(hit.material_id)->scatter(ray, hit, scatter_ray))
+    if (scene.materials.at(hit.material_id)->bsdf(ray, hit, scatter_ray))
         light = trace_ray(scatter_ray, scene, depth-1);
-    else
-        light = scene.materials.at(hit.material_id)->emissive(ray, hit);
+    else if (scene.materials[hit.material_id]->absorb(ray, hit))
+        light = glm::vec3(1);
+
 
     // get the color from this new ray
 
@@ -138,7 +145,7 @@ uint32_t Camera::process_color(glm::vec3 color)
 
 void Camera::reset_accumulator()
 {
-    frame_index = 1;
+    samples = 1;
     memset(accumulation_data, 0, viewport_pixel_width*viewport_pixel_height*sizeof(glm::vec3));
 }
 

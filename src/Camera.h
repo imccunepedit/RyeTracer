@@ -63,6 +63,8 @@ class Camera {
         float speed = 4;
         glm::vec2 sensitivity = glm::vec2(0.2);
 
+        uint32_t samples = 1;
+
     private:
         bool initialized = false;
 
@@ -72,7 +74,6 @@ class Camera {
         glm::mat4 view, inv_view, projection, inv_projection;
 
 
-        uint32_t frame_index = 1;
 
         int viewport_pixel_width = 1;
         int viewport_pixel_height = 1;

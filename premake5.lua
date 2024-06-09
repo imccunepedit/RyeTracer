@@ -39,7 +39,7 @@ project "Renderer"
     includedirs {
         "lib/imgui/",
         "lib/",
-        "lib/tracy/public/"
+        "lib/tracy/public/",
     }
 
 
