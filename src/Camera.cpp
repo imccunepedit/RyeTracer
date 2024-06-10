@@ -56,9 +56,10 @@ void Camera::render(const Scene &s)
 void Camera::pixel_color(int x, int y, const Scene &scene)
 {
 
-    // generate an offset so we cover more of our pixels area with rays
-    uint32_t seed = x * viewport_pixel_height*719345 + y * viewport_pixel_width * 983571 + out_image->texture*samples;
+    // generate a seed for our hash generator, should be different for each pixel and shouldn't be any perceptible shift across frames ( only the case if the accumulator is reset every frame and the camera isn't moving)
+    uint32_t seed = x + y * viewport_pixel_width + samples + (out_image->texture) * viewport_pixel_width * viewport_pixel_height;
 
+    // generate an offset so we cover more of our pixels area with rays
     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
                                             (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
 
