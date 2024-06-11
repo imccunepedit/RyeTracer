@@ -11,8 +11,6 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-#define DEFAULT_WINDOW_WIDTH 1280
-#define DEFUALT_WINDOW_HEIGHT 720
 
 #include "tracy/Tracy.hpp"
 
@@ -85,7 +83,7 @@ App::App()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window size x,y,title,not full screen
-    window_handle = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFUALT_WINDOW_HEIGHT, "m_floating Renderer", nullptr, nullptr);
+    window_handle = glfwCreateWindow(1280, 720, "m_floating Renderer", nullptr, nullptr);
 
 
     // make sure window exists

@@ -36,7 +36,7 @@ class metallic_bsdf : public Material {
         }
 
     private:
-        glm::vec3 color = glm::vec3(1.0f);
+        glm::vec3 color = glm::vec3(0.9f);
         float roughness = 0;
 };
 

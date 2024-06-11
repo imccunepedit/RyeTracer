@@ -8,8 +8,9 @@
 #include "../Material.h"
 
 #include <glm/geometric.hpp>
-#include "imgui.h"
 #include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
 
 class glass_bsdf : public Material {
     public:
@@ -17,10 +18,17 @@ class glass_bsdf : public Material {
         {
             uint32_t seed = in_ray.seed;
             float eta = 1/ior;
+            float at = 1;
+            hit.color = glm::vec3(1);
+
+            hit.normal += raytracing::random_on_sphere(seed) * roughness;
+            hit.normal = glm::normalize(hit.normal);
+
             if (hit.inside)
             {
                 eta = 1/eta;
                 hit.normal *= -1;
+                hit.color = glm::pow(color, glm::vec3(hit.distance));
             }
 
             scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
@@ -38,7 +46,6 @@ class glass_bsdf : public Material {
             scatter_ray.origin = hit.point;
             scatter_ray.seed = seed;
             scatter_ray.normalize();
-            hit.color = color;
             return true;
         }
 
@@ -49,6 +56,7 @@ class glass_bsdf : public Material {
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(color));
                 ImGui::DragFloat("IoR", &ior);
+                ImGui::DragFloat("Roughness", &roughness);
                 ImGui::TreePop();
             }
             return true;
@@ -57,6 +65,7 @@ class glass_bsdf : public Material {
     private:
         glm::vec3 color = glm::vec3(1.0f);
         float ior = 1.5f;
+        float roughness = 0;
 
 };
 
