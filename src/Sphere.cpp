@@ -24,15 +24,17 @@ bool Sphere::hit(const Ray &ray, Hit& hit) const {
     }
 
 
+    float min_t = 0.001;
     // make sure that we only use rays that go away from the camera
     // we don't want to be able to see behind use
     float t = (-b - std::sqrt(discriminant)) * 0.5f;
-    if (t < 0)
+
+    if (t < min_t)
     {
         // if the first t was negative that means that it hit something behind us, we can now check
         // if the second point is also behind us
-        float t = (-b + std::sqrt(discriminant)) * 0.5f;
-        if (t < 0)
+        t = (-b + std::sqrt(discriminant)) * 0.5f;
+        if (t < min_t)
             return false;
         // if the point isn't behind us we are inside the sphere so we tell our hit that.
         hit.inside = true;
