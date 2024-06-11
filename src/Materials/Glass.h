@@ -24,7 +24,14 @@ class glass_bsdf : public Material {
             }
 
             scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
-            if (glm::dot(scatter_ray.direction, scatter_ray.direction) < 0.5)
+            bool reflect = glm::dot(scatter_ray.direction, scatter_ray.direction) < 0.1;
+
+            float cos_angle = glm::dot(in_ray.direction, -hit.normal);
+            float r0 = (1-eta) / (1+eta);
+            float schlick = r0 + (1-r0)*pow((1 - cos_angle),5);
+            reflect |= schlick > raytracing::random_float(seed);
+
+            if (reflect)
                 scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal);
 
 
@@ -52,5 +59,7 @@ class glass_bsdf : public Material {
         float ior = 1.5f;
 
 };
+
+
 
 #endif // GLASS_H_
