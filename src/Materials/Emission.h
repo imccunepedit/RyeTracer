@@ -14,7 +14,7 @@
 
 class emission : public Material {
     public:
-        emission();
+        emission() {};
         emission(glm::vec3 color, float strength) : color(color), strength(strength) {}
         bool absorb(const Ray& in_ray, Hit& hit) override
         {
@@ -33,9 +33,9 @@ class emission : public Material {
             }
             return true;
         }
-    public:
+    private:
         glm::vec3 color = glm::vec3(1.0f, 0.9f, 0.8f);
-        float strength = 1.0f;
+        float strength = 10.0f;
 };
 
 

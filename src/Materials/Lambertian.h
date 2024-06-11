@@ -16,9 +16,11 @@ class lambertian_bsdf : public Material {
         bool bsdf(const Ray& in_ray, Hit& hit, Ray& scatter_ray) override
         {
             uint32_t seed = in_ray.seed;
-            scatter_ray.origin = hit.point + hit.normal * 0.001f;
-            scatter_ray.direction = glm::normalize(hit.normal + raytracing::random_on_sphere(seed));
+            scatter_ray.direction = hit.normal + raytracing::random_on_sphere(seed);
+
+            scatter_ray.origin = hit.point;
             scatter_ray.seed = seed;
+            scatter_ray.normalize();
             hit.color = color;
             return true;
         }
@@ -34,7 +36,7 @@ class lambertian_bsdf : public Material {
             return true;
         }
 
-    public:
+    private:
         glm::vec3 color = glm::vec3(0.5f);
 
 };

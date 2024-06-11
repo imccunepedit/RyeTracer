@@ -14,10 +14,12 @@ class metallic_bsdf : public Material {
     public:
         bool bsdf(const Ray &in_ray, Hit &hit, Ray &scatter_ray) override {
             uint32_t seed = in_ray.seed;
-            scatter_ray.origin = hit.point + hit.normal * 0.001f;
-            scatter_ray.direction = glm::normalize(glm::reflect(in_ray.direction, hit.normal) + raytracing::random_on_sphere(seed) * m_roughness);
+            scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal) + raytracing::random_on_sphere(seed) * roughness;
+
+            scatter_ray.origin = hit.point;
             scatter_ray.seed = seed;
-            hit.color = m_color;
+            scatter_ray.normalize();
+            hit.color = color;
             return true;
         }
 
@@ -26,16 +28,16 @@ class metallic_bsdf : public Material {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("Metallic BSDF"))
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(m_color));
-                ImGui::DragFloat("Roughness", &m_roughness);
+                ImGui::ColorEdit3("Color", glm::value_ptr(color));
+                ImGui::DragFloat("Roughness", &roughness);
                 ImGui::TreePop();
             }
             return true;
         }
 
     private:
-        glm::vec3 m_color = glm::vec3(1.0f);
-        float m_roughness = 0;
+        glm::vec3 color = glm::vec3(1.0f);
+        float roughness = 0;
 };
 
 
