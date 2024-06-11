@@ -47,7 +47,7 @@ class Camera {
 
     public:
         int max_depth = 50; // current max depth into scene
-        int max_stationary_depth = 500; // max depth into scene when stationary
+        int max_stationary_depth = 10; // max depth into scene when stationary
         int max_moving_depth = 2; // max depth into scene when moving camera
         int rays_per_pixel = 1;
 
