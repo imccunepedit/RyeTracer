@@ -19,24 +19,22 @@ class glass_bsdf : public Material {
             uint32_t seed = in_ray.seed;
             float eta = 1/ior;
             float at = 1;
-            hit.color = glm::vec3(1);
 
             hit.normal += raytracing::random_on_sphere(seed) * roughness;
             hit.normal = glm::normalize(hit.normal);
 
+            hit.color = glm::vec3(1);
             if (hit.inside)
             {
                 eta = 1/eta;
                 hit.normal *= -1;
-                hit.color = color;
+                hit.color *= exp((color-1.0f)*hit.distance);
             }
 
             scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
             bool reflect = glm::dot(scatter_ray.direction, scatter_ray.direction) < 0.1;
 
             reflect |= fresnel(in_ray.direction, hit.normal, eta) > raytracing::random_float(seed);
-            // hit.color = glm::vec3(fresnel(in_ray.direction, hit.normal, eta));
-            // return false;
 
             if (reflect)
                 scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal);
@@ -54,9 +52,8 @@ class glass_bsdf : public Material {
             if (ImGui::TreeNode("Glass BSDF"))
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(color));
-                ImGui::DragFloat("IoR", &ior, 0.01f, 0.0f);
-                ImGui::DragFloat("Roughness", &roughness, 0.1f, 0, 1);
-                ImGui::Checkbox("correctness", &correctness);
+                ImGui::DragFloat("IoR", &ior, 0.002f, 0.0f);
+                ImGui::DragFloat("Roughness", &roughness, 0.001f, 0, 1);
                 ImGui::TreePop();
             }
             return true;
@@ -68,7 +65,7 @@ class glass_bsdf : public Material {
             float n2 = 1;
             float c1 = glm::dot(I,-N);
 #ifndef SCHLICK
-            float c2 = sqrtf(1 - (n1*n1/(n2*n2)) * (1- (c1*c1)));
+            float c2 = sqrtf(1 - n1*n1/(n2*n2) * (1- c1*c1));
             float Rs = (n1*c1 - n2*c2) / (n1*c1 + n2*c2);
             float Rp = (n1*c2 - n2*c1) / (n1*c2 + n2*c1);
             return 0.5 * (Rs*Rs + Rp*Rp);
@@ -84,7 +81,6 @@ class glass_bsdf : public Material {
         glm::vec3 color = glm::vec3(1.0f);
         float ior = 1.5f;
         float roughness = 0;
-        bool correctness = true;
 
 };
 
