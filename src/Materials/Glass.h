@@ -28,16 +28,15 @@ class glass_bsdf : public Material {
             {
                 eta = 1/eta;
                 hit.normal *= -1;
-                hit.color = glm::pow(color, glm::vec3(hit.distance));
+                hit.color = color;
             }
 
             scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
             bool reflect = glm::dot(scatter_ray.direction, scatter_ray.direction) < 0.1;
 
-            float cos_angle = glm::dot(in_ray.direction, -hit.normal);
-            float r0 = (1-eta) / (1+eta);
-            float schlick = r0 + (1-r0)*pow((1 - cos_angle),5);
-            reflect |= schlick > raytracing::random_float(seed);
+            reflect |= fresnel(in_ray.direction, hit.normal, eta) > raytracing::random_float(seed);
+            // hit.color = glm::vec3(fresnel(in_ray.direction, hit.normal, eta));
+            // return false;
 
             if (reflect)
                 scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal);
@@ -55,17 +54,37 @@ class glass_bsdf : public Material {
             if (ImGui::TreeNode("Glass BSDF"))
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(color));
-                ImGui::DragFloat("IoR", &ior);
-                ImGui::DragFloat("Roughness", &roughness);
+                ImGui::DragFloat("IoR", &ior, 0.01f, 0.0f);
+                ImGui::DragFloat("Roughness", &roughness, 0.1f, 0, 1);
+                ImGui::Checkbox("correctness", &correctness);
                 ImGui::TreePop();
             }
             return true;
+        }
+
+
+        float fresnel(glm::vec3 I, glm::vec3 N, float n1)
+        {
+            float n2 = 1;
+            float c1 = glm::dot(I,-N);
+#ifndef SCHLICK
+            float c2 = sqrtf(1 - (n1*n1/(n2*n2)) * (1- (c1*c1)));
+            float Rs = (n1*c1 - n2*c2) / (n1*c1 + n2*c2);
+            float Rp = (n1*c2 - n2*c1) / (n1*c2 + n2*c1);
+            return 0.5 * (Rs*Rs + Rp*Rp);
+#else
+            float n12 = n1-n2;
+            float R0 = n12 / (n1+n2);
+            R0 *= R0;
+            return R0 + (1-R0)*pow((1 - c1),5);
+#endif
         }
 
     private:
         glm::vec3 color = glm::vec3(1.0f);
         float ior = 1.5f;
         float roughness = 0;
+        bool correctness = true;
 
 };
 
