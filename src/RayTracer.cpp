@@ -79,7 +79,6 @@ void RayTracer::Update()
     if (ImGui::Button("Add Sphere")) {
         my_scene.add_object(std::make_shared<Sphere>(glm::vec3(10,0,0),1,0));;
     }
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Objects"))
     {
         for (size_t i = 0; i < my_scene.objects.size(); i++)
@@ -93,6 +92,7 @@ void RayTracer::Update()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Materials"))
     {
         for (size_t i = 0; i < my_scene.materials.size(); i++)
