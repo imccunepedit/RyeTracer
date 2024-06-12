@@ -28,14 +28,14 @@ class metallic_bsdf : public Material {
 
         bool draw_attributes() override
         {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode("Metallic BSDF"))
-            {
-                ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Roughness", &roughness);
-                ImGui::TreePop();
-            }
+            ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
+            ImGui::DragFloat("Roughness", &roughness);
             return true;
+        }
+
+        std::string get_name() override
+        {
+            return "Metallic BSDF";
         }
 
     private:

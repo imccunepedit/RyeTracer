@@ -13,6 +13,8 @@
 #include "Materials/Lambertian.h"
 #include "Materials/Metallic.h"
 #include "Materials/Glass.h"
+#include "Materials/Specular.h"
+#include "Materials/Glossy.h"
 
 
 bool Scene::hit(const Ray& ray, Hit& hit) const
@@ -65,7 +67,7 @@ void Scene::load_default()
 
     add_material(std::make_shared<emission>());
     add_material(std::make_shared<metallic_bsdf>(glm::vec3(0.944,0.776,0.373)));
-    add_material(std::make_shared<glass_bsdf>());
+    add_material(std::make_shared<glossy_bsdf>());
 }
 
 void Scene::add_object(std::shared_ptr<Object> o)

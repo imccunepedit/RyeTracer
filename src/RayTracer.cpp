@@ -99,7 +99,13 @@ void RayTracer::Update()
         {
             ImGui::PushID(i);
             auto material = my_scene.materials.at(i);
-            material->draw_attributes();
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            auto name = material->get_name();
+            if (ImGui::TreeNode("a"))
+            {
+                material->draw_attributes();
+                ImGui::TreePop();
+            }
             ImGui::PopID();
         }
         ImGui::TreePop();

@@ -1,6 +1,8 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
+#include <string>
+
 #include "Hit.h"
 #include "Ray.h"
 #include "Random.h"
@@ -16,6 +18,7 @@ class Material {
         virtual bool absorb(const Ray& in_ray, Hit& hit) { return false; } // technically emitting and being absorbed into camera but we are being backwards
 
         virtual bool draw_attributes() { return false; }
+        virtual std::string get_name() = 0;
 
     // private:
         float fresnel(glm::vec3 I, glm::vec3 N, float n1)

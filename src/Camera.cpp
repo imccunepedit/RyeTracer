@@ -88,10 +88,6 @@ glm::vec3 Camera::trace_ray(const Ray &ray, const Scene &scene, int depth)
     Hit hit;
     if (!scene.hit(ray, hit))
     {
-        // float dirli = glm::dot(ray.direction, glm::normalize(-scene.light_direction));
-        // float threshold = 0.999;
-        // if (dirli > threshold)
-        //     return scene.light_color / (1-threshold*threshold);
         return scene.ambient_color;
     }
 
