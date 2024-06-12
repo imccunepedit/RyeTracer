@@ -64,7 +64,7 @@ void Scene::load_default()
     add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,4,0), 1, 3)));
 
     add_material(std::make_shared<emission>());
-    add_material(std::make_shared<metallic_bsdf>());
+    add_material(std::make_shared<metallic_bsdf>(glm::vec3(0.944,0.776,0.373)));
     add_material(std::make_shared<glass_bsdf>());
 }
 

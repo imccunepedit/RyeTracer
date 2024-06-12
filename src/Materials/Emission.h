@@ -27,7 +27,7 @@ class emission : public Material {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("Emission"))
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(color));
+                ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
                 ImGui::DragFloat("Strength", &strength, 1.0f, 0.0f);
                 ImGui::TreePop();
             }

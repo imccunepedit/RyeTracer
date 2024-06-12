@@ -28,7 +28,7 @@ class glass_bsdf : public Material {
             {
                 eta = 1/eta;
                 hit.normal *= -1;
-                hit.color *= exp((color-1.0f)*hit.distance);
+                hit.color *= glm::exp((color-1.0f)*hit.distance);
             }
 
             scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
@@ -51,31 +51,14 @@ class glass_bsdf : public Material {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("Glass BSDF"))
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(color));
+                ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
                 ImGui::DragFloat("IoR", &ior, 0.002f, 0.0f);
-                ImGui::DragFloat("Roughness", &roughness, 0.001f, 0, 1);
+                ImGui::DragFloat("Roughness", &roughness, 0.01f, 0, 1);
                 ImGui::TreePop();
             }
             return true;
         }
 
-
-        float fresnel(glm::vec3 I, glm::vec3 N, float n1)
-        {
-            float n2 = 1;
-            float c1 = glm::dot(I,-N);
-#ifndef SCHLICK
-            float c2 = sqrtf(1 - n1*n1/(n2*n2) * (1- c1*c1));
-            float Rs = (n1*c1 - n2*c2) / (n1*c1 + n2*c2);
-            float Rp = (n1*c2 - n2*c1) / (n1*c2 + n2*c1);
-            return 0.5 * (Rs*Rs + Rp*Rp);
-#else
-            float n12 = n1-n2;
-            float R0 = n12 / (n1+n2);
-            R0 *= R0;
-            return R0 + (1-R0)*pow((1 - c1),5);
-#endif
-        }
 
     private:
         glm::vec3 color = glm::vec3(1.0f);

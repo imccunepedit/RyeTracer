@@ -30,7 +30,7 @@ class lambertian_bsdf : public Material {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("Diffuse BSDF"))
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(color));
+                ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
                 ImGui::TreePop();
             }
             return true;
