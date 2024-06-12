@@ -20,9 +20,8 @@ class specular_bsdf : public Material {
         {
             uint32_t seed = in_ray.seed;
 
-            hit.color = glm::vec3(1);
+            hit.color = color;
             scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal) + raytracing::random_on_sphere(seed) * roughness;
-
 
             scatter_ray.origin = hit.point;
             scatter_ray.seed = seed;
@@ -32,8 +31,10 @@ class specular_bsdf : public Material {
 
         bool draw_attributes() override
         {
+            ImGui::PushID((int*) "specular");
             ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
             ImGui::DragFloat("Roughness", &roughness, 0.01f, 0, 1);
+            ImGui::PopID();
             return true;
         }
 
