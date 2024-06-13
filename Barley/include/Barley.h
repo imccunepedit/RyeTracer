@@ -1,5 +1,5 @@
-#ifndef APP_H_
-#define APP_H_
+#ifndef BARLEY_H
+#define BARLEY_H
 
 #define GL_GLEXT_PROTOTYPES
 #include <GLFW/glfw3.h>
@@ -28,4 +28,4 @@ class App {
 
 
 
-#endif // APP_H_
+#endif // BARLEY_H

@@ -3,14 +3,11 @@
 
 #include <oneapi/tbb/parallel_for.h>
 
-#include <GL/gl.h>
-
 #include "Camera.h"
 #include "Hit.h"
 #include "Random.h"
 #include "Material.h"
 
-#include "GLFW/glfw3.h"
 
 #include <glm/gtc/quaternion.hpp>
 
@@ -193,22 +190,22 @@ void Camera::move(GLFWwindow* window, float time_step)
 
     last_mouse_position = mouse_position;
 
-    glfwGetCursorPos(window, &mouse_position.x, &mouse_position.y);
+    // glfwGetCursorPos(window, &mouse_position.x, &mouse_position.y);
 
     glm::vec2 mouse_delta = mouse_position - last_mouse_position;
 
     if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
         max_depth = max_stationary_depth;
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         return;
     }
 
     max_depth = max_moving_depth;
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (glfwRawMouseMotionSupported())
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // if (glfwRawMouseMotionSupported())
+    //     glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 
     bool has_moved = false;

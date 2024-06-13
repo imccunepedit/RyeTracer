@@ -1,4 +1,4 @@
-#include "RayTracer.h"
+#include "RyeTracer.h"
 
 int main() {
     RayTracer ray_tracer;

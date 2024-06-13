@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "../Hit.h"
-#include "../Ray.h"
-#include "../Random.h"
-#include "../Material.h"
+#include "Hit.h"
+#include "Ray.h"
+#include "Random.h"
+#include "Material.h"
 
 #include <glm/geometric.hpp>
 #include "imgui.h"

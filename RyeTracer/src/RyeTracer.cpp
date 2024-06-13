@@ -1,4 +1,4 @@
-#include "RayTracer.h"
+#include "RyeTracer.h"
 
 #include <memory>
 #include <cstdint>

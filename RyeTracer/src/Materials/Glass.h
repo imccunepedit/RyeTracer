@@ -2,10 +2,10 @@
 #define GLASS_H_
 
 
-#include "../Hit.h"
-#include "../Ray.h"
-#include "../Random.h"
-#include "../Material.h"
+#include "Hit.h"
+#include "Ray.h"
+#include "Random.h"
+#include "Material.h"
 
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>

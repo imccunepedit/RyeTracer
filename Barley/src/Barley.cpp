@@ -1,4 +1,4 @@
-#include "App.h"
+#include "Barley.h"
 
 #include <stdlib.h>
 
@@ -11,8 +11,6 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-
-#include "tracy/Tracy.hpp"
 
 void App::Run()
 {
@@ -62,8 +60,6 @@ void App::Run()
 
         // swap the currently displayed buffer with the one that was just rendered
         glfwSwapBuffers(window_handle);
-        FrameMark;
-
     }
 
 }
