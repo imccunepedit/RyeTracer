@@ -1,72 +1,65 @@
 #ifndef GLASS_H_
 #define GLASS_H_
 
-
-#include "Hit.h"
-#include "Ray.h"
-#include "Random.h"
 #include "Material.h"
 
-#include <glm/geometric.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include "imgui.h"
+namespace Barley {
 
-class glass_bsdf : public Material {
-    public:
-        bool bsdf(const Ray& in_ray, Hit& hit, Ray& scatter_ray) override
-        {
-            uint32_t seed = in_ray.seed;
-            float eta = 1/ior;
-            float at = 1;
-
-            hit.normal += raytracing::random_on_sphere(seed) * roughness;
-            hit.normal = glm::normalize(hit.normal);
-
-            hit.color = glm::vec3(1);
-            if (hit.inside)
+    class GlassBSDf : public Material {
+        public:
+            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
             {
-                eta = 1/eta;
-                hit.normal *= -1;
-                hit.color *= glm::exp((color-1.0f)*hit.distance);
+                uint32_t seed = inRay.seed;
+                float eta = 1/m_IoR;
+                float at = 1;
+
+                hit.normal += random_on_sphere(seed) * m_roughness;
+                hit.normal = glm::normalize(hit.normal);
+
+                hit.color = glm::vec4(1);
+                if (hit.inside)
+                {
+                    eta = 1/eta;
+                    hit.normal *= -1;
+                    hit.color *= glm::exp((m_color-1.0f)*hit.distance);
+                }
+
+                scatterRay.direction = glm::refract(inRay.direction, hit.normal, eta);
+                bool reflect = glm::dot(scatterRay.direction, scatterRay.direction) < 0.1;
+
+                reflect |= Fresnel(inRay.direction, hit.normal, eta) > Barley::random_float(seed);
+
+                if (reflect)
+                    scatterRay.direction = glm::reflect(inRay.direction, hit.normal);
+
+
+                scatterRay.origin = hit.point;
+                scatterRay.seed = seed;
+                return true;
             }
 
-            scatter_ray.direction = glm::refract(in_ray.direction, hit.normal, eta);
-            bool reflect = glm::dot(scatter_ray.direction, scatter_ray.direction) < 0.1;
-
-            reflect |= fresnel(in_ray.direction, hit.normal, eta) > raytracing::random_float(seed);
-
-            if (reflect)
-                scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal);
-
-
-            scatter_ray.origin = hit.point;
-            scatter_ray.seed = seed;
-            scatter_ray.normalize();
-            return true;
-        }
-
-        bool draw_attributes() override
-        {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode("Glass BSDF"))
+            bool DrawAttributes() override
             {
-                ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("IoR", &ior, 0.002f, 0.0f);
-                ImGui::DragFloat("Roughness", &roughness, 0.01f, 0, 1);
-                ImGui::TreePop();
+                ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+                if (ImGui::TreeNode("Glass BSDF"))
+                {
+                    ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
+                    ImGui::DragFloat("IoR", &m_IoR, 0.002f, 0.0f);
+                    ImGui::DragFloat("Roughness", &m_roughness, 0.01f, 0, 1);
+                    ImGui::TreePop();
+                }
+                return true;
             }
-            return true;
-        }
 
 
-    private:
-        glm::vec3 color = glm::vec3(1.0f);
-        float ior = 1.5f;
-        float roughness = 0;
+        private:
+            glm::vec4 m_color = glm::vec4(1);
+            float m_IoR = 1.5f;
+            float m_roughness = 0;
 
-};
-
-
+    };
+    
+}
 
 #endif // GLASS_H_

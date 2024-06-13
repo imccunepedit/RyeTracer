@@ -3,23 +3,22 @@
 
 #include "Object.h"
 
-#include <glm/vec3.hpp>
-
+#include <glm/vec4.hpp>
 
 #include "Ray.h"
-#include "Hit.h"
+#include "HitData.h"
 
 class Sphere : public Object {
     public:
-        Sphere(glm::vec3 c, float r, uint32_t m_id) : position(c), radius(r), material_id(m_id) {}
+        Sphere(glm::vec4 position, float radius, uint32_t materialID) : m_position(position), m_radius(radius), m_materialID(materialID) {}
 
-        bool hit(const Ray &ray, Hit& hit) const override;
-        bool draw_attributes() override;
+        bool Hit(const Ray &ray, HitData& hit) const override;
+        bool DrawAttributes() override;
 
-    public:
-        glm::vec3 position;
-        float radius;
-        uint32_t material_id;
+    private:
+        glm::vec4 m_position;
+        float m_radius;
+        uint32_t m_materialID;
 };
 
 #endif // SPHERE_H_

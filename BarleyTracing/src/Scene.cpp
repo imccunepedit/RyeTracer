@@ -1,13 +1,13 @@
 #include "Scene.h"
-#include "Hit.h"
-#include "Ray.h"
-#include "imgui.h"
-#include "Sphere.h"
-
-#include "glm/gtc/type_ptr.hpp"
 
 #include <iostream>
 
+#include "imgui.h"
+#include "glm/gtc/type_ptr.hpp"
+
+#include "HitData.h"
+#include "Ray.h"
+#include "Sphere.h"
 
 #include "Materials/Emission.h"
 #include "Materials/Lambertian.h"
@@ -17,9 +17,11 @@
 #include "Materials/Glossy.h"
 
 
-bool Scene::hit(const Ray& ray, Hit& hit) const
+using namespace Barley;
+
+bool Scene::Hit(const Ray& ray, HitData& hit) const
 {
-    hit.color = glm::vec3(0,0,0);
+    hit.color = glm::vec4(0);
     // closest_hit.color = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     // if there isn't anything in the scene return skycolor
     if (objects.size() == 0)
@@ -30,10 +32,10 @@ bool Scene::hit(const Ray& ray, Hit& hit) const
     // try and find our closeset hit, loop over spheres
     for (auto object : objects)
     {
-        Hit temp_hit;
+        HitData temp_hit;
 
         // if distance is infinite/max, we haven't hit anything so check the next sphere
-        if (!object->hit(ray, temp_hit))
+        if (!object->Hit(ray, temp_hit))
             continue;
 
         // if our closest hit is closer than the hit on our sphere we aren't able to
@@ -48,46 +50,45 @@ bool Scene::hit(const Ray& ray, Hit& hit) const
 
     }
 
-
     // if we havent hit anything then return what ever the sky color is
     return hit.distance < std::numeric_limits<float>::max();
 
 }
 
-void Scene::load_default()
+void Scene::Initialize()
 {
-    ambient_color = glm::vec3(0.6f,0.7f,0.75f);
+    ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
     // ground
-    add_material(std::make_shared<lambertian_bsdf>());
-    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,4,-1000), 999, 0)));
+    AddMaterial(std::make_shared<LambertianBSDF>());
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, 0)));
 
-    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,4,10), 1, 1)));
-    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(-4,4,0), 1, 2)));
-    add_object(std::make_shared<Sphere>(Sphere(glm::vec3(0,4,0), 1, 3)));
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,10,1), 1, 1)));
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(-4,4,0,1), 1, 2)));
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,0,1), 1, 3)));
 
-    add_material(std::make_shared<emission>());
-    add_material(std::make_shared<metallic_bsdf>(glm::vec3(0.944,0.776,0.373)));
-    add_material(std::make_shared<glossy_bsdf>());
+    AddMaterial(std::make_shared<Emission>());
+    AddMaterial(std::make_shared<MetallicBSDF>(glm::vec4(0.944,0.776,0.373,1)));
+    AddMaterial(std::make_shared<GlossyBSDF>());
 }
 
-void Scene::add_object(std::shared_ptr<Object> o)
+void Scene::AddObject(std::shared_ptr<Object> o)
 {
     objects.push_back(std::move(o));
 }
 
-void Scene::remove_object(const int& i)
+void Scene::RemoveObject(const int& i)
 {
     objects.erase(std::next(objects.begin(), i));
 }
 
-void Scene::add_material(std::shared_ptr<Material> m)
+void Scene::AddMaterial(std::shared_ptr<Material> m)
 {
     materials.push_back(std::move(m));
-    material_count ++;
+    materialCount ++;
 }
 
-void Scene::remove_material(const int& i)
+void Scene::RemoveMaterial(const int& i)
 {
     materials.erase(std::next(materials.begin(), i));
-    material_count --;
+    materialCount --;
 }

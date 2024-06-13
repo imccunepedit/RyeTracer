@@ -16,19 +16,21 @@ namespace Barley {
         public:
             void SetPixel(const int& i, const int& j, glm::vec4 color);
             void Resize(const int& w, const int& h);
+            void OnUpdate(const float& deltaTime);
 
             glm::vec4 GetRayOrigin() { return m_position; }
             glm::vec4 GetRayDirection(const int& i, const int& j);
 
             void DebugWindow();
+            void DrawControls();
 
         private:
             void CalculateBasisVectors();
             void CalculateMatrices();
             void CalculateInverseMatrices();
 
-            void Translate(float deltaTime);
-            void Rotate(float deltaTime);
+            void Translate(const float& deltaTime);
+            void Rotate(const float& deltaTime);
 
         public:
             Film film;

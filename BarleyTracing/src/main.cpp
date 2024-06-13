@@ -1,7 +1,7 @@
 #include "RyeTracer.h"
 
 int main() {
-    RayTracer ray_tracer;
+    Barley::BarleyTracer ray_tracer;
 
     ray_tracer.Run();
 

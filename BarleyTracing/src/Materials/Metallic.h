@@ -2,47 +2,42 @@
 #define METALLIC_H_
 
 #include "Material.h"
-#include "Hit.h"
-#include "Ray.h"
-#include "Random.h"
 
-#include <glm/geometric.hpp>
-#include "imgui.h"
-#include <glm/gtc/type_ptr.hpp>
+namespace Barley {
 
-class metallic_bsdf : public Material {
-    public:
-        metallic_bsdf() {}
-        metallic_bsdf(glm::vec3 c) : color(c) {}
-        bool bsdf(const Ray &in_ray, Hit &hit, Ray &scatter_ray) override {
-            uint32_t seed = in_ray.seed;
-            scatter_ray.direction = glm::reflect(in_ray.direction, hit.normal) + raytracing::random_on_sphere(seed) * roughness;
+    class MetallicBSDF : public Material {
+        public:
+            MetallicBSDF() {}
+            MetallicBSDF(glm::vec4 color) : m_color(color) {}
+            bool BSDF(const Ray &inRay, HitData &hit, Ray &scatterRay) override {
+                uint32_t seed = inRay.seed;
+                scatterRay.direction = glm::reflect(inRay.direction, hit.normal) + random_on_sphere(seed) * m_roughness;
 
-            scatter_ray.origin = hit.point;
-            scatter_ray.seed = seed;
-            scatter_ray.normalize();
-            float f = fresnel(in_ray.direction, hit.normal, 0.27732f);
-            hit.color = (1-f) * color + f * glm::vec3(1);
-            return true;
-        }
+                scatterRay.origin = hit.point;
+                scatterRay.seed = seed;
+                float f = Fresnel(inRay.direction, hit.normal, 0.27732f);
+                hit.color = (1-f) * m_color + f * glm::vec4(1);
+                return true;
+            }
 
-        bool draw_attributes() override
-        {
-            ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
-            ImGui::DragFloat("Roughness", &roughness);
-            return true;
-        }
+            bool DrawAttributes() override
+            {
+                ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat("Roughness", &m_roughness);
+                return true;
+            }
 
-        std::string get_name() override
-        {
-            return "Metallic BSDF";
-        }
+            std::string GetName() override
+            {
+                return "Metallic BSDF";
+            }
 
-    private:
-        glm::vec3 color = glm::vec3(0.9f);
-        float roughness = 0;
-};
+        private:
+            glm::vec4 m_color = glm::vec4(0.9f);
+            float m_roughness = 0;
+    };
 
 
+}
 
 #endif // METALLIC_H_

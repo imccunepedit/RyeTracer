@@ -1,4 +1,4 @@
-#include "Barley.h"
+#include "App.h"
 
 #include <stdlib.h>
 
@@ -12,16 +12,18 @@
 #include "backends/imgui_impl_opengl3.h"
 
 
+using namespace Barley;
+
 void App::Run()
 {
 
-    while (!glfwWindowShouldClose(window_handle) && !should_quit)
+    while (!glfwWindowShouldClose(windowHandle) && !shouldQuit)
     {
         // tell glfw to look for events
         glfwPollEvents();
 
         // tell opengl what color to make the rendered buffer
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -40,18 +42,18 @@ void App::Run()
         {
             if (ImGui::BeginMenu("Menu"))
             {
-                ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
-                ImGui::ColorEdit4("Background (Clear) color", (float*) &clear_color, ImGuiColorEditFlags_NoInputs);
-                ImGui::MenuItem("Quit", NULL, &should_quit);
+                ImGui::MenuItem("Demo Window", NULL, &showDemoWindow);
+                ImGui::ColorEdit4("Background (Clear) color", (float*) &clearColor, ImGuiColorEditFlags_NoInputs);
+                ImGui::MenuItem("Quit", NULL, &shouldQuit);
                 ImGui::EndMenu();
             }
 
-            app_menu();
+            AppMenu();
             ImGui::EndMainMenuBar();
         }
 
         // show the demo window, very useful
-        if (show_demo_window)
+        if (showDemoWindow)
             ImGui::ShowDemoWindow();
 
 
@@ -59,7 +61,7 @@ void App::Run()
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // swap the currently displayed buffer with the one that was just rendered
-        glfwSwapBuffers(window_handle);
+        glfwSwapBuffers(windowHandle);
     }
 
 }
@@ -79,15 +81,15 @@ App::App()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window size x,y,title,not full screen
-    window_handle = glfwCreateWindow(1280, 720, "m_floating Renderer", nullptr, nullptr);
+    windowHandle = glfwCreateWindow(1280, 720, "m_floating Renderer", nullptr, nullptr);
 
 
     // make sure window exists
-    if (window_handle == nullptr)
+    if (windowHandle == nullptr)
         std::exit(1);
 
     // tell glfw that we want to use our window
-    glfwMakeContextCurrent(window_handle);
+    glfwMakeContextCurrent(windowHandle);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -98,7 +100,7 @@ App::App()
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window_handle, true);
+    ImGui_ImplGlfw_InitForOpenGL(windowHandle, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -110,6 +112,6 @@ App::~App() {
     ImGui::DestroyContext();
 
     // tell glfw to kill our window and kill its self
-    glfwDestroyWindow(window_handle);
+    glfwDestroyWindow(windowHandle);
     glfwTerminate();
 }

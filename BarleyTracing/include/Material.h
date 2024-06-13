@@ -3,25 +3,27 @@
 
 #include <string>
 
-#include "Hit.h"
+#include "imgui.h"
+
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "HitData.h"
 #include "Ray.h"
 #include "Utils.h"
 
-#include <glm/geometric.hpp>
-#include "imgui.h"
-#include <glm/gtc/type_ptr.hpp>
 
 class Material {
     public:
-        virtual bool bsdf(const Ray& in_ray, Hit& hit, Ray& scatter_ray) { return false; }
+        virtual bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) { return false; }
 
-        virtual bool absorb(const Ray& in_ray, Hit& hit) { return false; } // technically emitting and being absorbed into camera but we are being backwards
+        virtual bool Absorb(const Ray& inRay, HitData& hit) { return false; } // technically emitting and being absorbed into camera but we are being backwards
 
-        virtual bool draw_attributes() { return false; }
-        virtual std::string get_name() = 0;
+        virtual bool DrawAttributes() { return false; }
+        virtual std::string GetName() = 0;
 
     // private:
-        float fresnel(glm::vec3 I, glm::vec3 N, float n1)
+        float Fresnel(glm::vec3 I, glm::vec3 N, float n1)
         {
             float n2 = 1;
             float c1 = glm::dot(I,-N);

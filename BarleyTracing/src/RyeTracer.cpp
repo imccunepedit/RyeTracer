@@ -13,79 +13,75 @@
 #include "Sphere.h"
 
 
+using namespace Barley;
 
-RayTracer::RayTracer ()
+BarleyTracer::BarleyTracer()
 {
-    image = new Image();
-    my_scene.load_default();
-    cam.recalulate_all(image);
+    m_scene.Initialize();
+    // m_camera.Initialize();
 }
 
-RayTracer::~RayTracer()
+BarleyTracer::~BarleyTracer()
 {
-    delete(image);
+
 }
 
-void RayTracer::app_menu()
+void BarleyTracer::AppMenu()
 {
     if (ImGui::BeginMenu("Info"))
     {
-        ImGui::MenuItem("camera debug", NULL, &show_camera_debug);
+        ImGui::MenuItem("camera debug", NULL, &m_showCameraDebug);
         ImGui::EndMenu();
     }
 }
 
-void RayTracer::Update()
+void BarleyTracer::Update()
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    cam.resize();
+    m_camera.OnUpdate(io.DeltaTime);
 
-    cam.move(window_handle, io.DeltaTime);
+    if (m_showCameraDebug)
+        m_camera.DebugWindow();
 
-    if (render_every_frame) {
-        cam.render(my_scene);
-    }
-    if (show_camera_debug)
-        cam.debug_window();
+    // if (m_renderEveryFrame)
+    //     m_renderer.Render();
 
     ImGui::Begin("Controls");
     ImGui::SeparatorText("Info");
-    ImGui::Text("Viewport size: %d x %d", image->width, image->height);
+    ImGui::Text("Viewport size: %d x %d", m_camera.film.Width(), m_camera.film.Height());
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
-    ImGui::Text("Samples: %d", cam.samples);
+    ImGui::Text("Samples: %d", m_camera.film.samples);
 
     ImGui::SeparatorText("Camera");
-    ImGui::DragFloat("Vertical fov", &cam.vfov, 0.1f, 1.0f, 100.0f);
-    ImGui::DragFloat("Speed", &cam.speed, 0.1f);
-    ImGui::DragFloat2("Sensitivity", glm::value_ptr(cam.sensitivity), 0.1f);
+    m_camera.DrawControls();
     if (ImGui::Button("Render"))
     {
-        cam.render(my_scene);
+        m_renderer.Render();
     }
     ImGui::SameLine();
-    ImGui::Checkbox("render every frame", &render_every_frame);
+    ImGui::Checkbox("render every frame", &m_renderEveryFrame);
 
-    if (ImGui::Button("Recalculate camera"))
-        cam.recalulate_all(image);
+    // if (ImGui::Button("Recalculate camera"))
+    //     m_camera.ll(image);
 
     ImGui::End();
 
 
     ImGui::Begin("Scene");
-    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.ambient_color), ImGuiColorEditFlags_Float);
+    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
     // ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.light_color), ImGuiColorEditFlags_Float);
     // ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.light_direction), 0.1f, -1.0f, 1.0f);
     if (ImGui::Button("Add Sphere")) {
-        my_scene.add_object(std::make_shared<Sphere>(glm::vec3(10,0,0),1,0));;
+        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,0));;
     }
     if (ImGui::TreeNode("Objects"))
     {
-        for (size_t i = 0; i < my_scene.objects.size(); i++)
+        for (size_t i = 0; i < m_scene.objects.size(); i++)
         {
-            auto object = my_scene.objects.at(i);
+            auto object = m_scene.objects.at(i);
             ImGui::PushID(i);
-            object->draw_attributes();
+            object->DrawAttributes();
             // ImGui::DragFloat3("radius", glm::value_ptr(o.position));
             ImGui::PopID();
         }
@@ -95,14 +91,14 @@ void RayTracer::Update()
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Materials"))
     {
-        for (size_t i = 0; i < my_scene.materials.size(); i++)
+        for (size_t i = 0; i < m_scene.materials.size(); i++)
         {
             ImGui::PushID(i);
-            auto material = my_scene.materials.at(i);
+            auto material = m_scene.materials.at(i);
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode(material->get_name().c_str()))
+            if (ImGui::TreeNode(material->GetName().c_str()))
             {
-                material->draw_attributes();
+                material->DrawAttributes();
                 ImGui::TreePop();
             }
             ImGui::PopID();
@@ -113,6 +109,6 @@ void RayTracer::Update()
     ImGui::End();
 
     // draw our rendered image to the viewport
-    image->draw_image();
+    // image->draw_image();
 
 };

@@ -1,44 +1,36 @@
 #ifndef EMISSION_H_
 #define EMISSION_H_
 
-#include <string>
-
-#include "Hit.h"
-#include "Ray.h"
-#include "Random.h"
 #include "Material.h"
 
-#include <glm/geometric.hpp>
-#include "imgui.h"
-#include <glm/gtc/type_ptr.hpp>
 
+namespace Barley {
+    class Emission : public Material {
+        public:
+            Emission() {};
+            Emission(glm::vec4 color, float strength) : m_color(color), m_strength(strength) {}
+            bool Absorb(const Ray& in_ray, HitData& hit) override
+            {
+                hit.color = m_color * m_strength;
+                return true;
+            }
 
+            bool DrawAttributes() override
+            {
+                ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat("Strength", &m_strength, 1.0f, 0.0f);
+                return true;
+            }
 
-class emission : public Material {
-    public:
-        emission() {};
-        emission(glm::vec3 color, float strength) : color(color), strength(strength) {}
-        bool absorb(const Ray& in_ray, Hit& hit) override
-        {
-            hit.color = color * strength;
-            return true;
-        }
+            std::string GetName() override
+            {
+                return "Emmisive";
+            }
 
-        bool draw_attributes() override
-        {
-            ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
-            ImGui::DragFloat("Strength", &strength, 1.0f, 0.0f);
-            return true;
-        }
-
-        std::string get_name() override
-        {
-            return "Emmisive";
-        }
-    private:
-        glm::vec3 color = glm::vec3(1.0f, 0.9f, 0.8f);
-        float strength = 10.0f;
-};
-
+        private:
+            glm::vec4 m_color = glm::vec4(1.0f, 0.9f, 0.8f, 1);
+            float m_strength = 10.0f;
+    };
+}
 
 #endif // EMISSION_H_

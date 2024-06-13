@@ -13,14 +13,16 @@ namespace Barley {
             void Resize(const int& w, const int& h);
             void ResetAccumulator();
 
-            int Width() { return data.Width(); }
-            int Height() { return data.Height(); }
+            uint32_t ProcessColor(glm::vec4 color);
+
+            int Width() { return m_data.Width(); }
+            int Height() { return m_data.Height(); }
 
         public:
             int samples = 0;
         private:
-            Image accumulated;
-            Image data;
+            Image m_accumulated;
+            Image m_data;
 
     };
 }

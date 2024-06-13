@@ -35,12 +35,12 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
     ray.origin = m_camera.GetRayOrigin();
     ray.direction = m_camera.GetRayDirection(i, j);
 
-    Hit hit = TraceRay(ray);
+    HitData hit = TraceRay(ray);
 
     return hit.color;
 }
 
-Hit Renderer::TraceRay(const Ray& ray)
+HitData Renderer::TraceRay(const Ray& ray)
 {
 
     // if we are at the max depth of the scene return a black color since with enough bounces almost all light would be absorbed
@@ -48,8 +48,8 @@ Hit Renderer::TraceRay(const Ray& ray)
         return Miss(ray);
 
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
-    Hit hit;
-    if (!m_scene.hit(ray, hit))
+    HitData hit;
+    if (!m_scene.Hit(ray, hit))
     {
         return Miss(ray);
     }
@@ -58,9 +58,9 @@ Hit Renderer::TraceRay(const Ray& ray)
     // TODO fix recursion/remove recursion
     // create a ray to scatter and ask materials bsdf we just hit what the new ray should be
     Ray scatter_ray;
-    if (m_scene.materials.at(hit.material_id)->bsdf(ray, hit, scatter_ray))
+    if (m_scene.materials.at(hit.materialID)->BSDF(ray, hit, scatter_ray))
         hit = TraceRay(scatter_ray);
-    else if (m_scene.materials[hit.material_id]->absorb(ray, hit))
+    else if (m_scene.materials[hit.materialID]->Absorb(ray, hit))
         hit.color = glm::vec4(1); // TODO
 
 
@@ -71,12 +71,12 @@ Hit Renderer::TraceRay(const Ray& ray)
     // return hit.color * light;
 }
 
-Hit Renderer::ClosestHit(const Ray& ray)
+HitData Renderer::ClosestHit(const Ray& ray)
 {
-    return Hit();
+    return HitData();
 }
 
-Hit Renderer::Miss(const Ray& ray)
+HitData Renderer::Miss(const Ray& ray)
 {
-    return Hit();
+    return HitData();
 }

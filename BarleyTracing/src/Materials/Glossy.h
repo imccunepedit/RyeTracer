@@ -1,52 +1,46 @@
 #ifndef GLOSSY_H_
 #define GLOSSY_H_
 
-#include <string>
-
-#include "Hit.h"
-#include "Ray.h"
-#include "Random.h"
 #include "Material.h"
+
 #include "Lambertian.h"
 #include "Specular.h"
 
-#include <glm/geometric.hpp>
-#include "imgui.h"
-#include <glm/gtc/type_ptr.hpp>
-
-
-class glossy_bsdf : public Material {
-    public:
-        bool bsdf(const Ray& in_ray, Hit& hit, Ray& scatter_ray) override
-        {
-            uint32_t seed = in_ray.seed;
-            if (raytracing::random_float(seed) > specular_prob)
+namespace Barley {
+    class GlossyBSDF : public Material {
+        public:
+            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
             {
-                diffuse.bsdf(in_ray, hit, scatter_ray);
+                uint32_t seed = inRay.seed;
+                if (random_float(seed) > m_specularProb)
+                {
+                    m_diffuse.BSDF(inRay, hit, scatterRay);
+                    return true;
+                }
+                m_spec.BSDF(inRay, hit, scatterRay);
                 return true;
             }
-            spec.bsdf(in_ray, hit, scatter_ray);
-            return true;
-        }
 
-        bool draw_attributes() override
-        {
-            diffuse.draw_attributes();
-            spec.draw_attributes();
-            ImGui::DragFloat("Specular probability", &specular_prob, 0.01f, 0,1);
-            return true;
-        }
+            bool DrawAttributes() override
+            {
+                m_diffuse.DrawAttributes();
+                m_spec.DrawAttributes();
+                ImGui::DragFloat("Specular probability", &m_specularProb, 0.01f, 0,1);
+                return true;
+            }
 
-        std::string get_name() override
-        {
-            return "Glossy BSDF";
-        }
+            std::string GetName() override
+            {
+                return "Glossy BSDF";
+            }
 
-    private:
-        lambertian_bsdf diffuse;
-        specular_bsdf spec;
-        float specular_prob = 0.8;
+        private:
+            LambertianBSDF m_diffuse;
+            SpecularBSDF m_spec;
+            float m_specularProb = 0.8;
 
-};
+    };
+}
+
 
 #endif // GLOSSY_H_

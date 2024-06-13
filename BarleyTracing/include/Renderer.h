@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Ray.h"
-#include "Hit.h"
+#include "HitData.h"
 
 namespace Barley {
 
@@ -17,9 +17,9 @@ namespace Barley {
 
         private:
             glm::vec4 RayGen(const int& i, const int& j);
-            Hit TraceRay(const Ray& ray);
-            Hit ClosestHit(const Ray& ray);
-            Hit Miss(const Ray& ray);
+            HitData TraceRay(const Ray& ray);
+            HitData ClosestHit(const Ray& ray);
+            HitData Miss(const Ray& ray);
 
         private:
             Camera m_camera;

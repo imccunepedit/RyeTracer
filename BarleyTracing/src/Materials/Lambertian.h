@@ -1,47 +1,37 @@
 #ifndef LAMBERTIAN_H_
 #define LAMBERTIAN_H_
 
-#include <string>
-
-#include "Hit.h"
-#include "Ray.h"
-#include "Random.h"
 #include "Material.h"
 
-#include <glm/geometric.hpp>
-#include "imgui.h"
-#include <glm/gtc/type_ptr.hpp>
+namespace Barley {
+    class LambertianBSDF : public Material {
+        public:
+            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
+            {
+                uint32_t seed = inRay.seed;
+                scatterRay.direction = glm::normalize(hit.normal + random_on_sphere(seed));
 
+                scatterRay.origin = hit.point;
+                scatterRay.seed = seed;
+                hit.color = m_color;
+                return true;
+            }
 
-class lambertian_bsdf : public Material {
-    public:
-        bool bsdf(const Ray& in_ray, Hit& hit, Ray& scatter_ray) override
-        {
-            uint32_t seed = in_ray.seed;
-            scatter_ray.direction = hit.normal + raytracing::random_on_sphere(seed);
+            bool DrawAttributes() override
+            {
+                ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
+                return true;
+            }
 
-            scatter_ray.origin = hit.point;
-            scatter_ray.seed = seed;
-            scatter_ray.normalize();
-            hit.color = color;
-            return true;
-        }
+            std::string GetName() override
+            {
+                return "Diffuse BSDF";
+            }
 
-        bool draw_attributes() override
-        {
-            ImGui::ColorEdit3("Color", glm::value_ptr(color), ImGuiColorEditFlags_Float);
-            return true;
-        }
+        private:
+            glm::vec4 m_color = glm::vec4(0.5f);
 
-        std::string get_name() override
-        {
-            return "Diffuse BSDF";
-        }
-
-    private:
-        glm::vec3 color = glm::vec3(0.5f);
-
-};
-
+    };
+}
 
 #endif // LAMBERTIAN_H_

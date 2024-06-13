@@ -2,6 +2,7 @@
 
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 
@@ -11,6 +12,17 @@ void Camera::Resize(const int& w, const int& h)
 {
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
+}
+
+void Camera::OnUpdate(const float& deltaTime)
+{
+    Translate(deltaTime);
+    Rotate(deltaTime);
+}
+
+glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
+{
+    return glm::vec4(1,0,0,0);
 }
 
 void Camera::CalculateMatrices()
@@ -33,7 +45,7 @@ void Camera::CalculateBasisVectors()
     m_up = m_view * glm::vec4(0,0,1,0);
 }
 
-void Camera::Translate(float deltaTime)
+void Camera::Translate(const float& deltaTime)
 {
 
     glm::vec4 translation = glm::vec4(0);
@@ -71,7 +83,7 @@ void Camera::Translate(float deltaTime)
 
 }
 
-void Camera::Rotate(float deltaTime)
+void Camera::Rotate(const float& deltaTime)
 {
     m_lastMousePosition = m_mousePosition;
 
@@ -97,6 +109,7 @@ void Camera::Rotate(float deltaTime)
 
         film.ResetAccumulator();
         CalculateInverseMatrices();
+        m_forward = m_view*glm::vec4(0,1,0,0);
     }
 
 }
@@ -110,6 +123,12 @@ void Camera::DebugWindow()
     ImGui::End();
 }
 
+void Camera::DrawControls()
+{
+    ImGui::DragFloat("Vertical fov", &vFoV, 0.1f, 1.0f, 100.0f);
+    ImGui::DragFloat("Speed", &m_speed, 0.1f);
+    ImGui::DragFloat2("Sensitivity", glm::value_ptr(m_sensitivity), 0.1f);
+}
 
 
 

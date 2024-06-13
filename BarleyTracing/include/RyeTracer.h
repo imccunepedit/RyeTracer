@@ -1,24 +1,29 @@
-#include "Barley.h"
-#include "Image.h"
+#include "App.h"
+
 #include "Camera.h"
 #include "Scene.h"
+#include "Renderer.h"
+#include "Image.h"
 
-class RayTracer : public App
-{
-    public:
-        RayTracer();
-        ~RayTracer();
-    private:
-        void Update() override;
-        void app_menu() override;
+namespace Barley {
 
-    private:
-        bool render_every_frame = true;
-        bool show_camera_debug = false;
+    class BarleyTracer : public App
+    {
+        public:
+            BarleyTracer();
+            ~BarleyTracer();
+        private:
+            void Update() override;
+            void AppMenu() override;
 
-        Image* image;
-        Camera cam;
-        int viewport_width, viewport_height;
+        private:
+            bool m_renderEveryFrame = true;
+            bool m_showCameraDebug = false;
 
-        Scene my_scene;
-};
+            Scene m_scene;
+            Camera m_camera;
+            Renderer m_renderer = Renderer(m_camera, m_scene);
+
+            // int viewport_width, viewport_height;
+    };
+}

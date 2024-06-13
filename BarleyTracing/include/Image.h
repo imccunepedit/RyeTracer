@@ -13,9 +13,11 @@ namespace Barley {
             int Width() { return m_width; }
             int Height() { return m_height; }
 
+        public:
+            glm::vec4* data;
+
         private:
             int m_width, m_height;
-            glm::vec4* data;
 
     };
 }
