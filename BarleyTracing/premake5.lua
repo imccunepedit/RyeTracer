@@ -1,4 +1,4 @@
-project "RyeTracer"
+project "BarleyTracing"
     kind "WindowedApp"
     language "c++"
 
@@ -18,7 +18,7 @@ project "RyeTracer"
 
 
     links {
-        "Barley",
+        "BarleyGUI",
         "GL",
         "glfw",
 

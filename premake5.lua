@@ -1,4 +1,4 @@
-workspace "RyeTracer"
+workspace "BarleyTracing"
     configurations { "debug",
                      "tracy",
                      "release"}
@@ -14,7 +14,7 @@ workspace "RyeTracer"
         optimize "speed"
 
 
-include "Barley"
-include "RyeTracer"
+include "BarleyGUI"
+include "BarleyTracing"
 
 require "premake-ecc/ecc"

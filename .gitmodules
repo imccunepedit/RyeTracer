@@ -1,7 +1,7 @@
 [submodule "lib/imgui"]
-	path = Barley/lib/imgui
+	path = BarleyGUI/lib/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
 [submodule "lib/tracy"]
-	path = Barley/lib/tracy
+	path = BarleyTracing/lib/tracy
 	url = https://github.com/wolfpld/tracy.git
