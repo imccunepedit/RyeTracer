@@ -2,18 +2,21 @@
 #define IMAGE_H_
 
 #include <cstdint>
-#include "GL/gl.h"
-#include "imgui.h"
+#include <glm/vec4.hpp>
 
-class Image {
-    public:
-        bool set_image(uint32_t* image);
-        void draw_image();
+namespace Barley {
+    class Image {
+        public:
+            void Resize(const int& w, const int& h);
+            void Clear();
 
-        int width_last, height_last;
-        int width, height;
-        GLuint texture;
+            int Width() { return m_width; }
+            int Height() { return m_height; }
 
-};
+        private:
+            int m_width, m_height;
+            glm::vec4* data;
 
+    };
+}
 #endif // IMAGE_H_
