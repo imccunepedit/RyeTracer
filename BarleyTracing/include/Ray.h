@@ -1,24 +1,21 @@
 #ifndef RAY_H_
 #define RAY_H_
 
-#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <glm/geometric.hpp>
 
 class Ray {
     public:
         Ray() {}
 
-        glm::vec3 at(float t) const{
+        glm::vec4 at(float t) const{
             return origin + direction * t;
         }
 
-        void normalize() {
-            direction = glm::normalize(direction);
-        }
-
-        glm::vec3 origin;
-        glm::vec3 direction;
+        glm::vec4 origin;
+        glm::vec4 direction;
         uint32_t seed;
+        int depth = 0;
 };
 
 #endif // RAY_H_

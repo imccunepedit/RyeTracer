@@ -5,7 +5,7 @@
 
 #include "Hit.h"
 #include "Ray.h"
-#include "Random.h"
+#include "Utils.h"
 
 #include <glm/geometric.hpp>
 #include "imgui.h"

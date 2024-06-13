@@ -1,15 +1,13 @@
-#ifndef RANDOM_H_
-#define RANDOM_H_
+#ifndef UTILS_H_
+#define UTILS_H_
 
 #include <cstdint>
-#include <limits>
 
 #include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
 #include <glm/geometric.hpp>
 
 
-namespace raytracing
+namespace barley
 {
     static uint32_t pcg_hash(uint32_t input)
     {
@@ -17,7 +15,8 @@ namespace raytracing
         uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
         return (word >> 22u) ^ word;
     }
-        static float random_float(uint32_t& seed)
+
+    static float random_float(uint32_t& seed)
     {
         seed = pcg_hash(seed);
         return seed / (float) std::numeric_limits<uint32_t>::max();
@@ -31,11 +30,13 @@ namespace raytracing
             if (glm::dot(out, out) < 1)
                 return out*radius;
         }
-        }
+    }
 
-        static glm::vec3 random_on_sphere(uint32_t& seed, float radius=1.0f)
+
+    static glm::vec3 random_on_sphere(uint32_t& seed, float radius=1.0f)
     {
         return glm::normalize(random_in_sphere(seed))*radius;
     }
+
 }
-#endif // RANDOM_H_
+#endif // UTILS_H_
