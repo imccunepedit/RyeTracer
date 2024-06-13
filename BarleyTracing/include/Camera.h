@@ -1,88 +1,61 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include <GLFW/glfw3.h>
 #include <cstdint>
-#include <vector>
 
-#include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
-#include <glm/geometric.hpp>
-#include <glm/trigonometric.hpp>
-#include <glm/gtc/random.hpp>
+#include <GLFW/glfw3.h>
+
+#include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/rotate_vector.hpp>
-
-#include <GL/gl.h>
-
-#include "Image.h"
-#include "Ray.h"
-#include "Sphere.h"
-#include "Scene.h"
-
-class Camera {
-    public:
-        void render(const Scene &scene);
-        void recalulate_all(Image* image);
-
-        void resize();
-        void calculate_view();
-        void calculate_projection();
-        void reset_accumulator();
-
-        void debug_window();
-        void move(GLFWwindow* window, float delta);
-        void rotate(GLFWwindow* window, float delta);
-
-    private:
-        void pixel_color(int x, int y, const Scene& scene);
-        Ray get_ray(int x, int y);
-        glm::vec3 trace_ray(const Ray &ray, const Scene &scene, int depth);
-        uint32_t process_color(glm::vec3 color);
+#include "Film.h"
 
 
-    public:
-        int max_depth = 50; // current max depth into scene
-        int max_stationary_depth = 10; // max depth into scene when stationary
-        int max_moving_depth = 2; // max depth into scene when moving camera
-        int rays_per_pixel = 1;
+namespace Barley {
+    class Camera {
+        public:
+            void SetPixel(const int& i, const int& j, glm::vec4 color);
+            void Resize(const int& w, const int& h);
 
-        glm::vec3 position = glm::vec3(0,0,0);
-        glm::vec3 up = glm::vec3(0,0,1);
-        // glm::vec3 look_point = glm::vec3(0,1,0);
-        glm::vec3 forward = glm::vec3(0,1,0);
-        glm::vec3 right = glm::cross(forward, up);
-        float vfov = 45;
+            glm::vec4 GetRayOrigin() { return m_position; }
+            glm::vec4 GetRayDirection(const int& i, const int& j);
 
-        bool gamma_correction = true;
+            void DebugWindow();
 
-        float speed = 4;
-        glm::vec2 sensitivity = glm::vec2(0.2);
+        private:
+            void CalculateBasisVectors();
+            void CalculateMatrices();
+            void CalculateInverseMatrices();
 
-        uint32_t samples = 1;
+            void Translate(float deltaTime);
+            void Rotate(float deltaTime);
 
-    private:
-        bool initialized = false;
+        public:
+            Film film;
+            float vFoV = 45;
+            float m_aspectRatio = 1;
 
-        glm::dvec2  mouse_position;
-        glm::dvec2 last_mouse_position;
+        private:
+            glm::vec4 m_position = glm::vec4(0,0,0,1);
 
-        glm::mat4 view, inv_view, projection, inv_projection;
+            glm::mat4 m_projection = glm::mat4(1);
+            glm::mat4 m_inverseProjection = glm::mat4(1);
+            glm::mat4 m_view = glm::mat4(1);
+            glm::mat4 m_inverseView = glm::mat4(1);
+
+            glm::vec4 m_forward = glm::vec4(0,1,0,0);
+            glm::vec4 m_up = glm::vec4(0,0,1,0);
+            glm::vec4 m_right = glm::vec4(1,0,0,0);
 
 
+            float m_speed = 4;
+            glm::vec2 m_sensitivity = glm::vec2(0.2);
 
-        int viewport_pixel_width = 1;
-        int viewport_pixel_height = 1;
+            glm::dvec2 m_mousePosition;
+            glm::dvec2 m_lastMousePosition;
 
-
-        Image* out_image;
-        uint32_t* image_data = nullptr;
-        glm::vec3* accumulation_data = nullptr;
-};
+    };
+}
 
 
 #endif // CAMERA_H_
