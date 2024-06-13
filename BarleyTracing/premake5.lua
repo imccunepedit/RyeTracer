@@ -9,9 +9,9 @@ project "BarleyTracing"
     includedirs {
         "include/",
 
-        "../Barley/include/",
+        "../BarleyGUI/include/",
 
-        "../Barley/lib/imgui/",
+        "../BarleyGUI/lib/imgui/",
 
         "/lib/tracy/public/",
     }

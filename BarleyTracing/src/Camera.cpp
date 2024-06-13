@@ -1,9 +1,9 @@
+#include "Camera.h"
 #include <cstdint>
 #include <iostream>
 
 #include <oneapi/tbb/parallel_for.h>
 
-#include "Camera.h"
 #include "Hit.h"
 #include "Random.h"
 #include "Material.h"
