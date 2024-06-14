@@ -44,7 +44,7 @@ namespace Rye {
             float m_vFoV = 0;
             bool m_input = false;
 
-            glm::vec4 m_position = glm::vec4(0,0,0,1);
+            glm::vec4 m_position = glm::vec4(0,-4,0,1);
 
             glm::mat4 m_projection = glm::mat4(1);
             glm::mat4 m_inverseProjection = glm::mat4(1);

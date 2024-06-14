@@ -17,7 +17,7 @@ namespace Rye {
             void AppMenu() override;
 
         private:
-            bool m_renderEveryFrame = false;
+            bool m_renderEveryFrame = true;
             bool m_showCameraDebug = false;
 
             Scene m_scene;

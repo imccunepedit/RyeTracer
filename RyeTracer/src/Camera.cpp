@@ -44,10 +44,12 @@ void Camera::OnUpdate(const float& deltaTime)
         m_input = false;
         return;
     }
+
     m_input = true;
 
     Translate(deltaTime);
     Rotate(deltaTime);
+    film.ResetAccumulator();
 }
 
 glm::vec4 Camera::GetRayDirection(const int& i, const int& j)

@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <oneapi/tbb/parallel_for.h>
+
 
 using namespace Rye;
 
@@ -9,6 +11,8 @@ void Renderer::Render()
 {
     m_camera->film.NewSample();
 
+#define MT
+#ifndef MT
     std::cout << m_camera->film.width << std::endl;
     for (int j=0; j < m_camera->film.height; j++)
     {
@@ -19,15 +23,16 @@ void Renderer::Render()
         }
     }
 
-
-    // using oneapi::tbb::parallel_for;
-
-    // parallel_for(size_t(0), size_t(viewport_pixel_height), [this,s](size_t j)
-    // {
-    //     parallel_for(size_t(0), size_t(viewport_pixel_width), [this,s,j](size_t i){
-    //         pixel_color(i, j, s);
-    //     });
-    // });
+#else
+    using oneapi::tbb::parallel_for;
+    parallel_for(size_t(0), size_t(m_camera->film.height), [this](size_t j)
+    {
+        parallel_for(size_t(0), size_t(m_camera->film.width), [this,j](size_t i){
+            glm::vec4 color = RayGen(i, j);
+            m_camera->film.SetPixel(i,j,color);
+        });
+    });
+#endif
 
 }
 
