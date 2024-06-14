@@ -10,7 +10,7 @@
 
 #include "HitData.h"
 #include "Ray.h"
-#include "Material.h"
+#include "Materials.h"
 
 namespace Rye {
     class Scene {

@@ -9,12 +9,7 @@
 #include "Ray.h"
 #include "Sphere.h"
 
-#include "Materials/Emission.h"
-#include "Materials/Lambertian.h"
-#include "Materials/Metallic.h"
-#include "Materials/Glass.h"
-#include "Materials/Specular.h"
-#include "Materials/Glossy.h"
+#include "Materials.h"
 
 
 using namespace Rye;

@@ -6,7 +6,7 @@
 #include "Ray.h"
 
 #include "HitData.h"
-#include "Material.h"
+#include "Materials.h"
 
 namespace Rye {
     class Renderer

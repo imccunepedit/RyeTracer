@@ -11,7 +11,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 
-#include "Materials/Lambertian.h"
+#include "Materials.h"
 
 
 using namespace Rye;
