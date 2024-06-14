@@ -23,7 +23,7 @@ namespace Rye {
             virtual bool DrawAttributes() { return false; }
             virtual std::string GetName() = 0;
 
-            // private:
+        protected:
             float Fresnel(glm::vec4 I, glm::vec4 N, float n1)
             {
                 float n2 = 1;
@@ -41,6 +41,90 @@ namespace Rye {
 #endif
             }
     };
+
+    class LambertianBSDF : public Material {
+        public:
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            glm::vec4 m_color = glm::vec4(0.5,0.5,0.5,1);
+
+    };
+
+    class SpecularBSDF : public Material {
+        public:
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            glm::vec4 m_color = glm::vec4(1);
+            float m_roughness = 0;
+    };
+
+
+    class GlossyBSDF : public Material {
+        public:
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            LambertianBSDF m_diffuse;
+            SpecularBSDF m_spec;
+            float m_specularProb = 0.8;
+
+    };
+
+
+    class GlassBSDF : public Material {
+        public:
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            glm::vec4 m_color = glm::vec4(1);
+            float m_indexOfRefraction = 1.5;
+            float m_roughness = 0;
+    };
+
+
+    class MetallicBSDF : public Material {
+        public:
+            MetallicBSDF() {}
+            MetallicBSDF(glm::vec4 color) : m_color(color) {}
+
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            glm::vec4 m_color = glm::vec4(0.9,0.9,0.9,1);
+            float m_roughness = 0;
+    };
+
+    class Emission : public Material {
+        public:
+            Emission() {};
+            Emission(float strength) : m_strength(strength) {}
+
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override;
+            bool DrawAttributes() override;
+            std::string GetName() override;
+
+        private:
+            glm::vec4 m_color = glm::vec4(1.0,0.9,0.8,1);
+            float m_strength = 4;
+    };
+
 }
 
 #endif // MATERIAL_H_

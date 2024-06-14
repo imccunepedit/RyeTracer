@@ -1,51 +1,40 @@
 #ifndef GLOSSY_H_
 #define GLOSSY_H_
 
-#include "Material.h"
+#include "Materials.h"
 
-#include "Lambertian.h"
-#include "Specular.h"
+using namespace Rye;
 
-namespace Rye {
-    class GlossyBSDF : public Material {
-        public:
-            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
-            {
-                if (random_float(hit.seed) > m_specularProb)
-                {
-                    m_diffuse.BSDF(inRay, hit, scatterRay);
-                    return true;
-                }
-                m_spec.BSDF(inRay, hit, scatterRay);
-                return true;
-            }
-
-            bool Absorb(const glm::vec4& inRay, HitData& hit) override
-            {
-                hit.color = glm::vec4(1);
-                return true;
-            }
-
-            bool DrawAttributes() override
-            {
-                m_diffuse.DrawAttributes();
-                m_spec.DrawAttributes();
-                ImGui::DragFloat("Specular probability", &m_specularProb, 0.01f, 0,1);
-                return true;
-            }
-
-            std::string GetName() override
-            {
-                return "Glossy BSDF";
-            }
-
-        private:
-            LambertianBSDF m_diffuse;
-            SpecularBSDF m_spec;
-            float m_specularProb = 0.8;
-
-    };
+bool GlossyBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay)
+{
+    if (random_float(hit.seed) > m_specularProb)
+    {
+        m_diffuse.BSDF(inRay, hit, scatterRay);
+        return true;
+    }
+    m_spec.BSDF(inRay, hit, scatterRay);
+    return true;
 }
+
+bool GlossyBSDF::Absorb(const glm::vec4& inRay, HitData& hit)
+{
+    hit.color = glm::vec4(1);
+    return true;
+}
+
+bool GlossyBSDF::DrawAttributes()
+{
+    m_diffuse.DrawAttributes();
+    m_spec.DrawAttributes();
+    ImGui::DragFloat("Specular probability", &m_specularProb, 0.01f, 0,1);
+    return true;
+}
+
+std::string GlossyBSDF::GetName()
+{
+    return "Glossy BSDF";
+}
+
 
 
 #endif // GLOSSY_H_

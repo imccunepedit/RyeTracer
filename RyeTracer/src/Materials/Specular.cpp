@@ -1,45 +1,35 @@
 #ifndef SPECULAR_H_
 #define SPECULAR_H_
 
-#include "Material.h"
+#include "Materials.h"
 
-namespace Rye {
-    class SpecularBSDF : public Material {
-        public:
-            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
-            {
-                hit.color = m_color;
-                scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + random_on_sphere(hit.seed) * m_roughness);
+using namespace Rye;
+bool SpecularBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay)
+{
+    hit.color = m_color;
+    scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + random_on_sphere(hit.seed) * m_roughness);
 
-                return true;
-            }
+    return true;
+}
 
-            bool Absorb(const glm::vec4 &inRay, HitData &hit) override
-            {
-                hit.color = m_color;
-                return true;
-            }
+bool SpecularBSDF::Absorb(const glm::vec4 &inRay, HitData &hit)
+{
+    hit.color = m_color;
+    return true;
+}
 
-            bool DrawAttributes() override
-            {
-                ImGui::PushID((int*) "specular");
-                ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Roughness", &m_roughness, 0.01f, 0, 1);
-                ImGui::PopID();
-                return true;
-            }
+bool SpecularBSDF::DrawAttributes()
+{
+    ImGui::PushID((int*) "specular");
+    ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
+    ImGui::DragFloat("Roughness", &m_roughness, 0.01f, 0, 1);
+    ImGui::PopID();
+    return true;
+}
 
-            std::string GetName() override
-            {
-                return "Specular BSDF";
-            }
-
-
-        private:
-            glm::vec4 m_color = glm::vec4(1);
-            float m_roughness = 0;
-
-    };
+std::string SpecularBSDF::GetName()
+{
+    return "Specular BSDF";
 }
 
 
