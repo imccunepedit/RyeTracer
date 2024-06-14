@@ -16,6 +16,8 @@ namespace Rye {
 
             void Render();
 
+            void DrawControls();
+
         private:
             glm::vec4 RayGen(const int& i, const int& j);
             HitData TraceRay(const Ray& ray);
@@ -26,6 +28,7 @@ namespace Rye {
             Camera* m_camera = nullptr;
             Scene* m_scene = nullptr;
 
+            int m_maxDepth = 5;
     };
 }
 

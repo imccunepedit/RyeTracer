@@ -41,18 +41,16 @@ void RyeTracer::Update()
     ImGui::SeparatorText("Info");
     ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
-    ImGui::Text("Samples: %d", m_camera.film.Samples());
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
 
-    bool renderThisFrame = ImGui::Button("Render");
+    ImGui::SeparatorText("Renderer");
+    m_renderer.DrawControls();
 
+    bool renderThisFrame = ImGui::Button("Render");
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &m_renderEveryFrame);
-
-    // if (ImGui::Button("Recalculate camera"))
-    //     m_camera.ll(image);
 
     ImGui::End();
 

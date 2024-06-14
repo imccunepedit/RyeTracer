@@ -47,15 +47,25 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
 
     glm::vec4 color = glm::vec4(1);
 
-    int maxDepth = 5;
+    int maxDepth = m_maxDepth;
     if (m_camera->Inputting())
         maxDepth = 1;
 
-    for (int i=0; i < maxDepth; i++)
+    for (int b=0; b <= maxDepth; b++)
     {
+        if (b == maxDepth)
+        {
+            color = glm::vec4(0);
+            break;
+        }
+
         HitData hit = TraceRay(ray);
         hit.seed = seed;
         color *= hit.color;
+        if (i==450 && j==350)
+        {
+            std::cout << color.x << " "<< color.y << " "<< color.z << " "<< color.w << std::endl;
+        }
 
         if (hit.distance == std::numeric_limits<float>::max())
             break;
@@ -67,6 +77,9 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
         seed = hit.seed;
     }
 
+
+    if (i==450 && j==350)
+        return glm::vec4(1,0,0,1);
     return color;
 }
 
@@ -92,6 +105,11 @@ HitData Renderer::ClosestHit(const Ray& ray, HitData& hit)
 HitData Renderer::Miss(const Ray& ray)
 {
     HitData hit;
-    // hit.color = glm::vec4(0.6f,0.7f,0.75f, 1);
+    hit.color = m_scene->ambientColor;
     return hit;
+}
+
+void Renderer::DrawControls()
+{
+    ImGui::DragInt("Max Depth", &m_maxDepth);
 }
