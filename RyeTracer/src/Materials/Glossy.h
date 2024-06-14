@@ -11,13 +11,18 @@ namespace Rye {
         public:
             bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = 1;
-                if (random_float(seed) > m_specularProb)
+                if (random_float(hit.seed) > m_specularProb)
                 {
                     m_diffuse.BSDF(inRay, hit, scatterRay);
                     return true;
                 }
                 m_spec.BSDF(inRay, hit, scatterRay);
+                return true;
+            }
+
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override
+            {
+                hit.color = glm::vec4(1);
                 return true;
             }
 

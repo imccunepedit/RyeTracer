@@ -18,17 +18,34 @@ void Camera::Resize(const int& w, const int& h)
     std::cout << "resize" << std::endl;
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
+
+    m_projection = glm::perspective(glm::radians(vFoV), m_aspectRatio, 0.1f, 100.0f);
+    CalculatePerspectiveMatrix();
 }
 
 void Camera::Initialize()
 {
-    CalculateMatrices();
-    CalculateInverseMatrices();
+    CalculateViewMatrix();
+    CalculatePerspectiveMatrix();
     CalculateBasisVectors();
 }
 
 void Camera::OnUpdate(const float& deltaTime)
 {
+    if (m_vFoV != vFoV)
+    {
+        m_vFoV = vFoV;
+        CalculatePerspectiveMatrix();
+        film.ResetAccumulator();
+    }
+
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
+    {
+        m_input = false;
+        return;
+    }
+    m_input = true;
+
     Translate(deltaTime);
     Rotate(deltaTime);
 }
@@ -44,17 +61,15 @@ glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
 
 }
 
-void Camera::CalculateMatrices()
+void Camera::CalculateViewMatrix()
 {
-    m_view = glm::lookAt(glm::vec3(m_position), glm::vec3(m_position+m_forward), glm::vec3(m_up));
-    m_projection = glm::perspective(glm::radians(vFoV), m_aspectRatio, 0.1f, 100.0f);
-
-    CalculateInverseMatrices();
+    m_view = glm::lookAt(glm::vec3(m_position), glm::vec3(m_position+m_forward), glm::vec3(0,0,1));
+    m_inverseView = glm::inverse(m_view);
 }
 
-void Camera::CalculateInverseMatrices()
+void Camera::CalculatePerspectiveMatrix()
 {
-    m_inverseView = glm::inverse(m_view);
+    m_projection = glm::perspective(glm::radians(m_vFoV), m_aspectRatio, 0.1f, 100.0f);
     m_inverseProjection = glm::inverse(m_projection);
 }
 
@@ -96,8 +111,9 @@ void Camera::Translate(const float& deltaTime)
 
     if (glm::dot(translation, translation) > 0.0001)
     {
+        m_position += translation;
+        CalculateViewMatrix();
         film.ResetAccumulator();
-        CalculateMatrices();
     }
 
 }
@@ -105,30 +121,18 @@ void Camera::Translate(const float& deltaTime)
 void Camera::Rotate(const float& deltaTime)
 {
     m_lastMousePosition = m_mousePosition;
-
-    // glfwGetCursorPos(window, &m_mousePosition.x, &m_mousePosition.y);
-
+    m_mousePosition = glm::vec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
     glm::vec2 mouse_delta = m_mousePosition - m_lastMousePosition;
 
-    // if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
-    // {
-        // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        // return;
-    // }
-
-    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    // if (glfwRawMouseMotionSupported())
-        // glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-
-    if (glm::dot(mouse_delta, mouse_delta) > 0.0f)
+    if (glm::dot(mouse_delta, mouse_delta) > 0.001f)
     {
         m_view = glm::rotate(m_view, mouse_delta.y*m_sensitivity.y*deltaTime, glm::vec3(m_right));
         m_view = glm::rotate(m_view, mouse_delta.x*m_sensitivity.x*deltaTime, glm::vec3(0,0,1));
 
-        film.ResetAccumulator();
-        CalculateInverseMatrices();
         m_forward = m_view*glm::vec4(0,1,0,0);
+        CalculateViewMatrix();
+        CalculateBasisVectors();
+        film.ResetAccumulator();
     }
 
 }

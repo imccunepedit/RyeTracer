@@ -26,7 +26,9 @@ void Film::Resize(const int& w, const int& h)
 
 void Film::ResetAccumulator()
 {
-    samples = 0;
+    if (width*height <= 1)
+        return;
+    m_samples = 0;
     std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
 }
 
@@ -40,6 +42,7 @@ void Film::SetPixel(const int& i, const int& j, const glm::vec4& color)
 
 uint32_t Film::ProcessColor(glm::vec4 color)
 {
+    color = color * m_samplesInverse;
     color = glm::max(color, glm::vec4(0));
     color = glm::sqrt(color);
 

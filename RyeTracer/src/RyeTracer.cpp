@@ -41,7 +41,7 @@ void RyeTracer::Update()
     ImGui::SeparatorText("Info");
     ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
-    ImGui::Text("Samples: %d", m_camera.film.samples);
+    ImGui::Text("Samples: %d", m_camera.film.Samples());
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
@@ -96,10 +96,10 @@ void RyeTracer::Update()
     ImGui::End();
 
 
-    // m_camera.OnUpdate(io.DeltaTime);
+    m_camera.OnUpdate(io.DeltaTime);
 
-    // if (m_showCameraDebug)
-    //     m_camera.DebugWindow();
+    if (m_showCameraDebug)
+        m_camera.DebugWindow();
 
     // rendering
     Viewport.ReSize();

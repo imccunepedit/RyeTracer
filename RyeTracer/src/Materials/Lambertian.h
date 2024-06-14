@@ -8,9 +8,12 @@ namespace Rye {
         public:
             bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = 1;
-                scatterRay = glm::normalize(hit.normal + random_on_sphere(seed)); //TODO replace 1 with seed
+                scatterRay = glm::normalize(hit.normal + random_on_sphere(hit.seed)); //TODO replace 1 with seed
+                return true;
+            }
 
+            bool Absorb(const glm::vec4& inRay, HitData& hit) override
+            {
                 hit.color = m_color;
                 return true;
             }

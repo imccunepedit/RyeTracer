@@ -60,16 +60,17 @@ void Scene::Initialize()
     ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
     // ground
     AddMaterial(std::make_shared<LambertianBSDF>());
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, materials[0])));
-
 
     AddMaterial(std::make_shared<Emission>());
     AddMaterial(std::make_shared<MetallicBSDF>(glm::vec4(0.944,0.776,0.373,1)));
     AddMaterial(std::make_shared<GlossyBSDF>());
 
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,10,1), 1, materials[1])));
+
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, materials[0])));
+
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(4,4,0,1), 1, materials[3])));
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(-4,4,0,1), 1, materials[2])));
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,0,1), 1, materials[3])));
+    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,0,1), 1, materials[1])));
 }
 
 void Scene::AddObject(std::shared_ptr<Object> o)

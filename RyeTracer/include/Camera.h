@@ -25,10 +25,12 @@ namespace Rye {
             void DebugWindow();
             void DrawControls();
 
+            bool Inputting() { return m_input; }
+
         private:
             void CalculateBasisVectors();
-            void CalculateMatrices();
-            void CalculateInverseMatrices();
+            void CalculateViewMatrix();
+            void CalculatePerspectiveMatrix();
 
             void Translate(const float& deltaTime);
             void Rotate(const float& deltaTime);
@@ -39,6 +41,9 @@ namespace Rye {
             float m_aspectRatio = 1;
 
         private:
+            float m_vFoV = 0;
+            bool m_input = false;
+
             glm::vec4 m_position = glm::vec4(0,0,0,1);
 
             glm::mat4 m_projection = glm::mat4(1);
@@ -54,8 +59,8 @@ namespace Rye {
             float m_speed = 4;
             glm::vec2 m_sensitivity = glm::vec2(0.2);
 
-            glm::dvec2 m_mousePosition;
-            glm::dvec2 m_lastMousePosition;
+            glm::vec2 m_mousePosition;
+            glm::vec2 m_lastMousePosition;
 
     };
 }

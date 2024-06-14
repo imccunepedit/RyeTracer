@@ -2,4 +2,4 @@
 **/Makefile
 /compile_commands.json
 /.cache/
-/imgui.ini
+**/imgui.ini

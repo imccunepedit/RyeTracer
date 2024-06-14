@@ -17,6 +17,8 @@ namespace Rye {
         float distance = std::numeric_limits<float>::max();
         bool inside = false;
         std::shared_ptr<Material> material = nullptr;
+
+        uint32_t seed = 1;
     };
 }
 

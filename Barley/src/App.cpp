@@ -37,7 +37,6 @@ void App::Run()
 
 
         // show a menu bar, useful for demo window and quitting the application
-        // TODO add abbility for children classes to add menus
         if (ImGui::BeginMainMenuBar())
         {
             if (ImGui::BeginMenu("Menu"))
