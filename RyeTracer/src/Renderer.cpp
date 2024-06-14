@@ -1,17 +1,20 @@
 #include "Renderer.h"
 
+#include <iostream>
+
 using namespace Barley;
 
 void Renderer::Render()
 {
-    m_camera.film.samples ++;
+    m_camera->film.samples ++;
 
-    for (int j=0; j < m_camera.film.Height(); j++)
+    std::cout << m_camera->film.Width() << std::endl;
+    for (int j=0; j < m_camera->film.Height(); j++)
     {
-        for (int i = 0; i < m_camera.film.Width(); i++)
+        for (int i=0; i < m_camera->film.Width(); i++)
         {
             glm::vec4 color = RayGen(i, j);
-            m_camera.film.SetPixel(i,j,color);
+            m_camera->film.SetPixel(i,j,color);
         }
     }
 
@@ -25,19 +28,20 @@ void Renderer::Render()
     //     });
     // });
 
-
 }
 
 glm::vec4 Renderer::RayGen(const int& i, const int& j)
 {
-    Ray ray;
 
-    ray.origin = m_camera.GetRayOrigin();
-    ray.direction = m_camera.GetRayDirection(i, j);
+    Ray ray;
+    uint32_t seed = i + j * m_camera->film.Width() + m_camera->film.samples * m_camera->film.Width() * m_camera->film.Height();
+
+    ray.origin = m_camera->GetRayOrigin();
+    ray.direction = m_camera->GetRayDirection(i, j);
 
     HitData hit = TraceRay(ray);
 
-    return hit.color;
+    return glm::vec4(1,0,1,1);
 }
 
 HitData Renderer::TraceRay(const Ray& ray)
@@ -49,7 +53,7 @@ HitData Renderer::TraceRay(const Ray& ray)
 
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
     HitData hit;
-    if (!m_scene.Hit(ray, hit))
+    if (!m_scene->Hit(ray, hit))
     {
         return Miss(ray);
     }
@@ -58,9 +62,9 @@ HitData Renderer::TraceRay(const Ray& ray)
     // TODO fix recursion/remove recursion
     // create a ray to scatter and ask materials bsdf we just hit what the new ray should be
     Ray scatter_ray;
-    if (m_scene.materials.at(hit.materialID)->BSDF(ray, hit, scatter_ray))
+    if (m_scene->materials.at(hit.materialID)->BSDF(ray, hit, scatter_ray))
         hit = TraceRay(scatter_ray);
-    else if (m_scene.materials[hit.materialID]->Absorb(ray, hit))
+    else if (m_scene->materials[hit.materialID]->Absorb(ray, hit))
         hit.color = glm::vec4(1); // TODO
 
 

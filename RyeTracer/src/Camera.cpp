@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <iostream>
+
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,6 +12,10 @@ using namespace Barley;
 
 void Camera::Resize(const int& w, const int& h)
 {
+    if (w == film.Width() and h == film.Height())
+        return;
+
+    std::cout << "resize" << std::endl;
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
 }
@@ -22,7 +28,13 @@ void Camera::OnUpdate(const float& deltaTime)
 
 glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
 {
-    return glm::vec4(1,0,0,0);
+    glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.Width(),
+                                          j/(float)film.Height()) * 2.0f - 1.0f;
+
+    glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+
+    return glm::normalize(m_inverseView * rayWorldTarget);
+
 }
 
 void Camera::CalculateMatrices()

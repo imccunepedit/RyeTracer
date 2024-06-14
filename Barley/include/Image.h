@@ -2,19 +2,19 @@
 #define IMAGE_H_
 
 #include <cstdint>
+#include <cstring>
+
 #include <glm/vec4.hpp>
 
 namespace Barley {
+
     class Image {
         public:
-            void Resize(const int& w, const int& h);
-            void Clear();
+            void Set();
+            void Draw();
 
             int Width() { return m_width; }
             int Height() { return m_height; }
-
-        public:
-            glm::vec4* data;
 
         private:
             int m_width, m_height;

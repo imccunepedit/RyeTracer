@@ -22,8 +22,9 @@ namespace Barley {
 
             Scene m_scene;
             Camera m_camera;
-            Renderer m_renderer = Renderer(m_camera, m_scene);
+            Renderer m_renderer = Renderer(&m_camera, &m_scene);
 
-            // int viewport_width, viewport_height;
+            int m_viewportWidth = 0;
+            int m_viewportHeight = 0;
     };
 }

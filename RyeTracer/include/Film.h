@@ -15,14 +15,14 @@ namespace Barley {
 
             uint32_t ProcessColor(glm::vec4 color);
 
-            int Width() { return m_data.Width(); }
-            int Height() { return m_data.Height(); }
-
         public:
             int samples = 0;
+            int width = 1;
+            int height = 1;
+            uint32_t* data = nullptr;
+
         private:
-            Image m_accumulated;
-            Image m_data;
+            glm::vec4* m_accumulated = nullptr;
 
     };
 }

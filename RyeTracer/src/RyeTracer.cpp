@@ -7,7 +7,6 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "Camera.h"
-#include "Image.h"
 #include "imgui.h"
 #include "Scene.h"
 #include "Sphere.h"
@@ -21,10 +20,7 @@ BarleyTracer::BarleyTracer()
     // m_camera.Initialize();
 }
 
-BarleyTracer::~BarleyTracer()
-{
-
-}
+BarleyTracer::~BarleyTracer() = default;
 
 void BarleyTracer::AppMenu()
 {
@@ -38,14 +34,6 @@ void BarleyTracer::AppMenu()
 void BarleyTracer::Update()
 {
     ImGuiIO& io = ImGui::GetIO();
-
-    m_camera.OnUpdate(io.DeltaTime);
-
-    if (m_showCameraDebug)
-        m_camera.DebugWindow();
-
-    // if (m_renderEveryFrame)
-    //     m_renderer.Render();
 
     ImGui::Begin("Controls");
     ImGui::SeparatorText("Info");
@@ -69,12 +57,11 @@ void BarleyTracer::Update()
 
 
     ImGui::Begin("Scene");
-    ImGui::ColorEdit3("Directional Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
-    // ImGui::ColorEdit3("Directional Light color", glm::value_ptr(my_scene.light_color), ImGuiColorEditFlags_Float);
-    // ImGui::DragFloat3("Directional Light direction", glm::value_ptr(my_scene.light_direction), 0.1f, -1.0f, 1.0f);
+    ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
     if (ImGui::Button("Add Sphere")) {
         m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,0));;
     }
+
     if (ImGui::TreeNode("Objects"))
     {
         for (size_t i = 0; i < m_scene.objects.size(); i++)
@@ -82,7 +69,6 @@ void BarleyTracer::Update()
             auto object = m_scene.objects.at(i);
             ImGui::PushID(i);
             object->DrawAttributes();
-            // ImGui::DragFloat3("radius", glm::value_ptr(o.position));
             ImGui::PopID();
         }
         ImGui::TreePop();
@@ -107,6 +93,23 @@ void BarleyTracer::Update()
     }
 
     ImGui::End();
+
+    ImGui::Begin("Viewport");
+
+    int width = ImGui::GetContentRegionAvail().x;
+    int height = ImGui::GetContentRegionAvail().y;
+
+    m_camera.Resize(width, height);
+
+    ImGui::End();
+
+    // m_camera.OnUpdate(io.DeltaTime);
+
+    // if (m_showCameraDebug)
+    //     m_camera.DebugWindow();
+
+    // if (m_renderEveryFrame)
+    //     m_renderer.Render();
 
     // draw our rendered image to the viewport
     // image->draw_image();

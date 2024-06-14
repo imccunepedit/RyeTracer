@@ -1,4 +1,4 @@
-#include "RyeTracer.h"
+#include "BarleyTracer.h"
 
 int main() {
     Barley::BarleyTracer ray_tracer;

@@ -8,8 +8,14 @@ using namespace Barley;
 
 void Film::Resize(const int& w, const int& h)
 {
-    m_accumulated.Resize(w, h);
-    m_data.Resize(w, h);
+    width = w;
+    height = h;
+
+    delete[] m_accumulated;
+    delete[] data;
+
+    m_accumulated = new glm::vec4[w*h];
+    data = new uint32_t[w*h];
 
     ResetAccumulator();
 }
@@ -17,14 +23,14 @@ void Film::Resize(const int& w, const int& h)
 void Film::ResetAccumulator()
 {
     samples = 0;
-    m_accumulated.Clear();
+    std::memset(data, 0, width*height*sizeof(glm::vec4));
 }
 
 void Film::SetPixel(const int& i, const int& j, const glm::vec4& color)
 {
-    m_accumulated.data[i+j*Width()] += color;
+    m_accumulated[i+j*width] += color;
 
-    m_data.data[i+j*Width()] = m_accumulated.data[i+j*Width()] / (float)samples;
+    data[i+j*width] = ProcessColor(m_accumulated[i+j*width]);
 }
 
 

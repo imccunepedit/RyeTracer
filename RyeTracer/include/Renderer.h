@@ -11,7 +11,7 @@ namespace Barley {
     class Renderer
     {
         public:
-            Renderer(Camera& camera, Scene& scene) : m_camera(camera), m_scene(scene) {}
+            Renderer(Camera* camera, Scene* scene) : m_camera(camera), m_scene(scene) {}
 
             void Render();
 
@@ -22,8 +22,9 @@ namespace Barley {
             HitData Miss(const Ray& ray);
 
         private:
-            Camera m_camera;
-            Scene m_scene;
+            Camera* m_camera = nullptr;
+            Scene* m_scene = nullptr;
+
     };
 }
 
