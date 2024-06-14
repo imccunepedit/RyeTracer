@@ -15,13 +15,14 @@ namespace Rye {
     class Camera {
         public:
             void Initialize();
-            void SetPixel(const int& i, const int& j, glm::vec4 color);
             void Resize(const int& w, const int& h);
-            void OnUpdate(const float& deltaTime);
 
             glm::vec4 GetRayOrigin() { return m_position; }
             glm::vec4 GetRayDirection(const int& i, const int& j);
 
+            void SetPixel(const int& i, const int& j, glm::vec4 color);
+
+            void OnUpdate(const float& deltaTime);
             void DebugWindow();
             void DrawControls();
 
@@ -38,11 +39,10 @@ namespace Rye {
         public:
             Film film;
             float vFoV = 45;
-            float m_aspectRatio = 1;
 
         private:
             float m_vFoV = 0;
-            bool m_input = false;
+            float m_aspectRatio = 1;
 
             glm::vec4 m_position = glm::vec4(0,-4,0,1);
 
@@ -55,9 +55,10 @@ namespace Rye {
             glm::vec4 m_up = glm::vec4(0,0,1,0);
             glm::vec4 m_right = glm::vec4(1,0,0,0);
 
+            bool m_input = false;
 
             float m_speed = 4;
-            glm::vec2 m_sensitivity = glm::vec2(0.2);
+            float m_sensitivity = 0.1f;
 
             glm::vec2 m_mousePosition;
             glm::vec2 m_lastMousePosition;

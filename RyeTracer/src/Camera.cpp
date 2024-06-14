@@ -39,17 +39,14 @@ void Camera::OnUpdate(const float& deltaTime)
         film.ResetAccumulator();
     }
 
-    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
+    if (m_input && !(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
-        m_input = false;
-        return;
+            film.ResetAccumulator();
+            m_input = false;
     }
-
-    m_input = true;
 
     Translate(deltaTime);
     Rotate(deltaTime);
-    film.ResetAccumulator();
 }
 
 glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
@@ -77,12 +74,19 @@ void Camera::CalculatePerspectiveMatrix()
 
 void Camera::CalculateBasisVectors()
 {
-    m_right = m_view * glm::vec4(1,0,0,0);
-    m_up = m_view * glm::vec4(0,0,1,0);
+    m_right = m_inverseView * glm::vec4(1,0,0,0);
+    m_up = m_inverseView * glm::vec4(0,1,0,0);
 }
 
 void Camera::Translate(const float& deltaTime)
 {
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
+    {
+        return;
+    }
+
+    m_input = true;
+
 
     glm::vec4 translation = glm::vec4(0);
 
@@ -114,6 +118,7 @@ void Camera::Translate(const float& deltaTime)
     if (glm::dot(translation, translation) > 0.0001)
     {
         m_position += translation;
+
         CalculateViewMatrix();
         film.ResetAccumulator();
     }
@@ -124,16 +129,25 @@ void Camera::Rotate(const float& deltaTime)
 {
     m_lastMousePosition = m_mousePosition;
     m_mousePosition = glm::vec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+
+    if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
+    {
+        return;
+    }
+
+    m_input = true;
     glm::vec2 mouse_delta = m_mousePosition - m_lastMousePosition;
 
     if (glm::dot(mouse_delta, mouse_delta) > 0.001f)
     {
-        m_view = glm::rotate(m_view, mouse_delta.y*m_sensitivity.y*deltaTime, glm::vec3(m_right));
-        m_view = glm::rotate(m_view, mouse_delta.x*m_sensitivity.x*deltaTime, glm::vec3(0,0,1));
+        glm::mat4 rotate = glm::rotate(glm::mat4(1), -mouse_delta.y*m_sensitivity*deltaTime, glm::vec3(m_right));
+        rotate = glm::rotate(rotate, -mouse_delta.x*m_sensitivity*deltaTime, glm::vec3(0,0,1));
 
-        m_forward = m_view*glm::vec4(0,1,0,0);
+        m_forward = rotate*m_forward;
+
         CalculateViewMatrix();
         CalculateBasisVectors();
+
         film.ResetAccumulator();
     }
 
@@ -143,16 +157,23 @@ void Camera::Rotate(const float& deltaTime)
 void Camera::DebugWindow()
 {
     ImGui::Begin("Camera Debug", NULL, ImGuiWindowFlags_NoCollapse);
-    // ImGui::Text("Viewport size:   % f, % f", viewport_width, viewport_height);
-    ImGui::Text("vertical fov:  % f", vFoV);
+    ImGui::Text("vertical fov:  % .2f", m_vFoV);
+    ImGui::Text("position:      % .2f, % .2f, % .2f", m_position.x, m_position.y, m_position.z);
+    ImGui::Text("forward:       % .2f, % .2f, % .2f", m_forward.x, m_forward.y, m_forward.z);
+    ImGui::Text("up:            % .2f, % .2f, % .2f", m_up.x, m_up.y, m_up.z);
+    ImGui::Text("right:         % .2f, % .2f, % .2f", m_right.x, m_right.y, m_right.z);
     ImGui::End();
 }
 
 void Camera::DrawControls()
 {
+    ImGui::Text("Samples: %d", film.Samples());
     ImGui::DragFloat("Vertical fov", &vFoV, 0.1f, 1.0f, 100.0f);
     ImGui::DragFloat("Speed", &m_speed, 0.1f);
-    ImGui::DragFloat2("Sensitivity", glm::value_ptr(m_sensitivity), 0.1f);
+    ImGui::DragFloat("Sensitivity", &m_sensitivity, 0.1f);
+    if (ImGui::Button("Reset Accumulator")) {
+        film.ResetAccumulator();
+    }
 }
 
 
