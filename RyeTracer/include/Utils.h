@@ -7,7 +7,7 @@
 #include <glm/geometric.hpp>
 
 
-namespace Barley
+namespace Rye
 {
     static uint32_t pcg_hash(uint32_t input)
     {

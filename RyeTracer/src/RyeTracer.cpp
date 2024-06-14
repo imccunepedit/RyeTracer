@@ -11,18 +11,20 @@
 #include "Scene.h"
 #include "Sphere.h"
 
+#include "Materials/Lambertian.h"
 
-using namespace Barley;
 
-BarleyTracer::BarleyTracer()
+using namespace Rye;
+
+RyeTracer::RyeTracer()
 {
     m_scene.Initialize();
-    // m_camera.Initialize();
+    m_camera.Initialize();
 }
 
-BarleyTracer::~BarleyTracer() = default;
+RyeTracer::~RyeTracer() = default;
 
-void BarleyTracer::AppMenu()
+void RyeTracer::AppMenu()
 {
     if (ImGui::BeginMenu("Info"))
     {
@@ -31,22 +33,21 @@ void BarleyTracer::AppMenu()
     }
 }
 
-void BarleyTracer::Update()
+void RyeTracer::Update()
 {
     ImGuiIO& io = ImGui::GetIO();
 
     ImGui::Begin("Controls");
     ImGui::SeparatorText("Info");
-    ImGui::Text("Viewport size: %d x %d", m_camera.film.Width(), m_camera.film.Height());
+    ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
     ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
     ImGui::Text("Samples: %d", m_camera.film.samples);
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
-    if (ImGui::Button("Render"))
-    {
-        m_renderer.Render();
-    }
+
+    bool renderThisFrame = ImGui::Button("Render");
+
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &m_renderEveryFrame);
 
@@ -59,7 +60,7 @@ void BarleyTracer::Update()
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
     if (ImGui::Button("Add Sphere")) {
-        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,0));;
+        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,std::make_shared<LambertianBSDF>()));;
     }
 
     if (ImGui::TreeNode("Objects"))
@@ -94,24 +95,22 @@ void BarleyTracer::Update()
 
     ImGui::End();
 
-    ImGui::Begin("Viewport");
-
-    int width = ImGui::GetContentRegionAvail().x;
-    int height = ImGui::GetContentRegionAvail().y;
-
-    m_camera.Resize(width, height);
-
-    ImGui::End();
 
     // m_camera.OnUpdate(io.DeltaTime);
 
     // if (m_showCameraDebug)
     //     m_camera.DebugWindow();
 
-    // if (m_renderEveryFrame)
-    //     m_renderer.Render();
+    // rendering
+    Viewport.ReSize();
 
-    // draw our rendered image to the viewport
-    // image->draw_image();
+    if (m_renderEveryFrame || renderThisFrame)
+    {
+        m_camera.Resize(Viewport.width, Viewport.height);
+        m_renderer.Render();
+        Viewport.Set(m_camera.film.data);
+    }
+
+    Viewport.Draw();
 
 };

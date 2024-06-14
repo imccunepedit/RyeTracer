@@ -4,9 +4,19 @@
 
 using namespace Barley;
 
+void Image::ReSize()
+{
+    ImGui::Begin("Viewport");
+
+    width = ImGui::GetContentRegionAvail().x;
+    height = ImGui::GetContentRegionAvail().y;
+
+    ImGui::End();
+}
 
 void Image::Draw()
 {
+
     // window containing our rendered image
     // remove padding
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
@@ -17,12 +27,9 @@ void Image::Draw()
     // keep track of the window size
     // width_last = width;
     // height_last = height;
-    m_width = ImGui::GetContentRegionAvail().x;
-    m_height = ImGui::GetContentRegionAvail().y;
-
 
     // our images actual width and height, viewport may have changed size
-    ImVec2 imageSize = ImVec2(m_width, m_height);
+    ImVec2 imageSize = ImVec2(width, height);
 
     // tell ImGui how to orient our image
     ImVec2 uv0 = ImVec2(0.0f,1.0f);
@@ -49,7 +56,7 @@ void Image::Set(uint32_t* data)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
 
     // Upload pixels into texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 
     m_texture = texture;
 }

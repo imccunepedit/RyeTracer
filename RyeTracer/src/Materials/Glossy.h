@@ -6,12 +6,12 @@
 #include "Lambertian.h"
 #include "Specular.h"
 
-namespace Barley {
+namespace Rye {
     class GlossyBSDF : public Material {
         public:
-            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = inRay.seed;
+                uint32_t seed = 1;
                 if (random_float(seed) > m_specularProb)
                 {
                     m_diffuse.BSDF(inRay, hit, scatterRay);

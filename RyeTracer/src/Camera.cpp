@@ -8,16 +8,23 @@
 
 #include "imgui.h"
 
-using namespace Barley;
+using namespace Rye;
 
 void Camera::Resize(const int& w, const int& h)
 {
-    if (w == film.Width() and h == film.Height())
+    if ((w == film.width && h == film.height) || w*h <= 0 )
         return;
 
     std::cout << "resize" << std::endl;
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
+}
+
+void Camera::Initialize()
+{
+    CalculateMatrices();
+    CalculateInverseMatrices();
+    CalculateBasisVectors();
 }
 
 void Camera::OnUpdate(const float& deltaTime)
@@ -28,8 +35,8 @@ void Camera::OnUpdate(const float& deltaTime)
 
 glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
 {
-    glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.Width(),
-                                          j/(float)film.Height()) * 2.0f - 1.0f;
+    glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.width,
+                                          j/(float)film.height) * 2.0f - 1.0f;
 
     glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
 

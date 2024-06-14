@@ -4,20 +4,22 @@
 #include <cstdint>
 #include <cstring>
 
+#include <GL/gl.h>
+
 #include <glm/vec4.hpp>
 
 namespace Barley {
-
     class Image {
         public:
-            void Set();
+            void Set(uint32_t* data);
+            void ReSize();
             void Draw();
 
-            int Width() { return m_width; }
-            int Height() { return m_height; }
+            int width=1;
+            int height=1;
 
         private:
-            int m_width, m_height;
+            GLuint m_texture;
 
     };
 }

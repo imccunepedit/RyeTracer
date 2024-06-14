@@ -4,12 +4,12 @@
 #include "Material.h"
 
 
-namespace Barley {
+namespace Rye {
     class Emission : public Material {
         public:
             Emission() {};
             Emission(glm::vec4 color, float strength) : m_color(color), m_strength(strength) {}
-            bool Absorb(const Ray& in_ray, HitData& hit) override
+            bool Absorb(const glm::vec4& in_ray, HitData& hit) override
             {
                 hit.color = m_color * m_strength;
                 return true;

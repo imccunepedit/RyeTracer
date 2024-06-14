@@ -1,7 +1,7 @@
-#include "BarleyTracer.h"
+#include "RyeTracer.h"
 
 int main() {
-    Barley::BarleyTracer ray_tracer;
+    Rye::RyeTracer ray_tracer;
 
     ray_tracer.Run();
 

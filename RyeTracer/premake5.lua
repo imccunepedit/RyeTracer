@@ -1,4 +1,4 @@
-project "BarleyTracing"
+project "RyeTracer"
     kind "WindowedApp"
     language "c++"
 
@@ -9,18 +9,17 @@ project "BarleyTracing"
     includedirs {
         "include/",
 
-        "../BarleyGUI/include/",
+        "../Barley/include/",
 
-        "../BarleyGUI/lib/imgui/",
-
+        "../Barley/lib/imgui/",
         "/lib/tracy/public/",
     }
 
 
     links {
-        "BarleyGUI",
-        "GL",
+        "Barley",
         "glfw",
+        "GL",
 
         -- "Tracy",
         ":libpthread.a",

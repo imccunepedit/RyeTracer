@@ -4,10 +4,11 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Ray.h"
+
 #include "HitData.h"
+#include "Material.h"
 
-namespace Barley {
-
+namespace Rye {
     class Renderer
     {
         public:
@@ -18,7 +19,7 @@ namespace Barley {
         private:
             glm::vec4 RayGen(const int& i, const int& j);
             HitData TraceRay(const Ray& ray);
-            HitData ClosestHit(const Ray& ray);
+            HitData ClosestHit(const Ray& ray, HitData& hit);
             HitData Miss(const Ray& ray);
 
         private:

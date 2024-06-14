@@ -1,4 +1,4 @@
-project "BarleyGUI"
+project "Barley"
     kind "StaticLib"
     language "c++"
 

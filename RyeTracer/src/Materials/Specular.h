@@ -3,19 +3,16 @@
 
 #include "Material.h"
 
-namespace Barley {
-
+namespace Rye {
     class SpecularBSDF : public Material {
         public:
-            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = inRay.seed;
+                uint32_t seed = 1;
 
                 hit.color = m_color;
-                scatterRay.direction = glm::normalize(glm::reflect(inRay.direction, hit.normal) + random_on_sphere(seed) * m_roughness);
+                scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + random_on_sphere(seed) * m_roughness);
 
-                scatterRay.origin = hit.point;
-                scatterRay.seed = seed;
                 return true;
             }
 

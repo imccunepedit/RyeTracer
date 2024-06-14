@@ -14,7 +14,7 @@ workspace "BarleyTracing"
         optimize "speed"
 
 
-include "BarleyGUI"
-include "BarleyTracing"
+include "Barley"
+include "RyeTracer"
 
 require "premake-ecc/ecc"

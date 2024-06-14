@@ -5,6 +5,8 @@
 
 #include "imgui.h"
 
+using namespace Rye;
+
 bool Sphere::Hit(const Ray &ray, HitData& hit) const {
 
     // calculate a b and c for the quadratic fomula
@@ -44,7 +46,7 @@ bool Sphere::Hit(const Ray &ray, HitData& hit) const {
     hit.distance = t;
     hit.point = ray.at(t);
     hit.normal = (hit.point - m_position) / m_radius;
-    hit.materialID = m_materialID;
+    hit.material = m_material;
 
     return true;
 
@@ -58,7 +60,7 @@ bool Sphere::DrawAttributes()
     {
         ImGui::DragFloat3("Position", glm::value_ptr(m_position), 0.1f);
         ImGui::DragFloat("radius", &m_radius, 0.1f);
-        ImGui::InputInt("Material index", (int*)&m_materialID, 1, 0);
+        // ImGui::InputInt("Material index", (int*)&m_materialID, 1, 0);
         ImGui::TreePop();
     }
     return true;

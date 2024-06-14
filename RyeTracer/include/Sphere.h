@@ -8,17 +8,19 @@
 #include "Ray.h"
 #include "HitData.h"
 
-class Sphere : public Object {
-    public:
-        Sphere(glm::vec4 position, float radius, uint32_t materialID) : m_position(position), m_radius(radius), m_materialID(materialID) {}
+namespace Rye {
+    class Sphere : public Object {
+        public:
+            Sphere(glm::vec4 position, float radius, std::shared_ptr<Material> material) : m_position(position), m_radius(radius), m_material(material) {}
 
-        bool Hit(const Ray &ray, HitData& hit) const override;
-        bool DrawAttributes() override;
+            bool Hit(const Ray &ray, HitData& hit) const override;
+            bool DrawAttributes() override;
 
-    private:
-        glm::vec4 m_position;
-        float m_radius;
-        uint32_t m_materialID;
-};
+        private:
+            glm::vec4 m_position;
+            float m_radius;
+            std::shared_ptr<Material> m_material;
+    };
 
+}
 #endif // SPHERE_H_

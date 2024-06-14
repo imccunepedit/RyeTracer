@@ -3,14 +3,12 @@
 
 #include "Material.h"
 
-
-namespace Barley {
-
+namespace Rye {
     class GlassBSDf : public Material {
         public:
-            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = inRay.seed;
+                uint32_t seed = 1;
                 float eta = 1/m_IoR;
                 float at = 1;
 
@@ -25,17 +23,15 @@ namespace Barley {
                     hit.color *= glm::exp((m_color-1.0f)*hit.distance);
                 }
 
-                scatterRay.direction = glm::refract(inRay.direction, hit.normal, eta);
-                bool reflect = glm::dot(scatterRay.direction, scatterRay.direction) < 0.1;
+                scatterRay = glm::refract(inRay, hit.normal, eta);
+                bool reflect = glm::dot(scatterRay, scatterRay) < 0.1;
 
-                reflect |= Fresnel(inRay.direction, hit.normal, eta) > Barley::random_float(seed);
+                reflect |= Fresnel(inRay, hit.normal, eta) > random_float(seed);
 
                 if (reflect)
-                    scatterRay.direction = glm::reflect(inRay.direction, hit.normal);
+                    scatterRay = glm::reflect(inRay, hit.normal);
 
 
-                scatterRay.origin = hit.point;
-                scatterRay.seed = seed;
                 return true;
             }
 

@@ -11,9 +11,10 @@
 #include "Film.h"
 
 
-namespace Barley {
+namespace Rye {
     class Camera {
         public:
+            void Initialize();
             void SetPixel(const int& i, const int& j, glm::vec4 color);
             void Resize(const int& w, const int& h);
             void OnUpdate(const float& deltaTime);

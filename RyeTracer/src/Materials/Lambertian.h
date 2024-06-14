@@ -3,16 +3,14 @@
 
 #include "Material.h"
 
-namespace Barley {
+namespace Rye {
     class LambertianBSDF : public Material {
         public:
-            bool BSDF(const Ray& inRay, HitData& hit, Ray& scatterRay) override
+            bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override
             {
-                uint32_t seed = inRay.seed;
-                scatterRay.direction = glm::normalize(hit.normal + random_on_sphere(seed));
+                uint32_t seed = 1;
+                scatterRay = glm::normalize(hit.normal + random_on_sphere(seed)); //TODO replace 1 with seed
 
-                scatterRay.origin = hit.point;
-                scatterRay.seed = seed;
                 hit.color = m_color;
                 return true;
             }

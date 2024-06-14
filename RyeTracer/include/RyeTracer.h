@@ -5,26 +5,26 @@
 #include "Renderer.h"
 #include "Image.h"
 
-namespace Barley {
 
-    class BarleyTracer : public App
+namespace Rye {
+    class RyeTracer : public Barley::App
     {
         public:
-            BarleyTracer();
-            ~BarleyTracer();
+            RyeTracer();
+            ~RyeTracer();
         private:
             void Update() override;
             void AppMenu() override;
 
         private:
-            bool m_renderEveryFrame = true;
+            bool m_renderEveryFrame = false;
             bool m_showCameraDebug = false;
 
             Scene m_scene;
             Camera m_camera;
             Renderer m_renderer = Renderer(&m_camera, &m_scene);
 
-            int m_viewportWidth = 0;
-            int m_viewportHeight = 0;
+            Barley::Image Viewport;
+
     };
 }

@@ -3,19 +3,18 @@
 
 #include "Material.h"
 
-namespace Barley {
+namespace Rye {
 
     class MetallicBSDF : public Material {
         public:
             MetallicBSDF() {}
             MetallicBSDF(glm::vec4 color) : m_color(color) {}
-            bool BSDF(const Ray &inRay, HitData &hit, Ray &scatterRay) override {
-                uint32_t seed = inRay.seed;
-                scatterRay.direction = glm::reflect(inRay.direction, hit.normal) + random_on_sphere(seed) * m_roughness;
+            bool BSDF(const glm::vec4 &inRay, HitData &hit, glm::vec4 &scatterRay) override {
+                uint32_t seed = 1;
+                scatterRay = glm::reflect(inRay, hit.normal) + random_on_sphere(seed) * m_roughness;
 
-                scatterRay.origin = hit.point;
-                scatterRay.seed = seed;
-                float f = Fresnel(inRay.direction, hit.normal, 0.27732f);
+                // scatterRay.seed = seed;
+                float f = Fresnel(inRay, hit.normal, 0.27732f);
                 hit.color = (1-f) * m_color + f * glm::vec4(1);
                 return true;
             }

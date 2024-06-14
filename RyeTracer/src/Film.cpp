@@ -1,21 +1,25 @@
 #include "Film.h"
 
+#include <cstdint>
+
 #include <glm/exponential.hpp>
 #include <glm/ext/scalar_common.hpp>
 
-
-using namespace Barley;
+using namespace Rye;
 
 void Film::Resize(const int& w, const int& h)
 {
+    if(w*h <= 0)
+        return;
+
     width = w;
     height = h;
 
     delete[] m_accumulated;
-    delete[] data;
+    m_accumulated = new glm::vec4[width*height];
 
-    m_accumulated = new glm::vec4[w*h];
-    data = new uint32_t[w*h];
+    delete[] data;
+    data = new uint32_t[width*height];
 
     ResetAccumulator();
 }
@@ -23,7 +27,7 @@ void Film::Resize(const int& w, const int& h)
 void Film::ResetAccumulator()
 {
     samples = 0;
-    std::memset(data, 0, width*height*sizeof(glm::vec4));
+    std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
 }
 
 void Film::SetPixel(const int& i, const int& j, const glm::vec4& color)
