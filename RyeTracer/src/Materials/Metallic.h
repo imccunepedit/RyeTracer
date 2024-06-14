@@ -16,7 +16,7 @@ namespace Rye {
 
             bool Absorb(const glm::vec4& inRay, HitData& hit) override
             {
-                float f = Fresnel(inRay, hit.normal, 0.27732f);
+                float f = Fresnel(inRay, hit.normal, 0.2f);
                 hit.color = (1-f) * m_color + f * glm::vec4(1);
                 return true;
             }
@@ -24,7 +24,7 @@ namespace Rye {
             bool DrawAttributes() override
             {
                 ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Roughness", &m_roughness);
+                ImGui::DragFloat("Roughness", &m_roughness,0.01,0,1);
                 return true;
             }
 
@@ -34,7 +34,7 @@ namespace Rye {
             }
 
         private:
-            glm::vec4 m_color = glm::vec4(0.9f);
+            glm::vec4 m_color = glm::vec4(1);
             float m_roughness = 0;
     };
 

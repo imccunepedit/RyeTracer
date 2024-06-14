@@ -30,7 +30,7 @@ namespace Rye {
             }
 
         private:
-            glm::vec4 m_color = glm::vec4(0.5f);
+            glm::vec4 m_color = glm::vec4(0.5,0.5,0.5,1);
 
     };
 }

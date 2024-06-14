@@ -29,10 +29,10 @@ namespace Rye {
             std::vector<std::shared_ptr<Material>> materials;
             size_t materialCount = 0;
 
-            glm::vec3 ambientColor = glm::vec3(0.0f);
+            glm::vec4 ambientColor = glm::vec4(0);
 
-            glm::vec3 lightDirection = glm::vec3(1.0f,0.0f,-1.0f);
-            glm::vec3 lightColor = glm::vec3(1.0f,0.8f,0.6f);
+            glm::vec4 lightDirection = glm::vec4(1,0,-1, 0);
+            glm::vec4 lightColor = glm::vec4(1,0.8,0.6, 1);
     };
 }
 
