@@ -1,4 +1,5 @@
-[[docs/Demo.png]]
+[[docs/Samples-5300.MaxDepth-10.GlassGlossyMetal.png]]
+#+CAPTION[Demo Scene]: Demo scene rendered with 5300 samples and a max depth of 10. Took ~1 hour to accumulate.
 
 * Barley Tracer
 A ray tracer that is barely tracing rays.
