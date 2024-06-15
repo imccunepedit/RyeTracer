@@ -19,9 +19,9 @@ namespace Rye {
             void Resize(const int& w, const int& h);
 
             glm::vec4 GetRayOrigin() { return m_position; }
-            glm::vec4 GetRayDirection(const int& i, const int& j);
+            glm::vec4 GetRayDirection(const int& index);
 
-            void SetPixel(const int& i, const int& j, glm::vec4 color);
+            void SetPixel(const int& index, glm::vec4 color);
 
             void OnUpdate(const float& deltaTime);
             void DebugWindow();

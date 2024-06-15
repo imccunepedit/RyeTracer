@@ -19,7 +19,7 @@ namespace Rye {
             void DrawControls();
 
         private:
-            glm::vec4 RayGen(const int& i, const int& j);
+            glm::vec4 RayGen(const int& i);
             HitData TraceRay(const Ray& ray);
             HitData ClosestHit(const Ray& ray, HitData& hit);
             HitData Miss(const Ray& ray);

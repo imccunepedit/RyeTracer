@@ -13,37 +13,30 @@ void Renderer::Render()
 
 #define MT
 #ifndef MT
-    std::cout << m_camera->film.width << std::endl;
-    for (int j=0; j < m_camera->film.height; j++)
+    for (int i=0; i < m_camera->rayCount; i++)
     {
-        for (int i=0; i < m_camera->film.width; i++)
-        {
-            glm::vec4 color = RayGen(i, j);
-            m_camera->film.SetPixel(i,j,color);
-        }
+        glm::vec4 color = RayGen(i);
+        m_camera->film.SetPixel(i,color);
     }
-
 #else
     using oneapi::tbb::parallel_for;
-    parallel_for(size_t(0), size_t(m_camera->film.height), [this](size_t j)
+    parallel_for(size_t(0), size_t(m_camera->rayCount), [this](size_t i)
     {
-        parallel_for(size_t(0), size_t(m_camera->film.width), [this,j](size_t i){
-            glm::vec4 color = RayGen(i, j);
-            m_camera->film.SetPixel(i,j,color);
-        });
+        glm::vec4 color = RayGen(i);
+        m_camera->SetPixel(i,color);
     });
 #endif
 
 }
 
-glm::vec4 Renderer::RayGen(const int& i, const int& j)
+glm::vec4 Renderer::RayGen(const int& i)
 {
 
-    uint32_t seed = i + j * m_camera->film.width + m_camera->film.Samples() * m_camera->film.width * m_camera->film.height;
+    uint32_t seed = i + m_camera->film.Samples() * m_camera->film.width * m_camera->film.height;
 
     Ray ray;
     ray.origin = m_camera->GetRayOrigin();
-    ray.direction = m_camera->GetRayDirection(i, j);
+    ray.direction = m_camera->GetRayDirection(i);
 
     glm::vec4 color = glm::vec4(1);
 

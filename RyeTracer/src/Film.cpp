@@ -32,11 +32,10 @@ void Film::ResetAccumulator()
     std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
 }
 
-void Film::SetPixel(const int& i, const int& j, const glm::vec4& color)
+void Film::SetPixel(const int& index, const glm::vec4& color)
 {
-    m_accumulated[i+j*width] += color;
-
-    data[i+j*width] = ProcessColor(m_accumulated[i+j*width]);
+    m_accumulated[index] += color;
+    data[index] = ProcessColor(m_accumulated[index]);
 }
 
 

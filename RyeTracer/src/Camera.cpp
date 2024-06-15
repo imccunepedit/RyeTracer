@@ -50,19 +50,17 @@ void Camera::OnUpdate(const float& deltaTime)
     Rotate(deltaTime);
 }
 
-glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
+glm::vec4 Camera::GetRayDirection(const int& index)
 {
-    // glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.width,
-    //                                       j/(float)film.height) * 2.0f - 1.0f;
-
-    // glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
-
-    // return glm::normalize(m_inverseView * rayWorldTarget);
-
-    return m_rayDirections[i + j*film.width];
-
+    return m_rayDirections[index];
 }
 
+
+void Camera::SetPixel(const int &index, glm::vec4 color)
+{
+    uint32_t i = index / raysPerPixel;
+    film.SetPixel(i, color/(float)raysPerPixel);
+}
 
 void Camera::CalculateViewMatrix()
 {
