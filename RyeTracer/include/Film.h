@@ -25,6 +25,7 @@ namespace Rye {
             int width = 1;
             int height = 1;
             uint32_t* data = nullptr;
+            bool needsReset = true;
 
         private:
             int m_samples = 0;

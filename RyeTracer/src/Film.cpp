@@ -26,8 +26,12 @@ void Film::Resize(const int& w, const int& h)
 
 void Film::ResetAccumulator()
 {
+    if (!needsReset)
+        return;
     if (width*height <= 1)
         return;
+
+    needsReset = false;
     m_samples = 0;
     std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
 }

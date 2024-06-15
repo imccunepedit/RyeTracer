@@ -1,6 +1,8 @@
 #include "RyeTracer.h"
 
 #include <memory>
+#include <chrono>
+#include <future>
 #include <cstdint>
 #include <iostream>
 
@@ -102,13 +104,23 @@ void RyeTracer::Update()
     // rendering
     Viewport.ReSize();
 
-    if (m_renderEveryFrame || renderThisFrame)
+    using namespace std::chrono_literals;
+    auto status = renderThread.wait_for(0ms);
+
+    if ((status == std::future_status::ready) && Viewport.needsUpdate)
+    {
+        Viewport.Set(m_camera.film.data);
+        Viewport.needsUpdate = false;
+    }
+
+    if ((m_renderEveryFrame || renderThisFrame) && (status == std::future_status::ready))
     {
         m_camera.Resize(Viewport.width, Viewport.height);
-        m_renderer.Render();
-        Viewport.Set(m_camera.film.data);
+        renderThread = std::async(std::launch::async, &Renderer::Render, m_renderer);
+        Viewport.needsUpdate = true;
     }
 
     Viewport.Draw();
+
 
 };

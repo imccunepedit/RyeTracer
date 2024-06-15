@@ -37,12 +37,12 @@ void Camera::OnUpdate(const float& deltaTime)
     {
         m_vFoV = vFoV;
         CalculatePerspectiveMatrix();
-        film.ResetAccumulator();
+        film.needsReset = true;
     }
 
     if (m_input && !(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
-            film.ResetAccumulator();
+            film.needsReset = true;
             m_input = false;
     }
 
@@ -159,7 +159,7 @@ void Camera::Translate(const float& deltaTime)
         m_position += translation;
 
         CalculateViewMatrix();
-        film.ResetAccumulator();
+        film.needsReset = true;
     }
 
 }
@@ -188,7 +188,7 @@ void Camera::Rotate(const float& deltaTime)
         CalculateBasisVectors();
         CalculateRays();
 
-        film.ResetAccumulator();
+        film.needsReset = true;
     }
 
 }
@@ -212,7 +212,7 @@ void Camera::DrawControls()
     ImGui::DragFloat("Speed", &m_speed, 0.1f);
     ImGui::DragFloat("Sensitivity", &m_sensitivity, 0.1f);
     if (ImGui::Button("Reset Accumulator")) {
-        film.ResetAccumulator();
+        film.needsReset = true;
     }
 }
 

@@ -1,4 +1,4 @@
 [[docs/Demo.png]]
 
-#+title: RyeTracing
+* Barley Tracer
 A ray tracer that is barely tracing rays.

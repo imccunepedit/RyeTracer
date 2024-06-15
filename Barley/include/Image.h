@@ -16,9 +16,12 @@ namespace Barley {
             void ReSize();
             void Draw();
 
+        public:
             int width=1;
             int height=1;
             std::string name= "Viewport";
+            bool needsUpdate = false;
+
         private:
             GLuint m_texture;
 

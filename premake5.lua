@@ -7,6 +7,7 @@ workspace "BarleyTracing"
         symbols "Full"
 
     filter "configurations:release"
+        buildoptions { "-Os" }
         optimize "speed"
 
     filter "configurations:tracy"

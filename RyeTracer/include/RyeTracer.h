@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include <future>
+
 #include "Camera.h"
 #include "Scene.h"
 #include "Renderer.h"
@@ -17,8 +19,10 @@ namespace Rye {
             void AppMenu() override;
 
         private:
-            bool m_renderEveryFrame = true;
+            bool m_renderEveryFrame = false;
             bool m_showCameraDebug = false;
+
+            std::future<void> renderThread = std::async([] { return; });
 
             Scene m_scene;
             Camera m_camera;

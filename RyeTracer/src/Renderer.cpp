@@ -9,11 +9,13 @@ using namespace Rye;
 
 void Renderer::Render()
 {
+    m_camera->film.ResetAccumulator();
+
     m_camera->film.NewSample();
 
 #define MT
 #ifndef MT
-    for (int i=0; i < m_camera->rayCount; i++)
+    for (int i=0; i < m_camera->rayCount; ++i)
     {
         glm::vec4 color = RayGen(i);
         m_camera->film.SetPixel(i,color);
@@ -49,7 +51,7 @@ glm::vec4 Renderer::RayGen(const int& i)
     }
 
     float hits;
-    for (int b=0; b <= m_maxDepth; b++)
+    for (int b=0; b <= m_maxDepth; ++b)
     {
         if (b == m_maxDepth)
         {
