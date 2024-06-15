@@ -23,6 +23,8 @@ namespace Rye {
             virtual bool DrawAttributes() { return false; }
             virtual std::string GetName() = 0;
 
+        public:
+            bool doubleSided = false;
         protected:
             float Fresnel(glm::vec4 I, glm::vec4 N, float n1)
             {
@@ -91,6 +93,8 @@ namespace Rye {
             bool DrawAttributes() override;
             std::string GetName() override;
 
+        public:
+            bool doubleSided = true;
         private:
             glm::vec4 m_color = glm::vec4(1);
             float m_indexOfRefraction = 1.5;

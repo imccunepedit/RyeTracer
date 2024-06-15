@@ -45,7 +45,7 @@ bool Quad::Hit(const Ray &ray, HitData &hit) const
         return false;
 
     hit.point = intersectionPoint;
-    hit.inside = a > 0;
+    hit.front = a < 0;
     hit.distance = t;
     hit.normal = m_normal;
     hit.material = m_material;

@@ -38,7 +38,7 @@ bool Sphere::Hit(const Ray &ray, HitData& hit) const {
         if (t < min_t)
             return false;
         // if the point isn't behind us we are inside the sphere so we tell our hit that.
-        hit.inside = true;
+        hit.front = false;
     }
 
     // otherwise calculate hit position

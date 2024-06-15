@@ -28,19 +28,20 @@ bool Scene::Hit(const Ray& ray, HitData& hit) const
     // try and find our closeset hit, loop over spheres
     for (auto object : objects)
     {
-        HitData temp_hit;
+        HitData tempHit;
 
         // if distance is infinite/max, we haven't hit anything so check the next sphere
-        if (!object->Hit(ray, temp_hit))
+        if (!object->Hit(ray, tempHit))
             continue;
 
         // if our closest hit is closer than the hit on our sphere we aren't able to
         // see it so check the next sphere
-        if (hit.distance < temp_hit.distance) // already hit something infront
-        {
+        if (hit.distance < tempHit.distance) // already hit something infront
             continue;
-        }
-        hit = temp_hit;
+
+        if (!tempHit.front & !tempHit.material->doubleSided)
+            continue;
+        hit = tempHit;
 
         // otherwise we have hit a closer sphere so update the closest hit
 

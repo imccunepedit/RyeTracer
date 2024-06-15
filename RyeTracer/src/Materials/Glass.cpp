@@ -13,7 +13,7 @@ bool GlassBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay
     hit.normal += random_on_sphere(hit.seed) * m_roughness;
     hit.normal = glm::normalize(hit.normal);
 
-    if (hit.inside)
+    if (!hit.front)
     {
         eta = 1/eta;
         hit.normal *= -1;
@@ -34,7 +34,7 @@ bool GlassBSDF::Absorb(const glm::vec4& inRay, HitData& hit)
 {
     hit.color = glm::vec4(1);
 
-    if (hit.inside)
+    if (!hit.front)
         hit.color *= glm::exp((m_color-1.0f)*hit.distance);
 
     return true;
