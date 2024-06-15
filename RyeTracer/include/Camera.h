@@ -41,6 +41,8 @@ namespace Rye {
         public:
             Film film;
             float vFoV = 45;
+            uint32_t rayCount = 1;
+            uint32_t raysPerPixel = 1;
 
         private:
             float m_vFoV = 0;

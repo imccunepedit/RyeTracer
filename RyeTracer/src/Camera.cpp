@@ -82,25 +82,36 @@ void Camera::CalculateBasisVectors()
 
 void Camera::CalculateRayDirections()
 {
-    int raysPerPixel = 1;
     std::cout << "new dirs" << std::endl;
+    rayCount = film.width * film.height * raysPerPixel;
+
+    int raysPerPixelRoot = std::sqrt(raysPerPixel);
+    float raysPerPixelRootInverse = 1.0f/raysPerPixelRoot;
     int w = film.width;
 
-    m_rayDirections.resize(film.width*film.height);
+    m_rayDirections.resize(rayCount);
 
     for (int j = 0; j < film.height; j++)
     {
         for (int i=0; i < w; i++)
         {
-            for (int k=0; k < raysPerPixel; k++)
+            for (int n=0; n < raysPerPixelRoot; n++)
             {
-                glm::vec2 rayScreenTarget = glm::vec2(i/(float)w,
-                                                      j/(float)film.height) * 2.0f - 1.0f;
+                for (int m=0; m < raysPerPixelRoot; m++)
+                {
+                    // glm::vec2 rayScreenTarget = glm::vec2(i/(float)w,
+                    //                                       j/(float)film.height);
 
-                glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
-                glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
+                    glm::vec2 rayScreenTarget = glm::vec2((i + m*raysPerPixelRootInverse)/(float)w,
+                                                          (j + n*raysPerPixelRootInverse)/(float)film.height);
 
-                m_rayDirections[i + j*w] = rayWorldDirection;
+                    rayScreenTarget = rayScreenTarget*2.0f - 1.0f;
+
+                    glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+                    glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
+
+                    m_rayDirections[m + n*raysPerPixelRoot + i*raysPerPixel + j*w*raysPerPixel] = rayWorldDirection;
+                }
             }
         }
     }
