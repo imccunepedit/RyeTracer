@@ -3,11 +3,6 @@
 
 #include "Object.h"
 
-#include <glm/vec4.hpp>
-
-#include "Ray.h"
-#include "HitData.h"
-
 namespace Rye {
     class Sphere : public Object {
         public:
