@@ -107,11 +107,6 @@ void RyeTracer::Update()
     using namespace std::chrono_literals;
     auto status = renderThread.wait_for(0ms);
 
-    if ((status == std::future_status::ready) && Viewport.needsUpdate)
-    {
-        Viewport.Set(m_camera.film.data);
-        Viewport.needsUpdate = false;
-    }
 
     if ((m_renderEveryFrame || renderThisFrame) && (status == std::future_status::ready))
     {
@@ -120,7 +115,12 @@ void RyeTracer::Update()
         Viewport.needsUpdate = true;
     }
 
-    Viewport.Draw();
+    if ((status == std::future_status::ready) && Viewport.needsUpdate)
+    {
+        Viewport.Set(m_camera.film.data);
+        Viewport.needsUpdate = false;
+    }
 
+    Viewport.Draw();
 
 };
