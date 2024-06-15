@@ -47,14 +47,17 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
 
     glm::vec4 color = glm::vec4(1);
 
-    int maxDepth = m_maxDepth;
     if (m_camera->Inputting())
-        maxDepth = 1;
-
-    for (int b=0; b <= maxDepth; b++)
     {
-        if (b == maxDepth && b > 1)
+        // if we are moving the camera return whatever the color of the first hit is
+        return TraceRay(ray).color;
+    }
+
+    for (int b=0; b <= m_maxDepth; b++)
+    {
+        if (b == m_maxDepth)
         {
+            // if we are at max depth we haven't hit any light source so return black
             color = glm::vec4(0);
             break;
         }
@@ -62,10 +65,6 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
         HitData hit = TraceRay(ray);
         hit.seed = seed;
         color *= hit.color;
-        // if (i==450 && j==350)
-        // {
-        //     std::cout << color.x << " "<< color.y << " "<< color.z << " "<< color.w << std::endl;
-        // }
 
         if (hit.distance == std::numeric_limits<float>::max())
             break;
@@ -77,9 +76,6 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
         seed = hit.seed;
     }
 
-
-    // if (i==450 && j==350)
-    //     return glm::vec4(1,0,0,1);
     return color;
 }
 
