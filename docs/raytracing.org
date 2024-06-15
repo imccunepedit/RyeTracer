@@ -1,9 +1,0 @@
-#+title:  Raytracing
-
-
-* useful resources
-https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/asimplediffusematerial
-https://github.com/GPSnoopy/RayTracingInVulkan
-https://github.com/TheCherno/RayTracing
-https://graphics.cg.uni-saarland.de/courses/ris-2021/slides/Spectral%20Raytracing.pdf
-https://youtu.be/KkOkx0FiHDA

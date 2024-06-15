@@ -1,5 +1,22 @@
 [[docs/Samples-5300.MaxDepth-10.GlassGlossyMetal.png]]
-#+CAPTION[Demo Scene]: Demo scene rendered with 5300 samples and a max depth of 10. Took ~1 hour to accumulate.
+Demo scene rendered with 5300 samples and a max depth of 10. Took ~1 hour to accumulate.
 
 * Barley Tracer
 A ray tracer that is barely tracing rays.
+
+
+* some links
+- https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/asimplediffusematerial
+- https://www.pbr-book.org/4ed/
+- https://github.com/GPSnoopy/RayTracingInVulkan
+- https://github.com/TheCherno/RayTracing
+- https://graphics.cg.uni-saarland.de/courses/ris-2021/slides/Spectral%20Raytracing.pdf
+- https://youtu.be/KkOkx0FiHDA
+- https://github.com/icaven/glm/blob/master/manual.md#section4_13
+- https://www.realtimerendering.com/intersections.html
+- https://belcour.github.io/blog/slides/2020-brdf-fresnel-decompo/index.html#/11/0/6
+- https://blog.demofox.org/2017/01/09/raytracing-reflection-refraction-fresnel-total-internal-reflection-and-beers-law/
+- https://www.pauldebevec.com/Probes/
+- https://refractiveindex.info/
+- https://github.com/tylermorganwall/rayrender/
+- https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/
