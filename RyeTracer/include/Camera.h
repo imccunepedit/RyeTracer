@@ -2,6 +2,7 @@
 #define CAMERA_H_
 
 #include <cstdint>
+#include <vector>
 
 #include <GLFW/glfw3.h>
 
@@ -32,6 +33,7 @@ namespace Rye {
             void CalculateBasisVectors();
             void CalculateViewMatrix();
             void CalculatePerspectiveMatrix();
+            void CalculateRayDirections();
 
             void Translate(const float& deltaTime);
             void Rotate(const float& deltaTime);
@@ -44,7 +46,9 @@ namespace Rye {
             float m_vFoV = 0;
             float m_aspectRatio = 1;
 
-            glm::vec4 m_position = glm::vec4(0,-5,0,1);
+            std::vector<glm::vec4> m_rayDirections;
+
+            glm::vec4 m_position = glm::vec4(0,-10,0,1);
 
             glm::mat4 m_projection = glm::mat4(1);
             glm::mat4 m_inverseProjection = glm::mat4(1);

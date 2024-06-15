@@ -21,6 +21,7 @@ void Camera::Resize(const int& w, const int& h)
 
     m_projection = glm::perspective(glm::radians(vFoV), m_aspectRatio, 0.1f, 100.0f);
     CalculatePerspectiveMatrix();
+    CalculateRayDirections();
 }
 
 void Camera::Initialize()
@@ -51,14 +52,17 @@ void Camera::OnUpdate(const float& deltaTime)
 
 glm::vec4 Camera::GetRayDirection(const int& i, const int& j)
 {
-    glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.width,
-                                          j/(float)film.height) * 2.0f - 1.0f;
+    // glm::vec2 rayScreenTarget = glm::vec2(i/(float)film.width,
+    //                                       j/(float)film.height) * 2.0f - 1.0f;
 
-    glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+    // glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
 
-    return glm::normalize(m_inverseView * rayWorldTarget);
+    // return glm::normalize(m_inverseView * rayWorldTarget);
+
+    return m_rayDirections[i + j*film.width];
 
 }
+
 
 void Camera::CalculateViewMatrix()
 {
@@ -76,6 +80,32 @@ void Camera::CalculateBasisVectors()
 {
     m_right = m_inverseView * glm::vec4(1,0,0,0);
     m_up = m_inverseView * glm::vec4(0,1,0,0);
+}
+
+void Camera::CalculateRayDirections()
+{
+    int raysPerPixel = 1;
+    std::cout << "new dirs" << std::endl;
+    int w = film.width;
+
+    m_rayDirections.resize(film.width*film.height);
+
+    for (int j = 0; j < film.height; j++)
+    {
+        for (int i=0; i < w; i++)
+        {
+            for (int k=0; k < raysPerPixel; k++)
+            {
+                glm::vec2 rayScreenTarget = glm::vec2(i/(float)w,
+                                                      j/(float)film.height) * 2.0f - 1.0f;
+
+                glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+                glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
+
+                m_rayDirections[i + j*w] = rayWorldDirection;
+            }
+        }
+    }
 }
 
 void Camera::Translate(const float& deltaTime)
@@ -147,6 +177,7 @@ void Camera::Rotate(const float& deltaTime)
 
         CalculateViewMatrix();
         CalculateBasisVectors();
+        CalculateRayDirections();
 
         film.ResetAccumulator();
     }
