@@ -45,7 +45,6 @@ bool GlassBSDF::DrawAttributes()
     ImGui::ColorEdit3("Color", glm::value_ptr(m_color), ImGuiColorEditFlags_Float);
     ImGui::DragFloat("IoR", &m_indexOfRefraction, 0.002f, 0.0f);
     ImGui::DragFloat("Roughness", &m_roughness, 0.01f, 0, 1);
-    ImGui::TreePop();
     return true;
 }
 
