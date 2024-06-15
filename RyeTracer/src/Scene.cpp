@@ -8,6 +8,7 @@
 #include "HitData.h"
 #include "Ray.h"
 #include "Sphere.h"
+#include "Quad.h"
 
 #include "Materials.h"
 
@@ -52,20 +53,35 @@ bool Scene::Hit(const Ray& ray, HitData& hit) const
 
 void Scene::Initialize()
 {
-    // ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
     // ground
-    AddMaterial(std::make_shared<LambertianBSDF>());
 
     AddMaterial(std::make_shared<Emission>(4));
+    AddMaterial(std::make_shared<LambertianBSDF>());
     AddMaterial(std::make_shared<MetallicBSDF>(glm::vec4(0.944,0.776,0.373,1)));
     AddMaterial(std::make_shared<GlossyBSDF>());
+    AddMaterial(std::make_shared<GlossyBSDF>());
 
-
+#if 0
+    ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, materials[0])));
-
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(4,4,0,1), 1, materials[3])));
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(-4,4,0,1), 1, materials[2])));
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,1,1), 1, materials[1])));
+
+#else
+
+    AddObject(std::make_shared<Quad>(glm::vec4(-1,-1, 1.9, 1), glm::vec4(0, 2, 0, 0), glm::vec4(2, 0, 0, 0), materials[0]));
+    AddObject(std::make_shared<Quad>(glm::vec4(-2,-2, 2, 1), glm::vec4(0, 4, 0, 0), glm::vec4(4, 0, 0, 0), materials[1]));
+    AddObject(std::make_shared<Quad>(glm::vec4(-2,-2,-2, 1), glm::vec4(4, 0, 0, 0), glm::vec4(0, 4, 0, 0), materials[1]));
+    AddObject(std::make_shared<Quad>(glm::vec4( 2,-2,-2, 1), glm::vec4(0, 0, 4, 0), glm::vec4(0, 4, 0, 0), materials[1]));
+    AddObject(std::make_shared<Quad>(glm::vec4(-2, 2,-2, 1), glm::vec4(4, 0, 0, 0), glm::vec4(0, 0, 4, 0), materials[1]));
+    AddObject(std::make_shared<Quad>(glm::vec4(-2,-2,-2, 1), glm::vec4(0, 4, 0, 0), glm::vec4(0, 0, 4, 0), materials[1]));
+
+    AddObject(std::make_shared<Sphere>(glm::vec4(-1.5,0,0,1), 0.25, materials[4]));
+    AddObject(std::make_shared<Sphere>(glm::vec4(0,0,0,1), 0.25, materials[3]));
+    AddObject(std::make_shared<Sphere>(glm::vec4(1.5,0,0,1), 0.25, materials[2]));
+
+#endif
 }
 
 void Scene::AddObject(std::shared_ptr<Object> o)
@@ -89,3 +105,5 @@ void Scene::RemoveMaterial(const int& i)
     materials.erase(std::next(materials.begin(), i));
     materialCount --;
 }
+
+
