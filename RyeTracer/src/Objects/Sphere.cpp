@@ -8,7 +8,6 @@
 using namespace Rye;
 
 bool Sphere::Hit(const Ray &ray, HitData& hit) const {
-
     // calculate a b and c for the quadratic fomula
     // see docs/raytracing.org for explanation
     //
@@ -56,11 +55,10 @@ bool Sphere::Hit(const Ray &ray, HitData& hit) const {
 bool Sphere::DrawAttributes()
 {
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Object %f"))
+    if (ImGui::TreeNode("Sphere"))
     {
         ImGui::DragFloat3("Position", glm::value_ptr(m_position), 0.1f);
-        ImGui::DragFloat("radius", &m_radius, 0.1f);
-        // ImGui::InputInt("Material index", (int*)&m_materialID, 1, 0);
+        ImGui::DragFloat("Radius", &m_radius, 0.1f);
         ImGui::TreePop();
     }
     return true;

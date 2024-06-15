@@ -44,6 +44,8 @@ namespace Rye {
 
     class LambertianBSDF : public Material {
         public:
+            LambertianBSDF() {}
+            LambertianBSDF(glm::vec4 color) : m_color(color) {}
             bool BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay) override;
             bool Absorb(const glm::vec4& inRay, HitData& hit) override;
             bool DrawAttributes() override;

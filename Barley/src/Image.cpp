@@ -6,11 +6,13 @@ using namespace Barley;
 
 void Image::ReSize()
 {
-    ImGui::Begin("Viewport");
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
+    ImGui::Begin(name.c_str());
 
     width = ImGui::GetContentRegionAvail().x;
     height = ImGui::GetContentRegionAvail().y;
 
+    ImGui::PopStyleVar();
     ImGui::End();
 }
 
@@ -21,7 +23,7 @@ void Image::Draw()
     // remove padding
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
     // 24 (0b1000 + 0b10000) remove scrollbars and scrolling
-    ImGui::Begin("Viewport", NULL, 24);
+    ImGui::Begin(name.c_str(), NULL, 24);
 
     // TODO keep image position correctly and unstrected while moving
     // keep track of the window size

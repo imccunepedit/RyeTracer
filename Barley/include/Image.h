@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <string>
 
 #include <GL/gl.h>
 
@@ -17,7 +18,7 @@ namespace Barley {
 
             int width=1;
             int height=1;
-
+            std::string name= "Viewport";
         private:
             GLuint m_texture;
 
