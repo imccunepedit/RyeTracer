@@ -1,7 +1,10 @@
-[submodule "lib/imgui"]
-	path = BarleyGUI/lib/imgui
+[submodule "Barley/lib/imgui"]
+	path = Barley/lib/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
-[submodule "lib/tracy"]
-	path = BarleyTracing/lib/tracy
+[submodule "RyeTracer/lib/tracy"]
+	path = RyeTracer/lib/tracy
 	url = https://github.com/wolfpld/tracy.git
+[submodule "RyeTracer/lib/glm"]
+	path = RyeTracer/lib/glm
+	url = https://github.com/g-truc/glm.git
