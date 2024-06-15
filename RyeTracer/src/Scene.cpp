@@ -17,9 +17,7 @@ using namespace Rye;
 
 bool Scene::Hit(const Ray& ray, HitData& hit) const
 {
-    hit.color = glm::vec4(0);
-    // closest_hit.color = glm::vec4(0.0f,0.0f,0.0f,1.0f);
-    // if there isn't anything in the scene return skycolor
+    // if there isn't anything in the scene return
     if (objects.size() == 0)
     {
         return false;
@@ -29,6 +27,7 @@ bool Scene::Hit(const Ray& ray, HitData& hit) const
     for (auto object : objects)
     {
         HitData tempHit;
+        tempHit.seed = hit.seed;
 
         // if distance is infinite/max, we haven't hit anything so check the next sphere
         if (!object->Hit(ray, tempHit))
@@ -41,6 +40,7 @@ bool Scene::Hit(const Ray& ray, HitData& hit) const
 
         if (!tempHit.front & !tempHit.material->doubleSided)
             continue;
+
         hit = tempHit;
 
         // otherwise we have hit a closer sphere so update the closest hit

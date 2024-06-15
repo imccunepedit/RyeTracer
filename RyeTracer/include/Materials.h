@@ -30,6 +30,7 @@ namespace Rye {
             {
                 float n2 = 1;
                 float c1 = glm::dot(I,-N);
+// #define SCHLICK
 #ifndef SCHLICK
                 float c2 = sqrtf(1 - n1*n1/(n2*n2) * (1- c1*c1));
                 float Rs = (n1*c1 - n2*c2) / (n1*c1 + n2*c2);
@@ -81,8 +82,7 @@ namespace Rye {
         private:
             LambertianBSDF m_diffuse;
             SpecularBSDF m_spec;
-            float m_specularProb = 0.8;
-
+            float m_specularity = 0.2;
     };
 
 

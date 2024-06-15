@@ -32,7 +32,7 @@ void Renderer::Render()
 glm::vec4 Renderer::RayGen(const int& i)
 {
 
-    uint32_t seed = i + m_camera->film.Samples() * m_camera->film.width * m_camera->film.height;
+    uint32_t seed = i + m_camera->film.Samples() * m_camera->rayCount;
 
     Ray ray;
     ray.origin = m_camera->GetRayOrigin();
@@ -43,9 +43,12 @@ glm::vec4 Renderer::RayGen(const int& i)
     if (m_camera->Inputting())
     {
         // if we are moving the camera return whatever the color of the first hit is
-        return TraceRay(ray).color;
+        HitData hit;
+        hit.seed = 1;
+        return TraceRay(ray, hit).color;
     }
 
+    float hits;
     for (int b=0; b <= m_maxDepth; b++)
     {
         if (b == m_maxDepth)
@@ -55,8 +58,10 @@ glm::vec4 Renderer::RayGen(const int& i)
             break;
         }
 
-        HitData hit = TraceRay(ray);
+        HitData hit;
         hit.seed = seed;
+        TraceRay(ray, hit);
+
         color *= hit.color;
 
         if (hit.distance == std::numeric_limits<float>::max())
@@ -66,19 +71,19 @@ glm::vec4 Renderer::RayGen(const int& i)
             break;
 
         ray.origin = hit.point;
+
         seed = hit.seed;
     }
 
     return color;
 }
 
-HitData Renderer::TraceRay(const Ray& ray)
+HitData Renderer::TraceRay(const Ray& ray, HitData& hit)
 {
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
-    HitData hit;
     if (!m_scene->Hit(ray, hit))
     {
-        return Miss(ray);
+        return Miss(ray, hit);
     }
 
     // get the color from this new ray
@@ -91,9 +96,8 @@ HitData Renderer::ClosestHit(const Ray& ray, HitData& hit)
     return hit;
 }
 
-HitData Renderer::Miss(const Ray& ray)
+HitData Renderer::Miss(const Ray& ray, HitData& hit)
 {
-    HitData hit;
     hit.color = m_scene->ambientColor;
     return hit;
 }

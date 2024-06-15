@@ -21,7 +21,7 @@ void Camera::Resize(const int& w, const int& h)
 
     m_projection = glm::perspective(glm::radians(vFoV), m_aspectRatio, 0.1f, 100.0f);
     CalculatePerspectiveMatrix();
-    CalculateRayDirections();
+    CalculateRays();
 }
 
 void Camera::Initialize()
@@ -80,7 +80,7 @@ void Camera::CalculateBasisVectors()
     m_up = m_inverseView * glm::vec4(0,1,0,0);
 }
 
-void Camera::CalculateRayDirections()
+void Camera::CalculateRays()
 {
     std::cout << "new dirs" << std::endl;
     rayCount = film.width * film.height * raysPerPixel;
@@ -186,7 +186,7 @@ void Camera::Rotate(const float& deltaTime)
 
         CalculateViewMatrix();
         CalculateBasisVectors();
-        CalculateRayDirections();
+        CalculateRays();
 
         film.ResetAccumulator();
     }
