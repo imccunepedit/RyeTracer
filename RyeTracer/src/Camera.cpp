@@ -55,13 +55,6 @@ glm::vec4 Camera::GetRayDirection(const int& index)
     return m_rayDirections[index];
 }
 
-
-void Camera::SetPixel(const int &index, glm::vec4 color)
-{
-    uint32_t i = index / raysPerPixel;
-    film.SetPixel(i, color/(float)raysPerPixel);
-}
-
 void Camera::CalculateViewMatrix()
 {
     m_view = glm::lookAt(glm::vec3(m_position), glm::vec3(m_position+m_forward), glm::vec3(0,0,1));
@@ -83,10 +76,8 @@ void Camera::CalculateBasisVectors()
 void Camera::CalculateRays()
 {
     std::cout << "new dirs" << std::endl;
-    rayCount = film.width * film.height * raysPerPixel;
+    rayCount = film.width * film.height;
 
-    int raysPerPixelRoot = std::sqrt(raysPerPixel);
-    float raysPerPixelRootInverse = 1.0f/raysPerPixelRoot;
     int w = film.width;
 
     m_rayDirections.resize(rayCount);
@@ -95,24 +86,15 @@ void Camera::CalculateRays()
     {
         for (int i=0; i < w; i++)
         {
-            for (int n=0; n < raysPerPixelRoot; n++)
-            {
-                for (int m=0; m < raysPerPixelRoot; m++)
-                {
-                    // glm::vec2 rayScreenTarget = glm::vec2(i/(float)w,
-                    //                                       j/(float)film.height);
+            glm::vec2 rayScreenTarget = glm::vec2(i/(float)w,
+                                                  j/(float)film.height);
 
-                    glm::vec2 rayScreenTarget = glm::vec2((i + m*raysPerPixelRootInverse)/(float)w,
-                                                          (j + n*raysPerPixelRootInverse)/(float)film.height);
+            rayScreenTarget = rayScreenTarget*2.0f - 1.0f;
 
-                    rayScreenTarget = rayScreenTarget*2.0f - 1.0f;
+            glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+            glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
 
-                    glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
-                    glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
-
-                    m_rayDirections[m + n*raysPerPixelRoot + i*raysPerPixel + j*w*raysPerPixel] = rayWorldDirection;
-                }
-            }
+            m_rayDirections[i+ j*w] = rayWorldDirection;
         }
     }
 }

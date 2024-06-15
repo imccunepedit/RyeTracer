@@ -21,8 +21,6 @@ namespace Rye {
             glm::vec4 GetRayOrigin() { return m_position; }
             glm::vec4 GetRayDirection(const int& index);
 
-            void SetPixel(const int& index, glm::vec4 color);
-
             void OnUpdate(const float& deltaTime);
             void DebugWindow();
             void DrawControls();
@@ -41,8 +39,7 @@ namespace Rye {
         public:
             Film film;
             float vFoV = 45;
-            uint32_t rayCount = 1;
-            uint32_t raysPerPixel = 1;
+            int rayCount = 1;
 
         private:
             float m_vFoV = 0;

@@ -13,13 +13,14 @@ project "RyeTracer"
 
         "../Barley/lib/imgui/",
         "/lib/tracy/public/",
+        "/lib/glm/",
     }
 
 
     links {
         "Barley",
-        "glfw",
         "GL",
+        "glfw",
 
         -- "Tracy",
         ":libpthread.a",

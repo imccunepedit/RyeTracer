@@ -25,10 +25,9 @@ void Renderer::Render()
     parallel_for(size_t(0), size_t(m_camera->rayCount), [this](size_t i)
     {
         glm::vec4 color = RayGen(i);
-        m_camera->SetPixel(i,color);
+        m_camera->film.SetPixel(i,color);
     });
 #endif
-
 }
 
 glm::vec4 Renderer::RayGen(const int& i)
