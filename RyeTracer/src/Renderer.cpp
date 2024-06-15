@@ -53,7 +53,7 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
 
     for (int b=0; b <= maxDepth; b++)
     {
-        if (b == maxDepth)
+        if (b == maxDepth && b > 1)
         {
             color = glm::vec4(0);
             break;
@@ -62,10 +62,10 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
         HitData hit = TraceRay(ray);
         hit.seed = seed;
         color *= hit.color;
-        if (i==450 && j==350)
-        {
-            std::cout << color.x << " "<< color.y << " "<< color.z << " "<< color.w << std::endl;
-        }
+        // if (i==450 && j==350)
+        // {
+        //     std::cout << color.x << " "<< color.y << " "<< color.z << " "<< color.w << std::endl;
+        // }
 
         if (hit.distance == std::numeric_limits<float>::max())
             break;
@@ -78,8 +78,8 @@ glm::vec4 Renderer::RayGen(const int& i, const int& j)
     }
 
 
-    if (i==450 && j==350)
-        return glm::vec4(1,0,0,1);
+    // if (i==450 && j==350)
+    //     return glm::vec4(1,0,0,1);
     return color;
 }
 
