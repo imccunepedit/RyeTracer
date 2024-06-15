@@ -1,5 +1,5 @@
-project "RyeTracer"
-    kind "WindowedApp"
+project "Rye"
+    kind "StaticLib"
     language "c++"
 
     files {
@@ -9,24 +9,19 @@ project "RyeTracer"
     includedirs {
         "include/",
 
-        "../Barley/include/",
-
         "../Barley/lib/imgui/",
+
         "/lib/tracy/public/",
         "/lib/glm/",
     }
 
 
     links {
-        "Barley",
-        "GL",
-        "glfw",
-
         -- "Tracy",
         ":libpthread.a",
         ":libdl.a",
-        "tbb"
+        "tbb",
     }
 
-    targetdir ("../build/bin/%{cfg.buildcfg}-%{prj.name}")
-    objdir ("../build/tmp/%{cfg.buildcfg}-%{prj.name}")
+    targetdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")
+    objdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")

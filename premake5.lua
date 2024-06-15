@@ -16,6 +16,6 @@ workspace "BarleyTracing"
 
 
 include "Barley"
-include "RyeTracer"
+include "Rye"
 
 require "premake-ecc/ecc"

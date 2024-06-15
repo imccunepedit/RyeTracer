@@ -1,6 +1,7 @@
 #include "Film.h"
 
 #include <cstdint>
+#include <cstring>
 
 #include <glm/exponential.hpp>
 #include <glm/ext/scalar_common.hpp>

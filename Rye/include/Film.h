@@ -1,8 +1,6 @@
 #ifndef FILM_H_
 #define FILM_H_
 
-#include "Image.h"
-
 #include <glm/vec4.hpp>
 
 namespace Rye {

@@ -1,5 +1,5 @@
 project "Barley"
-    kind "StaticLib"
+    kind "WindowedApp"
     language "c++"
 
     files {
@@ -12,15 +12,21 @@ project "Barley"
 
     includedirs {
         "include/",
-        "lib/imgui/"
+        "lib/imgui/",
+
+        "../Rye/include/"
     }
 
 
     links {
         "GL",
         "glfw",
-        "ImGui",
+        "Rye",
+
+        ":libpthread.a",
+        ":libdl.a",
+        "tbb",
     }
 
-    targetdir ("../build/bin/%{cfg.buildcfg}-%{prj.name}")
-    objdir ("../build/tmp/%{cfg.buildcfg}-%{prj.name}")
+    targetdir ("../build/%{cfg.buildcfg}/bin-%{prj.name}")
+    objdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")

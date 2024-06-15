@@ -1,32 +1,41 @@
-#ifndef APP_H
-#define APP_H
+#ifndef APP_H_
+#define APP_H_
 
-#define GL_GLEXT_PROTOTYPES
-#include <GLFW/glfw3.h>
-#include "imgui.h"
+#include "Window.h"
 
+#include <future>
+
+#include "Image.h"
+
+#include "Camera.h"
+#include "Scene.h"
+#include "Renderer.h"
+
+using namespace Rye;
 
 namespace Barley {
-    class App {
+    class App : public Window
+    {
         public:
             App();
-            virtual ~App();
-
-            void Run();
-
-        public:
-            GLFWwindow* windowHandle;
+            ~App();
+        private:
+            void Update() override;
+            void AppMenu() override;
 
         private:
-            virtual void Update() {};
-            virtual void AppMenu() {};
+            bool m_renderEveryFrame = false;
+            bool m_showCameraDebug = false;
 
-            bool showDemoWindow = false;
-            bool shouldQuit = false;
-            ImVec4 clearColor = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
+            std::future<void> renderThread = std::async([] { return; });
+
+            Scene m_scene;
+            Camera m_camera;
+            Renderer m_renderer = Renderer(&m_camera, &m_scene);
+
+            Barley::Image Viewport;
 
     };
 }
 
-
-#endif // APP_H
+#endif /* APP_H_ */

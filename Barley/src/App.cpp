@@ -1,116 +1,127 @@
 #include "App.h"
 
-#include <stdlib.h>
+#include <memory>
+#include <chrono>
+#include <future>
+#include <cstdint>
+#include <iostream>
 
-#define GL_GLEXT_PROTOTYPES
-#include <GLFW/glfw3.h>
-#include <GL/glext.h>
-#include <GL/gl.h>
+#include "glm/gtc/type_ptr.hpp"
 
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+
+#include "Camera.h"
+#include "Scene.h"
+#include "Sphere.h"
+#include "Materials.h"
 
 
 using namespace Barley;
-
-void App::Run()
-{
-
-    while (!glfwWindowShouldClose(windowHandle) && !shouldQuit)
-    {
-        // tell glfw to look for events
-        glfwPollEvents();
-
-        // tell opengl what color to make the rendered buffer
-        glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode); // do the docking things, make sure whats rendered in the background can still be seen
-
-
-        Update();
-
-
-        // show a menu bar, useful for demo window and quitting the application
-        if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("Menu"))
-            {
-                ImGui::MenuItem("Demo Window", NULL, &showDemoWindow);
-                ImGui::ColorEdit4("Background (Clear) color", (float*) &clearColor, ImGuiColorEditFlags_NoInputs);
-                ImGui::MenuItem("Quit", NULL, &shouldQuit);
-                ImGui::EndMenu();
-            }
-
-            AppMenu();
-            ImGui::EndMainMenuBar();
-        }
-
-        // show the demo window, very useful
-        if (showDemoWindow)
-            ImGui::ShowDemoWindow();
-
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // swap the currently displayed buffer with the one that was just rendered
-        glfwSwapBuffers(windowHandle);
-    }
-
-}
-
+using namespace Rye;
 
 App::App()
 {
-
-    // initiallize glfw and check
-    if (!glfwInit())
-
-        std::exit(1);
-
-    // tell glfw what opengl we are using
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // create a window size x,y,title,not full screen
-    windowHandle = glfwCreateWindow(1280, 720, "m_floating Renderer", nullptr, nullptr);
-
-
-    // make sure window exists
-    if (windowHandle == nullptr)
-        std::exit(1);
-
-    // tell glfw that we want to use our window
-    glfwMakeContextCurrent(windowHandle);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(windowHandle, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    m_scene.Initialize();
+    m_camera.Initialize();
 }
 
+App::~App() = default;
 
-App::~App() {
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    // tell glfw to kill our window and kill its self
-    glfwDestroyWindow(windowHandle);
-    glfwTerminate();
+void App::AppMenu()
+{
+    if (ImGui::BeginMenu("Info"))
+    {
+        ImGui::MenuItem("camera debug", NULL, &m_showCameraDebug);
+        ImGui::EndMenu();
+    }
 }
+
+void App::Update()
+{
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImGui::Begin("Controls");
+    ImGui::SeparatorText("Info");
+    ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
+    ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
+
+    ImGui::SeparatorText("Camera");
+    m_camera.DrawControls();
+
+    ImGui::SeparatorText("Renderer");
+    m_renderer.DrawControls();
+
+    bool renderThisFrame = ImGui::Button("Render");
+    ImGui::SameLine();
+    ImGui::Checkbox("render every frame", &m_renderEveryFrame);
+
+    ImGui::End();
+
+
+    ImGui::Begin("Scene");
+    ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
+    if (ImGui::Button("Add Sphere")) {
+        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,std::make_shared<LambertianBSDF>()));;
+    }
+
+    if (ImGui::TreeNode("Objects"))
+    {
+        for (size_t i = 0; i < m_scene.objects.size(); i++)
+        {
+            auto object = m_scene.objects.at(i);
+            ImGui::PushID(i);
+            object->DrawAttributes();
+            ImGui::PopID();
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::TreeNode("Materials"))
+    {
+        for (size_t i = 0; i < m_scene.materials.size(); i++)
+        {
+            ImGui::PushID(i);
+            auto material = m_scene.materials.at(i);
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            if (ImGui::TreeNode(material->GetName().c_str()))
+            {
+                material->DrawAttributes();
+                ImGui::TreePop();
+            }
+            ImGui::PopID();
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::End();
+
+
+    m_camera.OnUpdate(io.DeltaTime);
+
+    if (m_showCameraDebug)
+        m_camera.DebugWindow();
+
+    // rendering
+    Viewport.ReSize();
+
+    using namespace std::chrono_literals;
+    auto status = renderThread.wait_for(0ms);
+
+
+    if ((m_renderEveryFrame || renderThisFrame) && (status == std::future_status::ready))
+    {
+        m_camera.Resize(Viewport.width, Viewport.height);
+        renderThread = std::async(std::launch::async, &Renderer::Render, m_renderer);
+        Viewport.needsUpdate = true;
+    }
+
+    if ((status == std::future_status::ready) && Viewport.needsUpdate)
+    {
+        Viewport.Set(m_camera.film.data);
+        Viewport.needsUpdate = false;
+    }
+
+    Viewport.Draw();
+
+};
