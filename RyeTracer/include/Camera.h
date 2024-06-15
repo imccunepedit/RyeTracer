@@ -33,7 +33,7 @@ namespace Rye {
             void CalculateBasisVectors();
             void CalculateViewMatrix();
             void CalculatePerspectiveMatrix();
-            void CalculateRayDirections();
+            void CalculateRays();
 
             void Translate(const float& deltaTime);
             void Rotate(const float& deltaTime);
