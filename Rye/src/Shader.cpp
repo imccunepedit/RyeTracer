@@ -1,8 +1,18 @@
 #include "Shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 using namespace Rye;
 
+
 Shader::Shader(const char* shaderPath)
+{
+    m_shaderPath = shaderPath;
+    Load();
+}
+
+
+void Shader::Load()
 {
     // 1. retrieve the vertex/fragment source code from filePath
     std::ifstream shaderFile;
@@ -12,7 +22,7 @@ Shader::Shader(const char* shaderPath)
     try
     {
         // open files
-        shaderFile.open(shaderPath);
+        shaderFile.open(m_shaderPath);
         std::stringstream vShaderStream, fShaderStream;
         // read file's buffer contents into streams
         vShaderStream << shaderFile.rdbuf();
@@ -64,4 +74,22 @@ Shader::Shader(const char* shaderPath)
 void Shader::Use()
 {
     glUseProgram(ID);
+}
+
+
+void Shader::SetInt(const std::string &name, int &value) const
+{
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Shader::SetFloat(const std::string &name, float &value) const
+{
+    glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Shader::SetMat4(const std::string &name, glm::mat4 value) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+void Shader::SetVec4(const std::string &name, glm::vec4 value) const
+{
+    glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
 }

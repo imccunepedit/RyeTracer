@@ -41,6 +41,9 @@ namespace Rye {
             float vFoV = 45;
             int rayCount = 1;
 
+            glm::mat4 m_inverseProjection = glm::mat4(1);
+            glm::mat4 m_inverseView = glm::mat4(1);
+
         private:
             float m_vFoV = 0;
             float m_aspectRatio = 1;
@@ -50,9 +53,7 @@ namespace Rye {
             glm::vec4 m_position = glm::vec4(0,-10,0,1);
 
             glm::mat4 m_projection = glm::mat4(1);
-            glm::mat4 m_inverseProjection = glm::mat4(1);
             glm::mat4 m_view = glm::mat4(1);
-            glm::mat4 m_inverseView = glm::mat4(1);
 
             glm::vec4 m_forward = glm::vec4(0,1,0,0);
             glm::vec4 m_up = glm::vec4(0,0,1,0);

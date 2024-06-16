@@ -46,9 +46,7 @@ void App::Update()
     ImGui::Text("Application frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
     ImGui::Text("Last render time: %dms", m_lastRenderMS);
     if (ImGui::Button("Relod Shaders"))
-    {
-        Compute = Shader("Rye/src/Shaders/Compute.glsl");
-    }
+        Compute.Load();
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
@@ -133,9 +131,12 @@ void App::Update()
     }
 
 #else
-
     Viewport.BindImage();
     Compute.Use();
+    Compute.SetMat4("inverseView", m_camera.m_inverseView);
+    Compute.SetMat4("inverseProjection", m_camera.m_inverseProjection);
+
+
     glDispatchCompute((unsigned int)Viewport.width, (unsigned int)Viewport.height, 1);
 
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
