@@ -3,10 +3,10 @@
 
 #include <glm/vec4.hpp>
 
-#include "Ray.h"
-#include "HitData.h"
-
 namespace Rye {
+    class Ray;
+    class HitData;
+
     class Object {
         public:
             virtual bool Hit(const Ray& ray, HitData& hit) const { return false; }

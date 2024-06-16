@@ -1,12 +1,16 @@
-#ifndef METALLIC_H_
-#define METALLIC_H_
+#include "Materials/Metallic.h"
 
-#include "Materials.h"
+#include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
+
+#include "Utils.h"
+#include "Ray.h"
 
 using namespace Rye;
 
 bool MetallicBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay)  {
-    scatterRay = glm::reflect(inRay, hit.normal) + random_on_sphere(hit.seed) * m_roughness;
+    scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * m_roughness;
     return true;
 }
 
@@ -28,5 +32,3 @@ std::string MetallicBSDF::GetName()
 {
     return "Metallic BSDF";
 }
-
-#endif // METALLIC_H_

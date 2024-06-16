@@ -1,7 +1,11 @@
-#ifndef GLASS_H_
-#define GLASS_H_
+#include "Materials/Glass.h"
 
-#include "Materials.h"
+#include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
+
+#include "Utils.h"
+#include "Ray.h"
 
 using namespace Rye;
 
@@ -10,7 +14,7 @@ bool GlassBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay
     float eta = 1/m_indexOfRefraction;
     float at = 1;
 
-    hit.normal += random_on_sphere(hit.seed) * m_roughness;
+    hit.normal += RandomOnSphere(hit.seed) * m_roughness;
     hit.normal = glm::normalize(hit.normal);
 
     if (!hit.front)
@@ -22,7 +26,7 @@ bool GlassBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay
     scatterRay = glm::refract(inRay, hit.normal, eta);
     bool reflect = glm::dot(scatterRay, scatterRay) < 0;
 
-    reflect |= Fresnel(inRay, hit.normal, eta) > random_float(hit.seed);
+    reflect |= Fresnel(inRay, hit.normal, eta) > RandomFloat(hit.seed);
 
     if (reflect)
         scatterRay = glm::reflect(inRay, hit.normal);
@@ -53,4 +57,3 @@ std::string GlassBSDF::GetName()
     return "Glass BSDF";
 }
 
-#endif // GLASS_H_

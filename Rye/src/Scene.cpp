@@ -5,12 +5,17 @@
 #include "imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "HitData.h"
 #include "Ray.h"
-#include "Sphere.h"
-#include "Quad.h"
 
-#include "Materials.h"
+#include "Materials/Emission.h"
+#include "Materials/Lambertian.h"
+#include "Materials/Glass.h"
+#include "Materials/Glossy.h"
+#include "Materials/Metallic.h"
+
+#include "Objects/Sphere.h"
+#include "Objects/Quad.h"
+
 
 
 using namespace Rye;

@@ -1,14 +1,15 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include "Scene.h"
-#include "Camera.h"
-#include "Ray.h"
-
-#include "HitData.h"
-#include "Materials.h"
+#include <glm/vec4.hpp>
 
 namespace Rye {
+    class Camera;
+    class Scene;
+    class Ray;
+    class HitData;
+
+
     class Renderer
     {
         public:

@@ -4,6 +4,12 @@
 
 #include <oneapi/tbb/parallel_for.h>
 
+#include "imgui.h"
+
+#include "Camera.h"
+#include "Scene.h"
+#include "Ray.h"
+#include "Material.h"
 
 using namespace Rye;
 

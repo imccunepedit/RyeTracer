@@ -1,13 +1,17 @@
-#ifndef LAMBERTIAN_H_
-#define LAMBERTIAN_H_
+#include "Materials/Lambertian.h"
 
-#include "Materials.h"
+#include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
+
+#include "Utils.h"
+#include "Ray.h"
 
 using namespace Rye;
 
 bool LambertianBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay)
 {
-    scatterRay = glm::normalize(hit.normal + random_on_sphere(hit.seed)); //TODO replace 1 with seed
+    scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed)); //TODO replace 1 with seed
     return true;
 }
 
@@ -27,6 +31,3 @@ std::string LambertianBSDF::GetName()
 {
     return "Diffuse BSDF";
 }
-
-
-#endif // LAMBERTIAN_H_

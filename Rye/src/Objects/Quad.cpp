@@ -1,4 +1,4 @@
-#include "Quad.h"
+#include "Objects/Quad.h"
 
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>

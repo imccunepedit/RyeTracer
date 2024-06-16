@@ -1,18 +1,18 @@
 #ifndef SCENE_H_
 #define SCENE_H_
 
-#include "glm/vec4.hpp"
-
 #include <vector>
 #include <memory>
 
-#include "Object.h"
+#include <glm/vec4.hpp>
 
-#include "HitData.h"
-#include "Ray.h"
-#include "Materials.h"
 
 namespace Rye {
+    class Object;
+    class Material;
+    class Ray;
+    class HitData;
+
     class Scene {
         public:
             void AddObject(std::shared_ptr<Object> o);

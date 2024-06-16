@@ -1,13 +1,17 @@
-#ifndef SPECULAR_H_
-#define SPECULAR_H_
+#include "Materials/Specular.h"
 
-#include "Materials.h"
+#include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
+
+#include "Utils.h"
+#include "Ray.h"
 
 using namespace Rye;
 bool SpecularBSDF::BSDF(const glm::vec4& inRay, HitData& hit, glm::vec4& scatterRay)
 {
     hit.color = m_color;
-    scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + random_on_sphere(hit.seed) * m_roughness);
+    scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * m_roughness);
 
     return true;
 }
@@ -31,6 +35,3 @@ std::string SpecularBSDF::GetName()
 {
     return "Specular BSDF";
 }
-
-
-#endif // SPECULAR_H_

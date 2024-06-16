@@ -1,11 +1,15 @@
 #ifndef PLANE_H_
 #define PLANE_H_
 
+#include <memory>
+
 #include "Object.h"
 
 #include <glm/vec2.hpp>
 
 namespace Rye {
+    class Material;
+
     class Plane : public Object {
         public:
             Plane(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, std::shared_ptr<Material> material);

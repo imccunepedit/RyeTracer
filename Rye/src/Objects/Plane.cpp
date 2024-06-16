@@ -1,9 +1,11 @@
-#include "Plane.h"
+#include "Objects/Plane.h"
 
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
+
+#include "Ray.h"
 
 using namespace Rye;
 

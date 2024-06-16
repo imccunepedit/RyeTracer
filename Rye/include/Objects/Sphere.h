@@ -1,9 +1,13 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
+#include <memory>
+
 #include "Object.h"
 
 namespace Rye {
+    class Material;
+
     class Sphere : public Object {
         public:
             Sphere(glm::vec4 position, float radius, std::shared_ptr<Material> material)

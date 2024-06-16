@@ -12,9 +12,8 @@
 
 #include "Camera.h"
 #include "Scene.h"
-#include "Sphere.h"
-#include "Materials.h"
-
+#include "Objects/Sphere.h"
+#include "Materials/Lambertian.h"
 
 using namespace Barley;
 using namespace Rye;
