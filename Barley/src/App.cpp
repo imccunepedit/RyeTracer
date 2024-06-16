@@ -39,10 +39,11 @@ void App::Update()
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    ImGui::Begin("Controls");
+    ImGui::Begin("Info");
     ImGui::SeparatorText("Info");
     ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
-    ImGui::Text("Frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
+    ImGui::Text("Application frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
+    ImGui::Text("Last render time: %dms", m_lastRenderMS);
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
@@ -53,6 +54,7 @@ void App::Update()
     bool renderThisFrame = ImGui::Button("Render");
     ImGui::SameLine();
     ImGui::Checkbox("render every frame", &m_renderEveryFrame);
+
 
     ImGui::End();
 
@@ -104,21 +106,23 @@ void App::Update()
     // rendering
     Viewport.ReSize();
 
-    using namespace std::chrono_literals;
-    auto status = renderThread.wait_for(0ms);
-
-
-    if ((m_renderEveryFrame || renderThisFrame) && (status == std::future_status::ready))
+    if ((m_renderEveryFrame || renderThisFrame) && !m_rendering)
     {
         m_camera.Resize(Viewport.width, Viewport.height);
         renderThread = std::async(std::launch::async, &Renderer::Render, m_renderer);
-        Viewport.needsUpdate = true;
+        m_rendering = true;
     }
 
-    if ((status == std::future_status::ready) && Viewport.needsUpdate)
+    if (renderThread.valid())
     {
-        Viewport.Set(m_camera.film.data);
-        Viewport.needsUpdate = false;
+        using namespace std::chrono_literals;
+        auto status = renderThread.wait_for(0ms);
+        if ((status == std::future_status::ready) && m_rendering)
+        {
+            m_lastRenderMS = renderThread.get();
+            Viewport.Set(m_camera.film.data);
+            m_rendering = false;
+        }
     }
 
     Viewport.Draw();

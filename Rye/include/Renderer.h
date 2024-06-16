@@ -15,7 +15,7 @@ namespace Rye {
         public:
             Renderer(Camera* camera, Scene* scene) : m_camera(camera), m_scene(scene) {}
 
-            void Render();
+            int Render();
 
             void DrawControls();
 

@@ -4,6 +4,7 @@
 #include "Window.h"
 
 #include <future>
+#include <vector>
 
 #include "Image.h"
 
@@ -26,8 +27,11 @@ namespace Barley {
         private:
             bool m_renderEveryFrame = false;
             bool m_showCameraDebug = false;
+            bool m_rendering = false;
 
-            std::future<void> renderThread = std::async([] { return; });
+            int m_lastRenderMS;
+
+            std::future<int> renderThread = std::async([] { return 0; });
 
             Scene m_scene;
             Camera m_camera;

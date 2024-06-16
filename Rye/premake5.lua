@@ -23,5 +23,5 @@ project "Rye"
         "tbb",
     }
 
-    targetdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")
+    targetdir ("../build/%{cfg.buildcfg}/lib-%{prj.name}")
     objdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")

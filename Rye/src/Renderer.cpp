@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include <iostream>
+#include <chrono>
 
 #include <oneapi/tbb/parallel_for.h>
 
@@ -13,8 +14,10 @@
 
 using namespace Rye;
 
-void Renderer::Render()
+int Renderer::Render()
 {
+    auto timer = std::chrono::steady_clock::now();
+
     m_camera->film.ResetAccumulator();
 
     m_camera->film.NewSample();
@@ -34,6 +37,9 @@ void Renderer::Render()
         m_camera->film.SetPixel(i,color);
     });
 #endif
+
+
+    return (int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - timer).count();
 }
 
 glm::vec4 Renderer::RayGen(const int& i)
