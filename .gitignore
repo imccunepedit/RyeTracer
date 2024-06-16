@@ -1,5 +1,14 @@
+# emacs project stuff
+/.cache/
+/.projectile
+
+# imgui window layout
+**/imgui.ini
+
+# build build and make files
 /build/
 **/Makefile
+**.make
+
+# generated lsp stuff
 /compile_commands.json
-/.cache/
-**/imgui.ini

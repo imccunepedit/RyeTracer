@@ -15,7 +15,17 @@ workspace "BarleyTracing"
         optimize "speed"
 
 
+
+project "*"
+    targetdir ("%{wks.location}/build/%{cfg.buildcfg}-bin/%{prj.name}")
+    objdir ("%{wks.location}/build/%{cfg.buildcfg}-tmp/%{prj.name}")
+
+
+vendor = "%{wks.location}/vendor"
+
+include "vendor"
 include "Barley"
 include "Rye"
+
 
 require "premake-ecc/ecc"

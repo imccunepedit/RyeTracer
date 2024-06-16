@@ -1,10 +1,10 @@
-[submodule "Barley/lib/imgui"]
-	path = Barley/lib/imgui
+[submodule "vendor/imgui"]
+	path = vendor/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
-[submodule "Rye/lib/tracy"]
-	path = Rye/lib/tracy
+[submodule "vendor/tracy"]
+	path = vendor/tracy
 	url = https://github.com/wolfpld/tracy.git
-[submodule "Rye/lib/glm"]
-	path = Rye/lib/glm
+[submodule "vendor/glm"]
+	path = vendor/glm
 	url = https://github.com/g-truc/glm.git

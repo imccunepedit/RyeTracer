@@ -2,10 +2,8 @@
 
 #include <stdlib.h>
 
-#define GL_GLEXT_PROTOTYPES
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <GL/glext.h>
-#include <GL/gl.h>
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -71,7 +69,6 @@ Window::Window()
 
     // initiallize glfw and check
     if (!glfwInit())
-
         std::exit(1);
 
     // tell glfw what opengl we are using
@@ -85,10 +82,13 @@ Window::Window()
 
     // make sure window exists
     if (windowHandle == nullptr)
-        std::exit(1);
+        std::exit(2);
 
     // tell glfw that we want to use our window
     glfwMakeContextCurrent(windowHandle);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        std::exit(3);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

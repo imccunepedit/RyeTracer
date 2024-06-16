@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-#include <GL/gl.h>
+#include <glad/glad.h>
 
 #include <glm/vec4.hpp>
 

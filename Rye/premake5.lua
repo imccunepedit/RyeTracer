@@ -9,19 +9,8 @@ project "Rye"
     includedirs {
         "include/",
 
-        "../Barley/lib/imgui/",
+        "%{vendor}/imgui/",
 
-        "/lib/tracy/public/",
-        "/lib/glm/",
+        "%{vendor}/tracy/public/",
+        "%{vendor}/glm/",
     }
-
-
-    links {
-        -- "Tracy",
-        ":libpthread.a",
-        ":libdl.a",
-        "tbb",
-    }
-
-    targetdir ("../build/%{cfg.buildcfg}/lib-%{prj.name}")
-    objdir ("../build/%{cfg.buildcfg}/tmp-%{prj.name}")

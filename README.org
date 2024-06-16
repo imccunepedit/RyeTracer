@@ -20,3 +20,7 @@ A ray tracer that is barely tracing rays.
 - https://refractiveindex.info/
 - https://github.com/tylermorganwall/rayrender/
 - https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/
+* setup
+- clone with submodules
+- glfw needs to be configured, should work if installed on linux
+- for multithreading oneapi tbb needs to be configured

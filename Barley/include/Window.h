@@ -1,10 +1,9 @@
 #ifndef APP_H
 #define APP_H
 
-#define GL_GLEXT_PROTOTYPES
-#include <GLFW/glfw3.h>
 #include "imgui.h"
 
+class GLFWwindow;
 
 namespace Barley {
     class Window {
