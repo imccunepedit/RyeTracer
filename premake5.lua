@@ -1,7 +1,7 @@
 workspace "BarleyTracing"
-    configurations { "debug",
-                     "tracy",
-                     "release"}
+    configurations { "release",
+                     "debug",
+                     "tracy"}
 
     filter "configurations:debug"
         symbols "Full"

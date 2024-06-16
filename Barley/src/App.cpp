@@ -104,7 +104,7 @@ void App::Update()
         m_camera.DebugWindow();
 
     // rendering
-    Viewport.ReSize();
+    Viewport.Resize();
 
     if ((m_renderEveryFrame || renderThisFrame) && !m_rendering)
     {

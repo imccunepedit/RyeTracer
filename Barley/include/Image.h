@@ -11,9 +11,15 @@
 namespace Barley {
     class Image {
         public:
-            void Set(uint32_t* data);
-            void ReSize();
+            void Set(glm::vec4* data);
+            void Resize();
             void Draw();
+            void BindImage() {
+                glBindImageTexture(0, m_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+            }
+
+        private:
+            void Reset();
 
         public:
             int width=1;

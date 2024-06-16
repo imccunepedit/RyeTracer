@@ -4,13 +4,20 @@
 
 using namespace Barley;
 
-void Image::ReSize()
+void Image::Resize()
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f));
     ImGui::Begin(name.c_str());
 
-    width = ImGui::GetContentRegionAvail().x;
-    height = ImGui::GetContentRegionAvail().y;
+    int w = ImGui::GetContentRegionAvail().x;
+    int h = ImGui::GetContentRegionAvail().y;
+
+    if (w != width || h != height)
+    {
+        width = w;
+        height = h;
+        Reset();
+    }
 
     ImGui::PopStyleVar();
     ImGui::End();
@@ -38,18 +45,23 @@ void Image::Draw()
     ImVec2 uv1 = ImVec2(1.0f,0.0f);
 
     // draw the image into the viewport
-    ImGui::Image((ImTextureID) m_texture, imageSize, uv0, uv1);
+    ImGui::Image((ImTextureID)(intptr_t)m_texture, imageSize, uv0, uv1);
 
     ImGui::PopStyleVar();
     ImGui::End();
 }
 
-void Image::Set(uint32_t* data)
+void Image::Set(glm::vec4 *data)
+{
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, data);
+}
+
+void Image::Reset()
 {
     // Create a OpenGL texture identifier
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
     // Setup filtering parameters for display
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -58,7 +70,5 @@ void Image::Set(uint32_t* data)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
 
     // Upload pixels into texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, data);
-
-    m_texture = texture;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 }
