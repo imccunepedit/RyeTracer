@@ -19,6 +19,7 @@ using namespace Barley;
 using namespace Rye;
 
 App::App()
+: Compute(Shader("Rye/src/Shaders/Compute.glsl"))
 {
     m_scene.Initialize();
     m_camera.Initialize();
@@ -41,9 +42,13 @@ void App::Update()
 
     ImGui::Begin("Info");
     ImGui::SeparatorText("Info");
-    ImGui::Text("Viewport size: %d x %d", m_camera.film.width, m_camera.film.height);
+    ImGui::Text("Viewport size: %d x %d", Viewport.width, Viewport.height);
     ImGui::Text("Application frame time (fps): %.2fms (%.1f)", io.DeltaTime*1000, 1/io.DeltaTime);
     ImGui::Text("Last render time: %dms", m_lastRenderMS);
+    if (ImGui::Button("Relod Shaders"))
+    {
+        Compute = Shader("Rye/src/Shaders/Compute.glsl");
+    }
 
     ImGui::SeparatorText("Camera");
     m_camera.DrawControls();
@@ -104,8 +109,10 @@ void App::Update()
         m_camera.DebugWindow();
 
     // rendering
-    Viewport.ReSize();
+    Viewport.Resize();
 
+#define GPU
+#ifndef GPU
     if ((m_renderEveryFrame || renderThisFrame) && !m_rendering)
     {
         m_camera.Resize(Viewport.width, Viewport.height);
@@ -124,6 +131,15 @@ void App::Update()
             m_rendering = false;
         }
     }
+
+#else
+
+    Viewport.BindImage();
+    Compute.Use();
+    glDispatchCompute((unsigned int)Viewport.width, (unsigned int)Viewport.height, 1);
+
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 
     Viewport.Draw();
 

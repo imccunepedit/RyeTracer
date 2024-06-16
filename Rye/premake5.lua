@@ -13,4 +13,5 @@ project "Rye"
 
         "%{vendor}/tracy/public/",
         "%{vendor}/glm/",
+        "%{vendor}/glad/include",
     }

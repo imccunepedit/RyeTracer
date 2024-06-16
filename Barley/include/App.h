@@ -6,6 +6,8 @@
 #include <future>
 #include <vector>
 
+#include "Shader.h"
+
 #include "Image.h"
 
 #include "Camera.h"
@@ -28,6 +30,8 @@ namespace Barley {
             bool m_renderEveryFrame = false;
             bool m_showCameraDebug = false;
             bool m_rendering = false;
+
+            Shader Compute;
 
             int m_lastRenderMS;
 
