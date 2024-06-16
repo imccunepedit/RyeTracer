@@ -17,12 +17,12 @@ namespace Rye {
 
             int Samples() { return m_samples; }
 
-            uint32_t ProcessColor(glm::vec4 color);
+            glm::vec4 ProcessColor(glm::vec4 color);
 
         public:
             int width = 1;
             int height = 1;
-            uint32_t* data = nullptr;
+            glm::vec4* data = nullptr;
             bool needsReset = true;
 
         private:

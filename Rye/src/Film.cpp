@@ -20,7 +20,7 @@ void Film::Resize(const int& w, const int& h)
     m_accumulated = new glm::vec4[width*height];
 
     delete[] data;
-    data = new uint32_t[width*height];
+    data = new glm::vec4[width*height];
 
     ResetAccumulator();
 }
@@ -44,16 +44,11 @@ void Film::SetPixel(const int& index, const glm::vec4& color)
 }
 
 
-uint32_t Film::ProcessColor(glm::vec4 color)
+glm::vec4 Film::ProcessColor(glm::vec4 color)
 {
     color = color * m_samplesInverse;
     color = glm::max(color, glm::vec4(0));
     color = glm::sqrt(color);
 
-    uint8_t r = fminf(color.r, 0.99999f)*256;
-    uint8_t g = fminf(color.g, 0.99999f)*256;
-    uint8_t b = fminf(color.b, 0.99999f)*256;
-    uint8_t a = 255;
-
-    return (a << 24) | (b << 16) | (g << 8) | r;
+    return color;
 }
