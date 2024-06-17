@@ -1,12 +1,24 @@
 #ifndef APP_H
 #define APP_H
 
+#include <optional>
+
 #include <vulkan/vulkan.h>
 // include "imgui.h"
 
 class GLFWwindow;
 
 namespace Barley {
+    struct QueueFamilyIndices
+    {
+        std::optional<uint32_t> graphicsFamily;
+
+        bool IsComplete()
+        {
+            return graphicsFamily.has_value();
+        }
+    };
+
     class Window {
         public:
             void Run();
@@ -21,14 +33,23 @@ namespace Barley {
 
         private:
             void CreateGLFWWindow();
+            void CreateSurface();
             void CreateVulkanInstance();
             void PickPhysicalDevice();
+            void CreateLogicalDevice();
 
+            QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
             bool CheckValidationLayerSupport();
+            bool IsDeviceSuitable(VkPhysicalDevice);
 
         private:
             GLFWwindow* m_windowHandle;
-            VkInstance m_instance;
+            VkInstance m_vulkanInstance;
+            VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+            VkDevice m_logicalDevice;
+            VkQueue m_graphicsQueue;
+            VkSurfaceKHR m_surface;
+
 
         //     bool showDemoWindow = false;
             bool shouldQuit = false;

@@ -82,16 +82,17 @@ Window::Window()
     CreateGLFWWindow();
     CreateVulkanInstance();
     PickPhysicalDevice();
+    CreateLogicalDevice();
 }
 
 Window::~Window() {
-
-
     // ImGui_ImplOpenGL3_Shutdown();
     // ImGui_ImplGlfw_Shutdown();
     // ImGui::DestroyContext();
     // destrou vulkan stuff
-    vkDestroyInstance(m_instance, nullptr);
+    vkDestroyDevice(m_logicalDevice, nullptr);
+    vkDestroySurfaceKHR(m_vulkanInstance, m_surface, nullptr);
+    vkDestroyInstance(m_vulkanInstance, nullptr);
 
     // tell glfw to kill our window and kill its self
     glfwDestroyWindow(m_windowHandle);
@@ -119,6 +120,12 @@ void Window::CreateGLFWWindow()
 
     // tell glfw that we want to use our window
     glfwMakeContextCurrent(m_windowHandle);
+}
+
+void Window::CreateSurface()
+{
+    if (glfwCreateWindowSurface(m_vulkanInstance, m_windowHandle, nullptr, &m_surface) != VK_SUCCESS)
+        throw std::runtime_error("ERROR: failed to create window surface");
 }
 
 void Window::CreateVulkanInstance()
@@ -182,18 +189,113 @@ void Window::CreateVulkanInstance()
     }
 #endif
 
-    if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
+    if (vkCreateInstance(&createInfo, nullptr, &m_vulkanInstance) != VK_SUCCESS)
         throw std::runtime_error("ERROR: failed to create vulkan instance");
 }
 
-// void Window::PickPhysicalDevice()
-// {
+void Window::PickPhysicalDevice()
+{
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(m_vulkanInstance, &deviceCount, nullptr);
+    if (deviceCount == 0)
+        throw std::runtime_error("ERROR: failed to find gpus with vulkan support");
 
-// }
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(m_vulkanInstance, &deviceCount, devices.data());
+
+    for (const auto& device : devices)
+    {
+        if (IsDeviceSuitable(device))
+        {
+            m_physicalDevice = device;
+            break;
+        }
+    }
+
+    if (m_physicalDevice == VK_NULL_HANDLE) {
+        throw std::runtime_error("ERROR: failed to find a suitable GPU!");
+    }
+
+}
+
+void Window::CreateLogicalDevice()
+{
+    QueueFamilyIndices indices = FindQueueFamilies(m_physicalDevice);
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
+
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    VkPhysicalDeviceFeatures deviceFeatures{};
+
+    VkDeviceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+    createInfo.pQueueCreateInfos = &queueCreateInfo;
+    createInfo.queueCreateInfoCount = 1;
+
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
+    createInfo.enabledExtensionCount = 0;
+
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    } else {
+        createInfo.enabledLayerCount = 0;
+    }
+
+    if (vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_logicalDevice) != VK_SUCCESS) {
+        throw std::runtime_error("ERROR: failed to create logical device");
+    }
+
+    vkGetDeviceQueue(m_logicalDevice, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
 
 
+}
 
-bool Window::CheckValidationLayerSupport() {
+bool Window::IsDeviceSuitable(VkPhysicalDevice device)
+{
+    // VkPhysicalDeviceProperties deviceProperties;
+    // VkPhysicalDeviceFeatures deviceFeatures;
+
+    // vkGetPhysicalDeviceProperties(device, &deviceProperties);
+    // vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+    QueueFamilyIndices indices = FindQueueFamilies(device);
+
+    return indices.IsComplete();
+}
+
+QueueFamilyIndices Window::FindQueueFamilies(VkPhysicalDevice device)
+{
+    QueueFamilyIndices indices;
+
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+    int i = 0;
+    for (const auto& queuFamily : queueFamilies)
+    {
+        if (queuFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+            indices.graphicsFamily = i;
+        if (indices.IsComplete())
+            break;
+
+        ++i;
+    }
+
+
+    return indices;
+}
+
+bool Window::CheckValidationLayerSupport()
+{
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
     std::vector<VkLayerProperties> availableLayers(layerCount);
@@ -216,9 +318,6 @@ bool Window::CheckValidationLayerSupport() {
     }
     return false;
 }
-
-
-
 
 
 
