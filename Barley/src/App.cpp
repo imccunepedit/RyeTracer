@@ -38,7 +38,7 @@ void App::AppMenu()
 
 void App::Update()
 {
-    std::cout << 1 << std::endl;
+    // std::cout << 1 << std::endl;
     // ImGuiIO& io = ImGui::GetIO();
 
     // ImGui::Begin("Info");

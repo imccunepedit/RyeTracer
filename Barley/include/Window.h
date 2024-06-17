@@ -20,7 +20,11 @@ namespace Barley {
             virtual void AppMenu() {};
 
         private:
-            void createInstance();
+            void CreateGLFWWindow();
+            void CreateVulkanInstance();
+            void PickPhysicalDevice();
+
+            bool CheckValidationLayerSupport();
 
         private:
             GLFWwindow* m_windowHandle;
