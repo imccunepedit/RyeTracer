@@ -59,7 +59,6 @@ namespace Barley {
             void CreateSyncObjects();
 
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-            bool CheckValidationLayerSupport();
             bool IsDeviceSuitable(VkPhysicalDevice device);
             bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
             SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
@@ -69,6 +68,14 @@ namespace Barley {
             VkShaderModule CreateShaderModule(const std::vector<char>& code);
             static std::vector<char> ReadFile(const std::string& filename);
             void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
+
+            void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+            void SetupDebugMessenger();
+            std::vector<const char*> GetRequiredExtensions();
+            bool CheckValidationLayerSupport();
+            static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
+
 
         private:
             GLFWwindow* m_windowHandle;
@@ -96,7 +103,7 @@ namespace Barley {
             VkSemaphore m_renderFinishedSemaphore;
             VkFence m_inFlightFence;
 
-
+            VkDebugUtilsMessengerEXT m_debugMessenger;
             // bool showDemoWindow = false;
             bool shouldQuit = false;
 
