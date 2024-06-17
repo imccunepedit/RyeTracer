@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-#include <glad/glad.h>
+#include <vulkan/vulkan.h>
 
 #include <glm/vec4.hpp>
 

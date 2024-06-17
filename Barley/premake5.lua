@@ -17,12 +17,12 @@ project "Barley"
 
 
     links {
-        "Glad",
         "glfw",
         "ImGui",
         "Rye",
 
-        "pthread",
+        "vulkan",
         "dl",
+        "pthread",
         "tbb",
     }

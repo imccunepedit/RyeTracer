@@ -2,12 +2,12 @@
 
 #include <stdlib.h>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_vulkan.h"
 
 
 using namespace Barley;
@@ -24,7 +24,7 @@ void Window::Run()
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
