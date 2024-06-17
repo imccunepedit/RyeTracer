@@ -12,10 +12,11 @@ namespace Barley {
     struct QueueFamilyIndices
     {
         std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
 
         bool IsComplete()
         {
-            return graphicsFamily.has_value();
+            return graphicsFamily.has_value() && presentFamily.has_value();
         }
     };
 
@@ -47,8 +48,11 @@ namespace Barley {
             VkInstance m_vulkanInstance;
             VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
             VkDevice m_logicalDevice;
-            VkQueue m_graphicsQueue;
+
             VkSurfaceKHR m_surface;
+
+            VkQueue m_graphicsQueue;
+            VkQueue m_presentQueue;
 
 
         //     bool showDemoWindow = false;
