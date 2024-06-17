@@ -1,28 +1,34 @@
 #ifndef APP_H
 #define APP_H
 
-#include "imgui.h"
+#include <vulkan/vulkan.h>
+// include "imgui.h"
 
 class GLFWwindow;
 
 namespace Barley {
     class Window {
         public:
+            void Run();
+
+
+        protected:
             Window();
             virtual ~Window();
 
-            void Run();
-
-        public:
-            GLFWwindow* windowHandle;
-
-        private:
             virtual void Update() {};
             virtual void AppMenu() {};
 
-            bool showDemoWindow = false;
+        private:
+            void createInstance();
+
+        private:
+            GLFWwindow* m_windowHandle;
+            VkInstance m_instance;
+
+        //     bool showDemoWindow = false;
             bool shouldQuit = false;
-            ImVec4 clearColor = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
+            // ImVec4 clearColor = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
 
     };
 }

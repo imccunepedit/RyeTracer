@@ -14,9 +14,7 @@ namespace Barley {
             void Set(glm::vec4* data);
             void Resize();
             void Draw();
-            void BindImage() {
-                glBindImageTexture(0, m_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-            }
+            void BindImage(); // tell the gpu to use our image for inout
 
         private:
             void Reset();
@@ -28,7 +26,7 @@ namespace Barley {
             bool needsUpdate = false;
 
         private:
-            GLuint m_texture;
+            // GLuint m_texture; // texture id
 
     };
 }
