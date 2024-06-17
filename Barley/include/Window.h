@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <vector>
+#include <string>
 
 #include <vulkan/vulkan.h>
 // include "imgui.h"
@@ -10,6 +11,8 @@
 class GLFWwindow;
 
 namespace Barley {
+
+
     struct QueueFamilyIndices
     {
         std::optional<uint32_t> graphicsFamily;
@@ -26,6 +29,8 @@ namespace Barley {
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
+
+
     class Window {
         public:
             void Run();
@@ -45,6 +50,9 @@ namespace Barley {
             void PickPhysicalDevice();
             void CreateLogicalDevice();
             void CreateSwapChain();
+            void CreateImageViews();
+            void CreateGraphicsPipeline();
+            void CreateRenderPass();
 
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
             bool CheckValidationLayerSupport();
@@ -54,6 +62,8 @@ namespace Barley {
             VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
             VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
             VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+            VkShaderModule CreateShaderModule(const std::vector<char>& code);
+            static std::vector<char> ReadFile(const std::string& filename);
 
         private:
             GLFWwindow* m_windowHandle;
@@ -67,8 +77,10 @@ namespace Barley {
             std::vector<VkImage> m_swapChainImages;
             VkFormat m_swapChainImageFormat;
             VkExtent2D m_swapChainExtent;
-            std::vector<VkImageView> swapChainImageViews;
-
+            std::vector<VkImageView> m_swapChainImageViews;
+            VkRenderPass m_renderPass;
+            VkPipelineLayout m_pipelineLayout;
+            VkPipeline m_graphicsPipeline;
 
 
         //     bool showDemoWindow = false;

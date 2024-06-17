@@ -1,10 +1,11 @@
 #include "Window.h"
 
 #include <iostream>
-#include <cstring>
 #include <set>
 #include <limits>
 #include <algorithm>
+#include <fstream>
+#include <cstring>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -32,6 +33,7 @@ const bool enableValidationLayers = false;
 #endif
 
 
+
 using namespace Barley;
 
 void Window::Run()
@@ -40,45 +42,7 @@ void Window::Run()
     {
         // tell glfw to look for events
         glfwPollEvents();
-
-        // // tell opengl what color to make the rendered buffer
-        // glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-        // glClear(GL_COLOR_BUFFER_BIT);
-
-        // ImGui_ImplVulkan_NewFrame();
-        // ImGui_ImplGlfw_NewFrame();
-        // ImGui::NewFrame();
-
-        // ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode); // do the docking things, make sure whats rendered in the background can still be seen
-
-
         Update();
-
-
-        // // show a menu bar, useful for demo window and quitting the application
-        // if (ImGui::BeginMainMenuBar())
-        // {
-        //     if (ImGui::BeginMenu("Menu"))
-        //     {
-        //         ImGui::MenuItem("Demo Window", NULL, &showDemoWindow);
-        //         ImGui::ColorEdit4("Background (Clear) color", (float*) &clearColor, ImGuiColorEditFlags_NoInputs);
-        //         ImGui::MenuItem("Quit", NULL, &shouldQuit);
-        //         ImGui::EndMenu();
-        //     }
-
-        //     AppMenu();
-        //     ImGui::EndMainMenuBar();
-        // }
-
-        // // show the demo window, very useful
-        // if (showDemoWindow)
-        //     ImGui::ShowDemoWindow();
-
-
-        // ImGui::Render();
-        // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // swap the currently displayed buffer with the one that was just rendered
         glfwSwapBuffers(m_windowHandle);
     }
 
@@ -93,13 +57,21 @@ Window::Window()
     PickPhysicalDevice();
     CreateLogicalDevice();
     CreateSwapChain();
+    CreateImageViews();
+    CreateRenderPass();
+    CreateGraphicsPipeline();
 }
 
-Window::~Window() {
-    // ImGui_ImplOpenGL3_Shutdown();
-    // ImGui_ImplGlfw_Shutdown();
-    // ImGui::DestroyContext();
+Window::~Window()
+{
+    vkDestroyPipeline(m_logicalDevice, m_graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(m_logicalDevice, m_pipelineLayout, nullptr);
+    vkDestroyRenderPass(m_logicalDevice, m_renderPass, nullptr);
     // destroy vulkan stuff
+    for (auto imageView : m_swapChainImageViews) {
+        vkDestroyImageView(m_logicalDevice, imageView, nullptr);
+    }
+
     vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, nullptr);
     VkSwapchainKHR swapChain;
     vkDestroyDevice(m_logicalDevice, nullptr);
@@ -328,9 +300,184 @@ void Window::CreateSwapChain()
     m_swapChainImages.resize(imageCount);
     vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, m_swapChainImages.data());
     m_swapChainImageFormat = surfaceFormat.format;
+    m_swapChainExtent = extent;
 }
 
+void Window::CreateImageViews()
+{
+    m_swapChainImageViews.resize(m_swapChainImages.size());
 
+    for (size_t i = 0; i < m_swapChainImages.size(); ++i) {
+        VkImageViewCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        createInfo.image = m_swapChainImages[i];
+
+        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        createInfo.format = m_swapChainImageFormat;
+
+        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+        createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        createInfo.subresourceRange.baseMipLevel = 0;
+        createInfo.subresourceRange.levelCount = 1;
+        createInfo.subresourceRange.baseArrayLayer = 0;
+        createInfo.subresourceRange.layerCount = 1;
+
+        if (vkCreateImageView(m_logicalDevice, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS)
+            throw std::runtime_error("ERROR: failed to create image views");
+
+    }
+}
+
+void Window::CreateRenderPass()
+{
+    VkAttachmentDescription colorAttachment{};
+    colorAttachment.format = m_swapChainImageFormat;
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
+    VkAttachmentReference colorAttachmentRef{};
+    colorAttachmentRef.attachment = 0;
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    VkSubpassDescription subpass{};
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = 1;
+    subpass.pColorAttachments = &colorAttachmentRef;
+
+    VkRenderPassCreateInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassInfo.attachmentCount = 1;
+    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.subpassCount = 1;
+    renderPassInfo.pSubpasses = &subpass;
+
+    if (vkCreateRenderPass(m_logicalDevice, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+        throw std::runtime_error("ERROR: failed to create render pass");
+    }
+
+
+}
+
+void Window::CreateGraphicsPipeline()
+{
+    auto vertShaderCode = ReadFile("build/shaders/vert.spv");
+    auto fragShaderCode = ReadFile("build/shaders/frag.spv");
+
+    VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
+    VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
+
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vertShaderStageInfo.module = vertShaderModule;
+    vertShaderStageInfo.pName = "main";
+
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    fragShaderStageInfo.module = fragShaderModule;
+    fragShaderStageInfo.pName = "main";
+
+    VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+
+    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputInfo.vertexBindingDescriptionCount = 0;
+    vertexInputInfo.vertexAttributeDescriptionCount = 0;
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+    inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+    VkPipelineViewportStateCreateInfo viewportState{};
+    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.viewportCount = 1;
+    viewportState.scissorCount = 1;
+
+    VkPipelineRasterizationStateCreateInfo rasterizer{};
+    rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizer.depthClampEnable = VK_FALSE;
+    rasterizer.rasterizerDiscardEnable = VK_FALSE;
+    rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterizer.lineWidth = 1.0f;
+    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+    rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizer.depthBiasEnable = VK_FALSE;
+
+    VkPipelineMultisampleStateCreateInfo multisampling{};
+    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisampling.sampleShadingEnable = VK_FALSE;
+    multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.blendEnable = VK_FALSE;
+
+    VkPipelineColorBlendStateCreateInfo colorBlending{};
+    colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    colorBlending.logicOpEnable = VK_FALSE;
+    colorBlending.logicOp = VK_LOGIC_OP_COPY;
+    colorBlending.attachmentCount = 1;
+    colorBlending.pAttachments = &colorBlendAttachment;
+    colorBlending.blendConstants[0] = 0.0f;
+    colorBlending.blendConstants[1] = 0.0f;
+    colorBlending.blendConstants[2] = 0.0f;
+    colorBlending.blendConstants[3] = 0.0f;
+
+    std::vector<VkDynamicState> dynamicStates = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR
+    };
+
+    VkPipelineDynamicStateCreateInfo dynamicState{};
+    dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    dynamicState.pDynamicStates = dynamicStates.data();
+
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutInfo.setLayoutCount = 0;
+    pipelineLayoutInfo.pushConstantRangeCount = 0;
+
+    if (vkCreatePipelineLayout(m_logicalDevice, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create pipeline layout!");
+    }
+
+
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.stageCount = 2;
+    pipelineInfo.pStages = shaderStages;
+    pipelineInfo.pVertexInputState = &vertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pMultisampleState = &multisampling;
+    pipelineInfo.pDepthStencilState = nullptr; // Optional
+    pipelineInfo.pColorBlendState = &colorBlending;
+    pipelineInfo.pDynamicState = &dynamicState;
+    pipelineInfo.layout = m_pipelineLayout;
+    pipelineInfo.renderPass = m_renderPass;
+    pipelineInfo.subpass = 0;
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+    pipelineInfo.basePipelineIndex = -1; // Optional
+
+    if (vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS) {
+        throw std::runtime_error("ERROR: failed to create graphics pipeline");
+    }
+
+
+    vkDestroyShaderModule(m_logicalDevice, fragShaderModule, nullptr);
+    vkDestroyShaderModule(m_logicalDevice, vertShaderModule, nullptr);
+}
 
 SwapChainSupportDetails Window::QuerySwapChainSupport(VkPhysicalDevice device)
 {
@@ -492,19 +639,35 @@ bool Window::CheckValidationLayerSupport()
     return false;
 }
 
+VkShaderModule Window::CreateShaderModule(const std::vector<char>& code)
+{
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = code.size();
+    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+    VkShaderModule shaderModule;
+    if (vkCreateShaderModule(m_logicalDevice, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+        throw std::runtime_error("ERROR: failed to create shader module");
+    }
 
+    return shaderModule;
+}
 
-    // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    //     std::exit(3);
+std::vector<char> Window::ReadFile(const std::string& filename)
+{
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
-    // IMGUI_CHECKVERSION();
-    // ImGui::CreateContext();
-    // ImGuiIO& io = ImGui::GetIO(); (void)io;
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    if (!file.is_open()) {
+        throw std::runtime_error("ERROR: failed to open file");
+    }
 
-    // ImGui::StyleColorsDark();
+    size_t fileSize = (size_t) file.tellg();
+    std::vector<char> buffer(fileSize);
 
-    // ImGui_ImplGlfw_InitForOpenGL(windowHandle, true);
-    // ImGui_ImplOpenGL3_Init("#version 330");
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+    file.close();
+
+    return buffer;
+
+}
