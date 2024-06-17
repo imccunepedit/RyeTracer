@@ -53,6 +53,10 @@ namespace Barley {
             void CreateImageViews();
             void CreateGraphicsPipeline();
             void CreateRenderPass();
+            void CreateFramebuffers();
+            void CreateCommandPool();
+            void CreateCommandBuffer();
+            void CreateSyncObjects();
 
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
             bool CheckValidationLayerSupport();
@@ -64,6 +68,7 @@ namespace Barley {
             VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
             VkShaderModule CreateShaderModule(const std::vector<char>& code);
             static std::vector<char> ReadFile(const std::string& filename);
+            void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
         private:
             GLFWwindow* m_windowHandle;
@@ -73,19 +78,27 @@ namespace Barley {
             VkSurfaceKHR m_surface;
             VkQueue m_graphicsQueue;
             VkQueue m_presentQueue;
-            VkSwapchainKHR m_swapChain;
-            std::vector<VkImage> m_swapChainImages;
-            VkFormat m_swapChainImageFormat;
-            VkExtent2D m_swapChainExtent;
-            std::vector<VkImageView> m_swapChainImageViews;
             VkRenderPass m_renderPass;
             VkPipelineLayout m_pipelineLayout;
             VkPipeline m_graphicsPipeline;
 
+            VkCommandPool m_commandPool;
+            VkCommandBuffer m_commandBuffer;
 
-        //     bool showDemoWindow = false;
+            VkSwapchainKHR m_swapChain;
+            VkFormat m_swapChainImageFormat;
+            VkExtent2D m_swapChainExtent;
+            std::vector<VkImage> m_swapChainImages;
+            std::vector<VkImageView> m_swapChainImageViews;
+            std::vector<VkFramebuffer> m_swapChainFramebuffers;
+
+            VkSemaphore m_imageAvailableSemaphore;
+            VkSemaphore m_renderFinishedSemaphore;
+            VkFence m_inFlightFence;
+
+
+            // bool showDemoWindow = false;
             bool shouldQuit = false;
-            // ImVec4 clearColor = ImVec4(0.07f, 0.13f, 0.17f, 1.0f);
 
     };
 }
