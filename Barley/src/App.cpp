@@ -19,7 +19,7 @@ using namespace Barley;
 using namespace Rye;
 
 App::App()
-: Compute(Shader("Rye/src/Shaders/Compute.glsl"))
+: Compute(Shader("Rye/Shaders/RayTracing.comp"))
 {
     m_scene.Initialize();
     m_camera.Initialize();
@@ -133,8 +133,24 @@ void App::Update()
 #else
     Viewport.BindImage();
     Compute.Use();
-    Compute.SetMat4("inverseView", m_camera.m_inverseView);
-    Compute.SetMat4("inverseProjection", m_camera.m_inverseProjection);
+    Compute.SetMat4("inverseView", m_camera.inverseView);
+    Compute.SetMat4("inverseProjection", m_camera.inverseProjection);
+    Compute.SetVec4("cameraPosition", m_camera.position);
+
+
+    Compute.SetVec4("Materials[0].color", glm::vec4(0.5f));
+
+    Compute.SetVec4("Objects[0].position", glm::vec4(0,0,1,1));
+    Compute.SetFloat("Objects[0].raidius", 1.0f);
+    Compute.SetInt("Objects[0].materialID", 0);
+
+    Compute.SetVec4("Objects[1].position", glm::vec4(0,0,-1000,1));
+    Compute.SetFloat("Objects[1].raidius", 1000);
+    Compute.SetInt("Objects[1].materialID", 0);
+
+    Compute.SetVec4("Objects[2].position", glm::vec4(4,0,1,1));
+    Compute.SetFloat("Objects[2].raidius", 1.0f);
+    Compute.SetInt("Objects[2].materialID", 0);
 
 
     glDispatchCompute((unsigned int)Viewport.width, (unsigned int)Viewport.height, 1);

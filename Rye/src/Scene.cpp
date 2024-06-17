@@ -69,8 +69,7 @@ void Scene::Initialize()
     AddMaterial(std::make_shared<GlossyBSDF>());
     AddMaterial(std::make_shared<GlassBSDF>());
 
-#if 0
-    ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
+#if 1
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, materials[0])));
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(4,4,0,1), 1, materials[3])));
     AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(-4,4,0,1), 1, materials[2])));

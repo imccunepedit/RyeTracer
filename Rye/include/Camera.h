@@ -18,7 +18,7 @@ namespace Rye {
             void Initialize();
             void Resize(const int& w, const int& h);
 
-            glm::vec4 GetRayOrigin() { return m_position; }
+            glm::vec4 GetRayOrigin() { return position; }
             glm::vec4 GetRayDirection(const int& index);
 
             void OnUpdate(const float& deltaTime);
@@ -41,8 +41,9 @@ namespace Rye {
             float vFoV = 45;
             int rayCount = 1;
 
-            glm::mat4 m_inverseProjection = glm::mat4(1);
-            glm::mat4 m_inverseView = glm::mat4(1);
+            glm::mat4 inverseProjection = glm::mat4(1);
+            glm::mat4 inverseView = glm::mat4(1);
+            glm::vec4 position = glm::vec4(0,0,0,1);
 
         private:
             float m_vFoV = 0;
@@ -50,7 +51,6 @@ namespace Rye {
 
             std::vector<glm::vec4> m_rayDirections;
 
-            glm::vec4 m_position = glm::vec4(0,-10,0,1);
 
             glm::mat4 m_projection = glm::mat4(1);
             glm::mat4 m_view = glm::mat4(1);

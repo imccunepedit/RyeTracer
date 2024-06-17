@@ -57,25 +57,25 @@ glm::vec4 Camera::GetRayDirection(const int& index)
 
 void Camera::CalculateViewMatrix()
 {
-    m_view = glm::lookAt(glm::vec3(m_position), glm::vec3(m_position+m_forward), glm::vec3(0,0,1));
-    m_inverseView = glm::inverse(m_view);
+    m_view = glm::lookAt(glm::vec3(position), glm::vec3(position+m_forward), glm::vec3(0,0,1));
+    inverseView = glm::inverse(m_view);
 }
 
 void Camera::CalculatePerspectiveMatrix()
 {
     m_projection = glm::perspective(glm::radians(m_vFoV), m_aspectRatio, 0.1f, 100.0f);
-    m_inverseProjection = glm::inverse(m_projection);
+    inverseProjection = glm::inverse(m_projection);
 }
 
 void Camera::CalculateBasisVectors()
 {
-    m_right = m_inverseView * glm::vec4(1,0,0,0);
-    m_up = m_inverseView * glm::vec4(0,1,0,0);
+    m_right = inverseView * glm::vec4(1,0,0,0);
+    m_up = inverseView * glm::vec4(0,1,0,0);
 }
 
 void Camera::CalculateRays()
 {
-    std::cout << "new dirs" << std::endl;
+    // std::cout << "new dirs" << std::endl;
     rayCount = film.width * film.height;
 
     int w = film.width;
@@ -91,8 +91,8 @@ void Camera::CalculateRays()
 
             rayScreenTarget = rayScreenTarget*2.0f - 1.0f;
 
-            glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
-            glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
+            glm::vec4 rayWorldTarget = inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+            glm::vec4 rayWorldDirection = inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
 
             m_rayDirections[i+ j*w] = rayWorldDirection;
         }
@@ -138,7 +138,7 @@ void Camera::Translate(const float& deltaTime)
 
     if (glm::dot(translation, translation) > 0.0001)
     {
-        m_position += translation;
+        position += translation;
 
         CalculateViewMatrix();
         film.needsReset = true;
@@ -180,7 +180,7 @@ void Camera::DebugWindow()
 {
     ImGui::Begin("Camera Debug", NULL, ImGuiWindowFlags_NoCollapse);
     ImGui::Text("vertical fov:  % .2f", m_vFoV);
-    ImGui::Text("position:      % .2f, % .2f, % .2f", m_position.x, m_position.y, m_position.z);
+    ImGui::Text("position:      % .2f, % .2f, % .2f", position.x, position.y, position.z);
     ImGui::Text("forward:       % .2f, % .2f, % .2f", m_forward.x, m_forward.y, m_forward.z);
     ImGui::Text("up:            % .2f, % .2f, % .2f", m_up.x, m_up.y, m_up.z);
     ImGui::Text("right:         % .2f, % .2f, % .2f", m_right.x, m_right.y, m_right.z);
