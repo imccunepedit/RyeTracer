@@ -1,20 +1,15 @@
-#ifndef APP_H
-#define APP_H
+#ifndef WINDOW_H_
+#define WINDOW_H_
 
 #include <optional>
-#include <array>
 #include <vector>
 #include <string>
 
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
-// include "imgui.h"
 
 class GLFWwindow;
 
 namespace Barley {
-
-
     struct QueueFamilyIndices
     {
         std::optional<uint32_t> graphicsFamily;
@@ -32,54 +27,39 @@ namespace Barley {
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    struct UniformBufferObject {
-        glm::mat4 model;
-        glm::mat4 view;
-        glm::mat4 proj;
-    };
-
-    struct Vertex {
-        glm::vec2 pos;
-        glm::vec3 color;
-        static VkVertexInputBindingDescription getBindingDescription() {
-            VkVertexInputBindingDescription bindingDescription{};
-            bindingDescription.binding = 0;
-            bindingDescription.stride = sizeof(Vertex);
-            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-            return bindingDescription;
-        }
-
-        static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
-            attributeDescriptions[0].binding = 0;
-            attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[0].offset = offsetof(Vertex, pos);
-
-            attributeDescriptions[1].binding = 0;
-            attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-            return attributeDescriptions;
-        }
-
-    };
 
     class Window {
         public:
             void Run();
 
-
         protected:
             Window();
             virtual ~Window();
 
-            virtual void Update() {};
-            virtual void AppMenu() {};
+            virtual void Update() = 0;
+            virtual void Draw() = 0;
+            virtual void AppMenu() = 0;
 
         private:
-            void CreateGLFWWindow();
+            void Init();
+            void InitGlfw();
+            void InitVulkan();
+            void InitImGui();
+
+            void Close();
+            void CleanImGui();
+            void CleanVulkan();
+            void CleanGlfw();
+
+        private:
+            void BeginDrawVulkan();
+            void BeginDrawImGui();
+
+            void EndDrawImGui();
+            void EndDrawVulkan();
+
+        private:
+            // vulkan initialization functions
             void CreateSurface();
             void CreateVulkanInstance();
             void PickPhysicalDevice();
@@ -100,10 +80,11 @@ namespace Barley {
             void CreateDescriptorPool();
             void CreateDescriptorSets();
             void CreateDescriptorSetLayout();
-            void CreateImGUI();
-            void CleanImGUI();
 
-            void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+            // vulkan functions during frame
+            void StartRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+            void EndRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
 
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
             bool IsDeviceSuitable(VkPhysicalDevice device);
@@ -135,21 +116,34 @@ namespace Barley {
 
         private:
             GLFWwindow* m_windowHandle;
+
             VkInstance m_vulkanInstance;
+            VkDebugUtilsMessengerEXT m_debugMessenger;
+            VkSurfaceKHR m_surface;
+
             VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
             VkDevice m_logicalDevice;
-            VkSurfaceKHR m_surface;
+
             VkQueue m_graphicsQueue;
             VkQueue m_presentQueue;
+
+            VkSwapchainKHR m_swapChain;
+            std::vector<VkImage> m_swapChainImages;
+            VkFormat m_swapChainImageFormat;
+            VkExtent2D m_swapChainExtent;
+            std::vector<VkImageView> m_swapChainImageViews;
+            std::vector<VkFramebuffer> m_swapChainFramebuffers;
+
             VkRenderPass m_renderPass;
+            VkDescriptorSetLayout m_descriptorSetLayout;
             VkPipelineLayout m_pipelineLayout;
             VkPipeline m_graphicsPipeline;
+
             VkCommandPool m_commandPool;
-            std::vector<VkCommandBuffer> m_commandBuffers;
+
 
             VkBuffer m_vertexBuffer;
             VkDeviceMemory m_vertexBufferMemory;
-
             VkBuffer m_indexBuffer;
             VkDeviceMemory m_indexBufferMemory;
 
@@ -157,40 +151,25 @@ namespace Barley {
             std::vector<VkDeviceMemory> m_uniformBuffersMemory;
             std::vector<void*> m_uniformBuffersMapped;
 
-            VkSwapchainKHR m_swapChain;
-            VkFormat m_swapChainImageFormat;
-            VkExtent2D m_swapChainExtent;
-            std::vector<VkImage> m_swapChainImages;
-            std::vector<VkImageView> m_swapChainImageViews;
-            std::vector<VkFramebuffer> m_swapChainFramebuffers;
+            VkDescriptorPool m_descriptorPool;
+            std::vector<VkDescriptorSet> m_descriptorSets;
+
+            std::vector<VkCommandBuffer> m_commandBuffers;
 
             std::vector<VkSemaphore> m_imageAvailableSemaphores;
             std::vector<VkSemaphore> m_renderFinishedSemaphores;
             std::vector<VkFence> m_inFlightFences;
 
-            VkDescriptorPool m_descriptorPool;
-            VkDescriptorSetLayout m_descriptorSetLayout;
-            std::vector<VkDescriptorSet> m_descriptorSets;
-
-            VkDebugUtilsMessengerEXT m_debugMessenger;
-
-            const std::vector<Vertex> vertices = {
-                {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-                {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-                {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
-            };
-            const std::vector<uint16_t> indices = {
-                0, 1, 2, 2, 3, 0
-            };
+            uint32_t m_frameIndex = 0;
+            uint32_t m_imageIndex;
 
             bool m_framebufferResized = false;
-            uint32_t m_frameIndex = 0;
-            // bool showDemoWindow = false;
-            bool shouldQuit = false;
+
+            bool m_shouldQuit = false;
+            // bool m_showDemoWindow = false;
 
     };
 }
 
 
-#endif // APP_H
+#endif // WINDOW_H_

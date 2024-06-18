@@ -19,7 +19,7 @@ project "Barley"
     links {
         "glfw",
         "ImGui",
-        "Rye",
+        -- "Rye",
 
         "vulkan",
         "dl",

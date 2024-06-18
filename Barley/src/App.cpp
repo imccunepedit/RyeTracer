@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "imgui.h"
+
 using namespace Barley;
 
 App::App() {}
@@ -10,8 +12,10 @@ App::~App() = default;
 
 void App::AppMenu() {}
 
-void App::Update()
+void App::Draw()
 {
-    // std::cout << 1 << std::endl;
+    // ImGui::Begin("TEST");
+    // ImGui::Text("test");
+    // ImGui::End();
 
 };
