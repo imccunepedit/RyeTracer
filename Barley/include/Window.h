@@ -103,6 +103,8 @@ namespace Barley {
             void CreateImGUI();
             void CleanImGUI();
 
+            void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
             bool IsDeviceSuitable(VkPhysicalDevice device);
             bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
@@ -112,8 +114,10 @@ namespace Barley {
             VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
             VkShaderModule CreateShaderModule(const std::vector<char>& code);
             static std::vector<char> ReadFile(const std::string& filename);
-            void StartRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-            void EndRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
+
+            void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+            VkCommandBuffer BeginSingleTimeCommands();
 
             static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
 

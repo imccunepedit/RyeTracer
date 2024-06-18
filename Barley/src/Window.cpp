@@ -62,12 +62,6 @@ void Window::Run()
     {
         glfwPollEvents();
 
-        // (After event loop)
-        // Start the Dear ImGui frame
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        ImGui::ShowDemoWindow(); // Show demo window! :)
 
         vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX);
 
@@ -83,17 +77,11 @@ void Window::Run()
 
         vkResetFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex]);
 
-        vkResetCommandBuffer(m_commandBuffers[m_frameIndex], 0);
-
-        StartRecordCommandBuffer(m_commandBuffers[m_frameIndex], imageIndex);
-
-        Update();
-        ImGui::Render();
-        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_commandBuffers[m_frameIndex]);
-
-        EndRecordCommandBuffer(m_commandBuffers[m_frameIndex], imageIndex);
 
         UpdateUniformBuffer(m_frameIndex);
+        RecordCommandBuffer(m_commandBuffers[m_frameIndex], imageIndex);
+
+        // Update();
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -127,7 +115,7 @@ void Window::Run()
 
         result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
 
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_framebufferResized) {
             m_framebufferResized = false;
             RecreateSwapChain();
         } else if (result != VK_SUCCESS) {
@@ -135,11 +123,8 @@ void Window::Run()
         }
 
 
-
-
         vkDeviceWaitIdle(m_logicalDevice);
 
-        // tell glfw to look for events
 
         glfwSwapBuffers(m_windowHandle);
         m_frameIndex = (m_frameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
@@ -795,11 +780,11 @@ void Window::CreateCommandBuffers()
         throw std::runtime_error("ERROR: failed to allocate command buffers");
 }
 
-void Window::StartRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void Window::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = 0; // Optional
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     beginInfo.pInheritanceInfo = nullptr; // Optional
 
     if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
@@ -819,10 +804,6 @@ void Window::StartRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
 
-}
-
-void Window::EndRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
-{
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -847,6 +828,16 @@ void Window::EndRecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imag
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descriptorSets[m_frameIndex], 0, nullptr);
     vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+
+
+    ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplVulkan_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
 
     vkCmdEndRenderPass(commandBuffer);
 
@@ -898,15 +889,18 @@ void Window::CreateDescriptorSetLayout()
 
 void Window::CreateDescriptorPool()
 {
-    VkDescriptorPoolSize poolSize{};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    std::array<VkDescriptorPoolSize, 2> poolSizes{};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;;
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * 2;
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
-    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    poolInfo.poolSizeCount = poolSizes.size();
+    poolInfo.pPoolSizes = poolSizes.data();
+    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * 2;
 
     if (vkCreateDescriptorPool(m_logicalDevice, &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS)
         throw std::runtime_error("ERROR: failed to create descriptor pool");
@@ -950,28 +944,6 @@ void Window::CreateDescriptorSets()
 
 void Window::CreateImGUI()
 {
-    VkDescriptorPoolSize pool_sizes[] = { { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-                                          { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 } };
-
-    VkDescriptorPoolCreateInfo pool_info = {};
-    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets = 1000;
-    pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
-    pool_info.pPoolSizes = pool_sizes;
-
-    VkDescriptorPool imguiPool;
-    vkCreateDescriptorPool(m_logicalDevice, &pool_info, nullptr, &imguiPool);
-
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -984,26 +956,28 @@ void Window::CreateImGUI()
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForVulkan(m_windowHandle, true);
-    ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = m_vulkanInstance;
-    init_info.PhysicalDevice = m_physicalDevice;
-    init_info.Device = m_logicalDevice;
-    init_info.QueueFamily = FindQueueFamilies(m_physicalDevice).graphicsFamily.value();
-    init_info.Queue = m_graphicsQueue;
-    init_info.RenderPass = m_renderPass;
-    init_info.DescriptorPool = imguiPool;
-    init_info.Subpass = 0;
-    init_info.MinImageCount = 2;
-    init_info.ImageCount = 2;
-    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    ImGui_ImplVulkan_InitInfo initInfo = {};
+    initInfo.DescriptorPool = m_descriptorPool;
+    initInfo.RenderPass = m_renderPass;
+    initInfo.Device = m_logicalDevice;
+    initInfo.PhysicalDevice = m_physicalDevice;
+    initInfo.ImageCount = MAX_FRAMES_IN_FLIGHT;
+    initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    initInfo.Instance = m_vulkanInstance;
+    initInfo.Queue = m_graphicsQueue;
+    initInfo.QueueFamily = FindQueueFamilies(m_physicalDevice).graphicsFamily.value();
+    initInfo.Subpass = 0;
+    initInfo.MinImageCount = 2;
     // init_info.PipelineCache = ;
     // init_info.Allocator = YOUR_ALLOCATOR;
     // init_info.CheckVkResultFn = nullptr;
-    ImGui_ImplVulkan_Init(&init_info);
-    // (this gets a bit more complicated, see example app for full reference)
-    // ImGui_ImplVulkan_CreateFontsTexture(m_commandBuffers.data());
-    // (your code submit a queue)
-    // ImGui_ImplVulkan_DestroyFontUploadObjects();
+    ImGui_ImplVulkan_Init(&initInfo);
+
+    VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+    ImGui_ImplVulkan_CreateFontsTexture();
+    EndSingleTimeCommands(commandBuffer);
+
+    ImGui_ImplVulkan_DestroyFontsTexture();
 
 }
 
@@ -1041,7 +1015,7 @@ SwapChainSupportDetails Window::QuerySwapChainSupport(VkPhysicalDevice device)
 VkSurfaceFormatKHR Window::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
     for (const auto& availableFormat : availableFormats) {
-        if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+        if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
             return availableFormat;
 
     }
@@ -1294,6 +1268,26 @@ void Window::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryP
 
 void Window::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
+VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+
+    VkBufferCopy copyRegion{};
+    copyRegion.size = size;
+    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+    EndSingleTimeCommands(commandBuffer);
+}
+
+void Window::UpdateUniformBuffer(uint32_t frameIndex)
+{
+    UniformBufferObject ubo{};
+    ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.proj = glm::perspective(glm::radians(45.0f), m_swapChainExtent.width / (float) m_swapChainExtent.height, 0.1f, 10.0f);
+    ubo.proj[1][1] *= -1;
+    memcpy(m_uniformBuffersMapped[frameIndex], &ubo, sizeof(ubo));
+}
+
+VkCommandBuffer Window::BeginSingleTimeCommands() {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -1309,12 +1303,10 @@ void Window::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 
     vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
-    VkBufferCopy copyRegion{};
-    copyRegion.srcOffset = 0; // Optional
-    copyRegion.dstOffset = 0; // Optional
-    copyRegion.size = size;
-    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+    return commandBuffer;
+}
 
+void Window::EndSingleTimeCommands(VkCommandBuffer commandBuffer) {
     vkEndCommandBuffer(commandBuffer);
 
     VkSubmitInfo submitInfo{};
@@ -1326,15 +1318,4 @@ void Window::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
     vkQueueWaitIdle(m_graphicsQueue);
 
     vkFreeCommandBuffers(m_logicalDevice, m_commandPool, 1, &commandBuffer);
-
-}
-
-void Window::UpdateUniformBuffer(uint32_t frameIndex)
-{
-    UniformBufferObject ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f), m_swapChainExtent.width / (float) m_swapChainExtent.height, 0.1f, 10.0f);
-    ubo.proj[1][1] *= -1;
-    memcpy(m_uniformBuffersMapped[frameIndex], &ubo, sizeof(ubo));
 }
