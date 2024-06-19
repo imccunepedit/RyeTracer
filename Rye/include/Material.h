@@ -18,10 +18,12 @@ namespace Rye {
                        Emissive};
 
         public:
-            Material() = default;
-            Material(Type type) : materialType(type) {}
-            Material(Type type, glm::vec4 color) : materialType(type), color(color) {}
-            Material(Type type, glm::vec4 color, float roughness) : materialType(type), color(color), roughness(roughness) {}
+            Material(Type type)
+                : materialType(type) {}
+            Material(Type type, glm::vec4 color)
+                : materialType(type), color(color) {}
+            Material(Type type, glm::vec4 color, float roughness)
+                : materialType(type), color(color), roughness(roughness) {}
 
         public:
             bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
@@ -31,9 +33,9 @@ namespace Rye {
             bool DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
 
         public:
-            int materialType = Lambertian;
+            int materialType;
             glm::vec4 color = glm::vec4(0.5f,0.5f,0.5f,1.0f);
-            float roughness = 0;
+            float roughness = 1;
 
             bool doubleSided = false;
             float indexOfRefraction = 1.5f;

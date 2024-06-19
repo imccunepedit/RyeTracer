@@ -10,18 +10,22 @@ namespace Rye {
     class HitData;
 
     class Object {
-        enum Type {Sphere,
-                   Quad};
         public:
-            Object() = default;
-            Object(Transform transform, int materialID) : transform(transform), m_materialID(materialID) {}
+            enum Type {Sphere, Quad};
+        public:
+            Object(Type type)
+                : objectType(type) {}
+            Object(Type type, Transform transform, int materialID)
+                : objectType(type), transform(transform), m_materialID(materialID) {}
 
             bool Hit(const Ray& ray, HitData& hit) const;
+            bool SphereHit(const Ray& ray, HitData& hit) const;
+            bool QuadHit(const Ray& ray, HitData& hit) const;
 
         public:
-            Transform transform = Transform(0);
+            Type objectType;
+            Transform transform = Transform();
             int m_materialID = 0;
-
     };
 }
 

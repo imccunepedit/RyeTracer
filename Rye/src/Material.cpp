@@ -12,12 +12,12 @@ bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
             scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed));
             return true;
 
-        case Conductor:
-            scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness;
-            return true;
+        // case Conductor:
+        //     scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness;
+        //     return true;
 
-        case Dielectric:
-            return DielectricBSDF(inRay, hit, scatterRay);
+        // case Dielectric:
+        //     return DielectricBSDF(inRay, hit, scatterRay);
 
         default:
             break;
@@ -43,10 +43,10 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             hit.color =  color * emissiveStrength;
             return;
 
-        case Conductor:
-            float f = Fresnel(inRay, hit.normal, 0.2f);
-            hit.color = (1-f) * color + f * glm::vec4(1);
-            return;
+        // case Conductor:
+        //     float f = Fresnel(inRay, hit.normal, 0.2f);
+        //     hit.color = (1-f) * color + f * glm::vec4(1);
+        //     return;
     }
 
 }

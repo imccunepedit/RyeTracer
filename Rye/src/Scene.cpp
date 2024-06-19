@@ -7,11 +7,6 @@
 #include "Material.h"
 #include "Object.h"
 
-#include "Objects/Sphere.h"
-#include "Objects/Quad.h"
-
-
-
 using namespace Rye;
 
 bool Scene::Hit(const Ray& ray, HitData& hit)
@@ -63,26 +58,27 @@ void Scene::Initialize()
     AddMaterial(Material(Material::Lambertian, glm::vec4(0,0,1.0f,1)));
     AddMaterial(Material(Material::Dielectric));
 
-#if 1
-    ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
-    AddObject(Object(Transform(glm::vec4(0,4,-1000,1), 999), 0));
-    AddObject(Object(Transform(glm::vec4(4,4,0,1), 1), 3));
-    AddObject(Object(Transform(glm::vec4(-4,4,0,1), 1), 2));
-    AddObject(Object(Transform(glm::vec4(0,4,1,1), 1), 1));
+#if 0
+    ambientColor = glm::vec4(0.6f,0.7f,0.75f, 2);
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,-1000), 999), 1));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(4,4,0), 1), 3));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(-4,4,3), glm::vec3(2,2,1)), 4));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,1), 1), 0));
+    AddObject(Object(Object::Quad, Transform(glm::vec3(0,4,1), 8, glm::vec3(90,0,0)), 0));
+
 
 #else
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 0));
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5,10, 1), 10, glm::vec3(180,  0,  0)), 1)); // top
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5, 0, 1), 10, glm::vec3(  0,  0,  0)), 1)); // bottom
+    AddObject(Object(Object::Quad, Transform(glm::vec4( 5,-5, 0, 1), 10, glm::vec3(  0,-90,  0)), 2)); // right
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(  0, 90,  0)), 3)); // left
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5, 0, 1), 10, glm::vec3( 90,  0,  0)), 1)); // back
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(-90,  0,  0)), 1)); // front
 
-    AddObject(std::make_shared<Quad>(glm::vec4(-3,-3, 9, 1), glm::vec4(0, 6, 0, 0), glm::vec4(6, 0, 0, 0), 0));
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5,10, 1), glm::vec4(0, 10, 0, 0), glm::vec4(10, 0, 0, 0), 1)); // top
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 10, 0, 0), 1)); // bottom
-    AddObject(std::make_shared<Quad>(glm::vec4( 5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(0, 10, 0, 0), 2)); // right
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 10, 0, 0), glm::vec4(0, 0, 10, 0), 3)); // left
-    AddObject(std::make_shared<Quad>(glm::vec4(-5, 5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 0, 10, 0), 1)); // back
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(10, 0, 0, 0), 1)); // front
-
-    AddObject(std::make_shared<Sphere>(glm::vec4(-3,0,1,1), 1, 6));
-    AddObject(std::make_shared<Sphere>(glm::vec4(0,0,1,1), 1, 5));
-    AddObject(std::make_shared<Sphere>(glm::vec4(3,0,1,1), 1, 4));
+    // AddObject(Object(Object::Sphere, Transform(glm::vec4(-3,0,1,1), 1), 6));
+    AddObject(Object(Object::Sphere, Transform(glm::vec4(0,0,1,1), 1), 5));
+    // AddObject(Object(Object::Sphere, Transform(glm::vec4(3,0,1,1), 1), 4));
 
 #endif
 }

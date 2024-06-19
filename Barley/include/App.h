@@ -25,7 +25,7 @@ namespace Barley {
             void AppMenu() override;
 
         private:
-            bool m_renderEveryFrame = false;
+            bool m_renderEveryFrame = true;
             bool m_showCameraDebug = false;
             bool m_rendering = false;
 

@@ -12,8 +12,8 @@
 
 #include "Camera.h"
 #include "Scene.h"
-#include "Objects/Sphere.h"
 #include "Material.h"
+#include "Object.h"
 
 using namespace Barley;
 using namespace Rye;
@@ -61,9 +61,9 @@ void App::Update()
 
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
-    if (ImGui::Button("Add Sphere")) {
-        m_scene.AddObject(Object(Transform(glm::vec4(10,0,0,1),1),0));;
-    }
+    // if (ImGui::Button("Add Sphere")) {
+    //     m_scene.AddObject(Object(Transform(glm::vec4(10,0,0,1),1),0));;
+    // }
 
     if (ImGui::TreeNode("Objects"))
     {
