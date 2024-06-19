@@ -37,7 +37,7 @@ namespace Barley {
             virtual ~Window();
 
             virtual void Update() = 0;
-            virtual void Draw() = 0;
+            virtual void ImGuiDraw() = 0;
             virtual void AppMenu() = 0;
 
         private:
@@ -51,12 +51,6 @@ namespace Barley {
             void CleanVulkan();
             void CleanGlfw();
 
-        private:
-            void BeginDrawVulkan();
-            void BeginDrawImGui();
-
-            void EndDrawImGui();
-            void EndDrawVulkan();
 
         private:
             // vulkan initialization functions
@@ -161,7 +155,6 @@ namespace Barley {
             std::vector<VkFence> m_inFlightFences;
 
             uint32_t m_frameIndex = 0;
-            uint32_t m_imageIndex;
 
             bool m_framebufferResized = false;
 

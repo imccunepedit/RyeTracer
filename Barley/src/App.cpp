@@ -12,10 +12,9 @@ App::~App() = default;
 
 void App::AppMenu() {}
 
-void App::Draw()
+void App::ImGuiDraw()
 {
-    // ImGui::Begin("TEST");
-    // ImGui::Text("test");
-    // ImGui::End();
-
+    ImGui::Begin("TEST");
+    ImGui::Text("test");
+    ImGui::End();
 };

@@ -12,7 +12,7 @@ namespace Barley {
 
         private:
             void Update() override {}
-            void Draw() override;
+            void ImGuiDraw() override;
             void AppMenu() override;
 
     };

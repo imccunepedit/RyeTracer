@@ -8,7 +8,6 @@ workspace "BarleyTracing"
 
     filter "configurations:release"
         defines { "NDEBUG" }
-        buildoptions { "-Os" }
         optimize "speed"
 
     filter "configurations:tracy"

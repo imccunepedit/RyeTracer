@@ -107,17 +107,89 @@ void Window::Run()
     while (!glfwWindowShouldClose(m_windowHandle) && !m_shouldQuit)
     {
         glfwPollEvents();
+        Update(); // update any logic in the "engine"/"game"
 
-        Update();
+        // beginning of vulkan draw
+        vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX);
 
-        BeginDrawVulkan();
-        BeginDrawImGui();
+        uint32_t imageIndex;
+        VkResult result = vkAcquireNextImageKHR(m_logicalDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_frameIndex], VK_NULL_HANDLE, &imageIndex);
 
-        Draw();
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+            RecreateSwapChain();
+            continue;
+        } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+            throw std::runtime_error("ERROR: failed to acquire swap chain image");
+        }
 
-        EndDrawImGui();
-        EndDrawVulkan();
+        vkResetFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex]);
 
+
+        UpdateUniformBuffer(m_frameIndex);
+        StartRecordCommandBuffer(m_commandBuffers[m_frameIndex], imageIndex);
+
+        // imgui begining of draw
+#ifndef IMGUI_DISABLE
+        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplVulkan_NewFrame();
+        ImGui::NewFrame();
+        ImGui::DockSpaceOverViewport(0,ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode); // do the docking things, make sure whats rendered in the background can still be seen
+        ImGui::ShowDemoWindow();
+#endif
+
+        ImGuiDraw();
+
+        // imgui end of draw
+#ifndef IMGUI_DISABLE
+        ImGui::Render();
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_commandBuffers[m_frameIndex]);
+#endif
+        // vulkan end of dra
+        EndRecordCommandBuffer(m_commandBuffers[m_frameIndex], imageIndex);
+
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        VkSemaphore waitSemaphores[] = {m_imageAvailableSemaphores[m_frameIndex]};
+        VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = waitSemaphores;
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &m_commandBuffers[m_frameIndex];
+
+        VkSemaphore signalSemaphores[] = {m_renderFinishedSemaphores[m_frameIndex]};
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = signalSemaphores;
+
+        if (vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, m_inFlightFences[m_frameIndex]) != VK_SUCCESS)
+            throw std::runtime_error("ERROR: failed to submit draw command buffer");
+
+
+        VkPresentInfoKHR presentInfo{};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = signalSemaphores;
+
+        VkSwapchainKHR swapChains[] = {m_swapChain};
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = swapChains;
+        presentInfo.pImageIndices = &imageIndex;
+
+        result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_framebufferResized) {
+            m_framebufferResized = false;
+            RecreateSwapChain();
+        } else if (result != VK_SUCCESS) {
+            throw std::runtime_error("ERROR: failed to present swap chain image");
+        }
+
+        vkDeviceWaitIdle(m_logicalDevice);
+
+        // glfw end of draw
         glfwSwapBuffers(m_windowHandle);
         m_frameIndex = (m_frameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
@@ -286,92 +358,6 @@ void Window::CleanImGui()
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-#endif
-}
-
-void Window::BeginDrawVulkan()
-{
-    vkWaitForFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX);
-
-    VkResult result = vkAcquireNextImageKHR(m_logicalDevice, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_frameIndex], VK_NULL_HANDLE, &m_imageIndex);
-
-    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-        RecreateSwapChain();
-        return; // TODO need to tell continue in loop if we return here
-    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-        throw std::runtime_error("ERROR: failed to acquire swap chain image");
-    }
-
-    vkResetFences(m_logicalDevice, 1, &m_inFlightFences[m_frameIndex]);
-
-
-    UpdateUniformBuffer(m_frameIndex);
-    StartRecordCommandBuffer(m_commandBuffers[m_frameIndex], m_imageIndex);
-}
-
-void Window::EndDrawVulkan()
-{
-    EndRecordCommandBuffer(m_commandBuffers[m_frameIndex], m_imageIndex);
-
-
-    VkSubmitInfo submitInfo{};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-    VkSemaphore waitSemaphores[] = {m_imageAvailableSemaphores[m_frameIndex]};
-    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = waitSemaphores;
-    submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &m_commandBuffers[m_frameIndex];
-
-    VkSemaphore signalSemaphores[] = {m_renderFinishedSemaphores[m_frameIndex]};
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = signalSemaphores;
-
-    if (vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, m_inFlightFences[m_frameIndex]) != VK_SUCCESS)
-        throw std::runtime_error("ERROR: failed to submit draw command buffer");
-
-
-    VkPresentInfoKHR presentInfo{};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = signalSemaphores;
-
-    VkSwapchainKHR swapChains[] = {m_swapChain};
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
-    presentInfo.pImageIndices = &m_imageIndex;
-
-    VkResult result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
-
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_framebufferResized) {
-        m_framebufferResized = false;
-        RecreateSwapChain();
-    } else if (result != VK_SUCCESS) {
-        throw std::runtime_error("ERROR: failed to present swap chain image");
-    }
-
-    vkDeviceWaitIdle(m_logicalDevice);
-}
-
-void Window::BeginDrawImGui()
-{
-#ifndef IMGUI_DISABLE
-    ImGui_ImplGlfw_NewFrame();
-    ImGui_ImplVulkan_NewFrame();
-    ImGui::NewFrame();
-    ImGui::DockSpaceOverViewport(0,ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode); // do the docking things, make sure whats rendered in the background can still be seen
-    ImGui::ShowDemoWindow();
-#endif
-}
-
-void Window::EndDrawImGui()
-{
-#ifndef IMGUI_DISABLE
-    ImGui::Render();
-    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_commandBuffers[m_frameIndex]);
 #endif
 }
 
@@ -1360,7 +1346,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Window::DebugCallback(VkDebugUtilsMessageSeverity
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
     return VK_FALSE;
 }
-
 
 uint32_t Window::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
