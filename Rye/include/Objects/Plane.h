@@ -12,22 +12,20 @@ namespace Rye {
 
     class Plane : public Object {
         public:
-            Plane(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, std::shared_ptr<Material> material);
-
+            Plane(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, int materialID);
             bool Hit(const Ray &ray, HitData& hit) const override;
-            bool DrawAttributes() override;
 
         protected:
             virtual bool InsideBounds(glm::vec2 planarCoord) const { return true; }
 
-        protected:
+        public:
             glm::vec4 m_position;
             glm::vec4 m_u, m_v, m_w;
 
             glm::vec4 m_normal;
             float m_planeOffset;
 
-            std::shared_ptr<Material> m_material;
+            int m_materialID;
     };
 
 }

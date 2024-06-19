@@ -14,7 +14,7 @@ namespace Rye {
         glm::vec4 color = glm::vec4(0,0,0,1);
         float distance = std::numeric_limits<float>::max();
         bool front = true;
-        std::shared_ptr<Material> material = nullptr;
+        uint32_t materialID = 0;
 
         uint32_t seed = 1;
     };

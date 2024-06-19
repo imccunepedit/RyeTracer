@@ -6,6 +6,10 @@ project "Rye"
         "src/**.cpp",
     }
 
+    removefiles {
+        "src/Materials/*.cpp"
+    }
+
     includedirs {
         "include/",
 

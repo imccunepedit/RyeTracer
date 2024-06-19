@@ -10,16 +10,15 @@ namespace Rye {
 
     class Sphere : public Object {
         public:
-            Sphere(glm::vec4 position, float radius, std::shared_ptr<Material> material)
-                : m_position(position), m_radius(radius), m_material(material) {}
+            Sphere(glm::vec4 position, float radius, int materialID)
+                : m_position(position), m_radius(radius), m_materialID(materialID) {}
 
             bool Hit(const Ray &ray, HitData& hit) const override;
-            bool DrawAttributes() override;
 
-        protected:
+        public:
             glm::vec4 m_position;
             float m_radius;
-            std::shared_ptr<Material> m_material;
+            int m_materialID;
     };
 
 }

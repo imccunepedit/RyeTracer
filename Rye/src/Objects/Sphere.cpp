@@ -3,8 +3,6 @@
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "imgui.h"
-
 #include "Ray.h"
 
 using namespace Rye;
@@ -47,21 +45,10 @@ bool Sphere::Hit(const Ray &ray, HitData& hit) const {
     hit.distance = t;
     hit.point = ray.at(t);
     hit.normal = (hit.point - m_position) / m_radius;
-    hit.material = m_material;
+    hit.materialID = m_materialID;
 
     return true;
 
 }
 
 
-bool Sphere::DrawAttributes()
-{
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Sphere"))
-    {
-        ImGui::DragFloat3("Position", glm::value_ptr(m_position), 0.1f);
-        ImGui::DragFloat("Radius", &m_radius, 0.1f);
-        ImGui::TreePop();
-    }
-    return true;
-}

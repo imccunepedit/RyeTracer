@@ -7,11 +7,12 @@
 
 #include "Ray.h"
 
-#include "Materials/Emission.h"
-#include "Materials/Lambertian.h"
-#include "Materials/Glass.h"
-#include "Materials/Glossy.h"
-#include "Materials/Metallic.h"
+// #include "Materials/Emission.h"
+// #include "Materials/Lambertian.h"
+// #include "Materials/Glass.h"
+// #include "Materials/Glossy.h"
+// #include "Materials/Metallic.h"
+#include "Material.h"
 
 #include "Objects/Sphere.h"
 #include "Objects/Quad.h"
@@ -20,7 +21,7 @@
 
 using namespace Rye;
 
-bool Scene::Hit(const Ray& ray, HitData& hit) const
+bool Scene::Hit(const Ray& ray, HitData& hit)
 {
     // if there isn't anything in the scene return
     if (objects.size() == 0)
@@ -43,7 +44,7 @@ bool Scene::Hit(const Ray& ray, HitData& hit) const
         if (hit.distance < tempHit.distance) // already hit something infront
             continue;
 
-        if (!tempHit.front & !tempHit.material->doubleSided)
+        if (!tempHit.front & !GetMaterial(tempHit.materialID).doubleSided)
             continue;
 
         hit = tempHit;
@@ -61,13 +62,13 @@ void Scene::Initialize()
 {
     // ground
 
-    AddMaterial(std::make_shared<Emission>(4));
-    AddMaterial(std::make_shared<LambertianBSDF>());
-    AddMaterial(std::make_shared<LambertianBSDF>(glm::vec4(0.68,0.1,0.1,1)));
-    AddMaterial(std::make_shared<LambertianBSDF>(glm::vec4(0.12,0.65,0.1,1)));
-    AddMaterial(std::make_shared<MetallicBSDF>(glm::vec4(0.944,0.776,0.373,1)));
-    AddMaterial(std::make_shared<GlossyBSDF>());
-    AddMaterial(std::make_shared<GlassBSDF>());
+    AddMaterial(Material(Material::Emissive));
+    AddMaterial(Material(Material::Lambertian));
+    AddMaterial(Material(Material::Lambertian, glm::vec4(0.68,0.1,0.1,1)));
+    AddMaterial(Material(Material::Lambertian, glm::vec4(0.12,0.65,0.1,1)));
+    AddMaterial(Material(Material::Conductor, glm::vec4(0.944,0.776,0.373,1)));
+    AddMaterial(Material(Material::Lambertian, glm::vec4(0,0,1.0f,1)));
+    AddMaterial(Material(Material::Dielectric));
 
 #if 0
     ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
@@ -78,17 +79,17 @@ void Scene::Initialize()
 
 #else
 
-    AddObject(std::make_shared<Quad>(glm::vec4(-3,-3, 9, 1), glm::vec4(0, 6, 0, 0), glm::vec4(6, 0, 0, 0), materials[0]));
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5,10, 1), glm::vec4(0, 10, 0, 0), glm::vec4(10, 0, 0, 0), materials[1])); // top
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 10, 0, 0), materials[1])); // bottom
-    AddObject(std::make_shared<Quad>(glm::vec4( 5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(0, 10, 0, 0), materials[2])); // right
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 10, 0, 0), glm::vec4(0, 0, 10, 0), materials[3])); // left
-    AddObject(std::make_shared<Quad>(glm::vec4(-5, 5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 0, 10, 0), materials[1])); // back
-    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(10, 0, 0, 0), materials[1])); // front
+    AddObject(std::make_shared<Quad>(glm::vec4(-3,-3, 9, 1), glm::vec4(0, 6, 0, 0), glm::vec4(6, 0, 0, 0), 0));
+    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5,10, 1), glm::vec4(0, 10, 0, 0), glm::vec4(10, 0, 0, 0), 1)); // top
+    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 10, 0, 0), 1)); // bottom
+    AddObject(std::make_shared<Quad>(glm::vec4( 5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(0, 10, 0, 0), 2)); // right
+    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 10, 0, 0), glm::vec4(0, 0, 10, 0), 3)); // left
+    AddObject(std::make_shared<Quad>(glm::vec4(-5, 5, 0, 1), glm::vec4(10, 0, 0, 0), glm::vec4(0, 0, 10, 0), 1)); // back
+    AddObject(std::make_shared<Quad>(glm::vec4(-5,-5, 0, 1), glm::vec4(0, 0, 10, 0), glm::vec4(10, 0, 0, 0), 1)); // front
 
-    AddObject(std::make_shared<Sphere>(glm::vec4(-3,0,1,1), 1, materials[6]));
-    AddObject(std::make_shared<Sphere>(glm::vec4(0,0,1,1), 1, materials[5]));
-    AddObject(std::make_shared<Sphere>(glm::vec4(3,0,1,1), 1, materials[4]));
+    AddObject(std::make_shared<Sphere>(glm::vec4(-3,0,1,1), 1, 6));
+    AddObject(std::make_shared<Sphere>(glm::vec4(0,0,1,1), 1, 5));
+    AddObject(std::make_shared<Sphere>(glm::vec4(3,0,1,1), 1, 4));
 
 #endif
 }
@@ -103,16 +104,23 @@ void Scene::RemoveObject(const int& i)
     objects.erase(std::next(objects.begin(), i));
 }
 
-void Scene::AddMaterial(std::shared_ptr<Material> m)
+void Scene::AddMaterial(Material m)
 {
-    materials.push_back(std::move(m));
+    m_materials.push_back(m);
     materialCount ++;
 }
 
 void Scene::RemoveMaterial(const int& i)
 {
-    materials.erase(std::next(materials.begin(), i));
+    m_materials.erase(std::next(m_materials.begin(), i));
     materialCount --;
 }
 
 
+Material Scene::GetMaterial(uint32_t ID)
+{
+    if (ID >= materialCount)
+        return m_materials[0];
+
+    return m_materials[ID];
+}

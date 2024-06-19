@@ -80,7 +80,7 @@ glm::vec4 Renderer::RayGen(const int& i)
         if (hit.distance == std::numeric_limits<float>::max())
             break;
 
-        if (!hit.material->BSDF(ray.direction, hit, ray.direction))
+        if (!m_scene->GetMaterial(hit.materialID).BSDF(ray.direction, hit, ray.direction))
             break;
 
         ray.origin = hit.point;
@@ -105,7 +105,7 @@ HitData Renderer::TraceRay(const Ray& ray, HitData& hit)
 
 HitData Renderer::ClosestHit(const Ray& ray, HitData& hit)
 {
-    hit.material->Absorb(ray.direction, hit);
+    m_scene->GetMaterial(hit.materialID).Color(ray.direction, hit);
     return hit;
 }
 

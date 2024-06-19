@@ -18,21 +18,26 @@ namespace Rye {
             void AddObject(std::shared_ptr<Object> o);
             void RemoveObject(const int& i);
 
-            void AddMaterial(std::shared_ptr<Material> m);
+            void AddMaterial(Material m);
             void RemoveMaterial(const int& i);
 
             void Initialize();
-            bool Hit(const Ray& ray, HitData& hit) const;
+            bool Hit(const Ray& ray, HitData& hit);
+
+            Material GetMaterial(uint32_t ID);
 
         public:
             std::vector<std::shared_ptr<Object>> objects;
-            std::vector<std::shared_ptr<Material>> materials;
+
             size_t materialCount = 0;
 
             glm::vec4 ambientColor = glm::vec4(0);
 
             glm::vec4 lightDirection = glm::vec4(1,0,-1, 0);
             glm::vec4 lightColor = glm::vec4(1,0.8,0.6, 1);
+
+        private:
+            std::vector<Material> m_materials;
     };
 }
 

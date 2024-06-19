@@ -3,12 +3,10 @@
 #include <glm/geometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "imgui.h"
-
 using namespace Rye;
 
-Quad::Quad(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, std::shared_ptr<Material> material)
-: Plane(position, u, v, material) {}
+Quad::Quad(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, int materialID)
+: Plane(position, u, v, materialID) {}
 
 bool Quad::InsideBounds(glm::vec2 planarCoord) const
 {
@@ -21,7 +19,4 @@ bool Quad::InsideBounds(glm::vec2 planarCoord) const
     return true;
 }
 
-bool Quad::DrawAttributes()
-{
-    return false;
-}
+

@@ -13,7 +13,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Objects/Sphere.h"
-#include "Materials/Lambertian.h"
+#include "Material.h"
 
 using namespace Barley;
 using namespace Rye;
@@ -62,7 +62,7 @@ void App::Update()
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
     if (ImGui::Button("Add Sphere")) {
-        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,std::make_shared<LambertianBSDF>()));;
+        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,0));;
     }
 
     if (ImGui::TreeNode("Objects"))
@@ -71,7 +71,15 @@ void App::Update()
         {
             auto object = m_scene.objects.at(i);
             ImGui::PushID(i);
-            object->DrawAttributes();
+
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            if (ImGui::TreeNode("Sphere"))
+            {
+                ImGui::DragFloat3("Position", glm::value_ptr(object->m_position), 0.1f);
+                ImGui::SliderInt("Material ID", &object->m_materialID, 0, 10);
+                ImGui::TreePop();
+            }
+
             ImGui::PopID();
         }
         ImGui::TreePop();
@@ -80,14 +88,19 @@ void App::Update()
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Materials"))
     {
-        for (size_t i = 0; i < m_scene.materials.size(); i++)
+        for (size_t i = 0; i < m_scene.materialCount; i++)
         {
             ImGui::PushID(i);
-            auto material = m_scene.materials.at(i);
+            auto material = m_scene.GetMaterial(i);
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode(material->GetName().c_str()))
+            if (ImGui::TreeNode("material"))
             {
-                material->DrawAttributes();
+                ImGui::ColorEdit3("Color", glm::value_ptr(material.color), ImGuiColorEditFlags_Float);
+                ImGui::DragFloat("Roughness", &material.roughness,0.01,0,1);
+                ImGui::DragFloat("IoR", &material.indexOfRefraction, 0.002f, 0.0f);
+                ImGui::DragFloat("Emissive Strength", &material.emissiveStrength, 1.0f, 0.0f);
+                ImGui::SliderInt("Material Type", &material.materialType, 0, 4);
+                // material.DrawAttributes();
                 ImGui::TreePop();
             }
             ImGui::PopID();

@@ -47,7 +47,7 @@ namespace Rye {
 
             std::vector<glm::vec4> m_rayDirections;
 
-            glm::vec4 m_position = glm::vec4(0,-10,0,1);
+            glm::vec4 m_position = glm::vec4(0,-10,5,1);
 
             glm::mat4 m_projection = glm::mat4(1);
             glm::mat4 m_inverseProjection = glm::mat4(1);
