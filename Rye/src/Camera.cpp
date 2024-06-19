@@ -75,7 +75,6 @@ void Camera::CalculateBasisVectors()
 
 void Camera::CalculateRays()
 {
-    std::cout << "new dirs" << std::endl;
     rayCount = film.width * film.height;
 
     int w = film.width;

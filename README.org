@@ -30,7 +30,7 @@ git clone --depth=1 --recursive https://github.com/imccunepedit/RyeTracer.git
 - if multi-threading make sure oneapi tbb is installed and can be included
 - install premake and generate build files
 #+begin_src
-premake5 gmake2
+./init.sh
 #+end_src
 - compile
 #+begin_src
