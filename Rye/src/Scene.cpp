@@ -55,7 +55,7 @@ void Scene::Initialize()
     AddMaterial(Material(Material::Lambertian, glm::vec4(0.68,0.1,0.1,1)));
     AddMaterial(Material(Material::Lambertian, glm::vec4(0.12,0.65,0.1,1)));
     AddMaterial(Material(Material::Conductor, glm::vec4(0.944,0.776,0.373,1)));
-    AddMaterial(Material(Material::Lambertian, glm::vec4(0,0,1.0f,1)));
+    AddMaterial(Material(Material::Glossy, glm::vec4(0,0,1.0f,1)));
     AddMaterial(Material(Material::Dielectric));
 
 #if 0
@@ -66,7 +66,6 @@ void Scene::Initialize()
     AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,1), 1), 0));
     AddObject(Object(Object::Quad, Transform(glm::vec3(0,4,1), 8, glm::vec3(90,0,0)), 0));
 
-
 #else
     AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 0));
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5,10, 1), 10, glm::vec3(180,  0,  0)), 1)); // top
@@ -76,11 +75,11 @@ void Scene::Initialize()
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5, 0, 1), 10, glm::vec3( 90,  0,  0)), 1)); // back
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(-90,  0,  0)), 1)); // front
 
-    // AddObject(Object(Object::Sphere, Transform(glm::vec4(-3,0,1,1), 1), 6));
+    AddObject(Object(Object::Sphere, Transform(glm::vec4(-3,0,1,1), 1), 6));
     AddObject(Object(Object::Sphere, Transform(glm::vec4(0,0,1,1), 1), 5));
-    // AddObject(Object(Object::Sphere, Transform(glm::vec4(3,0,1,1), 1), 4));
-
+    AddObject(Object(Object::Sphere, Transform(glm::vec4(3,0,1,1), 1), 4));
 #endif
+
 }
 
 void Scene::AddObject(Object o)
@@ -106,7 +105,7 @@ void Scene::RemoveMaterial(const int& i)
 }
 
 
-Material Scene::GetMaterial(uint32_t ID)
+Material& Scene::GetMaterial(uint32_t ID)
 {
     if (ID >= materialCount)
         return m_materials[0];

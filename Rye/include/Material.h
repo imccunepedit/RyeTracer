@@ -31,15 +31,20 @@ namespace Rye {
 
         private:
             bool DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
+            bool GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
 
         public:
             int materialType;
             glm::vec4 color = glm::vec4(0.5f,0.5f,0.5f,1.0f);
-            float roughness = 1;
+            float roughness = 0.0f;
 
             bool doubleSided = false;
+            float specularity = 0.2f;
             float indexOfRefraction = 1.5f;
             float emissiveStrength = 4.0f;
+
+        private:
+            bool m_isSpecular = false;
     };
 }
 

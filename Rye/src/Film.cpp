@@ -22,6 +22,7 @@ void Film::Resize(const int& w, const int& h)
     delete[] data;
     data = new glm::vec4[width*height];
 
+    needsReset = true;
     ResetAccumulator();
 }
 

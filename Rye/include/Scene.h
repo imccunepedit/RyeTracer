@@ -24,7 +24,7 @@ namespace Rye {
             void Initialize();
             bool Hit(const Ray& ray, HitData& hit);
 
-            Material GetMaterial(uint32_t ID);
+            Material& GetMaterial(uint32_t ID);
 
         public:
             std::vector<Object> objects;

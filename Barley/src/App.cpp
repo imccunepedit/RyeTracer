@@ -69,7 +69,7 @@ void App::Update()
     {
         for (size_t i = 0; i < m_scene.objects.size(); i++)
         {
-            auto object = m_scene.objects.at(i);
+            Object& object = m_scene.objects.at(i);
             ImGui::PushID(i);
 
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
@@ -91,7 +91,7 @@ void App::Update()
         for (size_t i = 0; i < m_scene.materialCount; i++)
         {
             ImGui::PushID(i);
-            auto material = m_scene.GetMaterial(i);
+            Material& material = m_scene.GetMaterial(i);
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("material"))
             {

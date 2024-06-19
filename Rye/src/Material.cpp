@@ -12,12 +12,15 @@ bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
             scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed));
             return true;
 
-        // case Conductor:
-        //     scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness;
-        //     return true;
+        case Conductor:
+            scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness;
+            return true;
 
-        // case Dielectric:
-        //     return DielectricBSDF(inRay, hit, scatterRay);
+        case Dielectric:
+            return DielectricBSDF(inRay, hit, scatterRay);
+
+        case Glossy:
+            return GlossyBSDF(inRay, hit, scatterRay);
 
         default:
             break;
@@ -43,10 +46,21 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             hit.color =  color * emissiveStrength;
             return;
 
-        // case Conductor:
-        //     float f = Fresnel(inRay, hit.normal, 0.2f);
-        //     hit.color = (1-f) * color + f * glm::vec4(1);
-        //     return;
+        case Glossy:
+            if (RandomFloat(hit.seed) <= specularity)
+            {
+                m_isSpecular = true;
+                hit.color = glm::vec4(1.0f);
+                return;
+            }
+            m_isSpecular = false;
+            hit.color = color;
+            return;
+
+        case Conductor:
+            float f = Fresnel(inRay, hit.normal, 0.2f);
+            hit.color = (1-f) * color + f * glm::vec4(1);
+            return;
     }
 
 }
@@ -73,5 +87,17 @@ bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& s
     if (reflect)
         scatterRay = glm::reflect(inRay, hit.normal);
 
+    return true;
+}
+
+bool Material::GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
+{
+    if (m_isSpecular)
+    {
+        scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness);
+        return true;
+    }
+
+    scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed));
     return true;
 }
