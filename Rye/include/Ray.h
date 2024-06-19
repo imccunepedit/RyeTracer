@@ -4,13 +4,14 @@
 #include <memory>
 
 #include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 
 namespace Rye {
     class Material;
     struct HitData {
-        glm::vec4 point;
-        glm::vec4 normal;
+        glm::vec3 point;
+        glm::vec3 normal;
         glm::vec4 color = glm::vec4(0,0,0,1);
         float distance = std::numeric_limits<float>::max();
         bool front = true;
@@ -21,12 +22,12 @@ namespace Rye {
 
     class Ray {
         public:
-            glm::vec4 at(float t) const{
+            glm::vec3 at(float t) const{
                 return origin + direction * t;
             }
 
-            glm::vec4 origin;
-            glm::vec4 direction;
+            glm::vec3 origin;
+            glm::vec3 direction;
             uint32_t seed;
             int depth = 0;
     };

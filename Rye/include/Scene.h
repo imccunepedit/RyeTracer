@@ -15,7 +15,7 @@ namespace Rye {
 
     class Scene {
         public:
-            void AddObject(std::shared_ptr<Object> o);
+            void AddObject(Object o);
             void RemoveObject(const int& i);
 
             void AddMaterial(Material m);
@@ -27,7 +27,7 @@ namespace Rye {
             Material GetMaterial(uint32_t ID);
 
         public:
-            std::vector<std::shared_ptr<Object>> objects;
+            std::vector<Object> objects;
 
             size_t materialCount = 0;
 

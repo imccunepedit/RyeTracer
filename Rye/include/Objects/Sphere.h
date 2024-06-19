@@ -13,7 +13,7 @@ namespace Rye {
             Sphere(glm::vec4 position, float radius, int materialID)
                 : m_position(position), m_radius(radius), m_materialID(materialID) {}
 
-            bool Hit(const Ray &ray, HitData& hit) const override;
+            bool Hit(const Ray &ray, HitData& hit) const;
 
         public:
             glm::vec4 m_position;

@@ -62,7 +62,7 @@ void App::Update()
     ImGui::Begin("Scene");
     ImGui::ColorEdit3("Ambient Light color", glm::value_ptr(m_scene.ambientColor), ImGuiColorEditFlags_Float);
     if (ImGui::Button("Add Sphere")) {
-        m_scene.AddObject(std::make_shared<Sphere>(glm::vec4(10,0,0,1),1,0));;
+        m_scene.AddObject(Object(Transform(glm::vec4(10,0,0,1),1),0));;
     }
 
     if (ImGui::TreeNode("Objects"))
@@ -75,8 +75,8 @@ void App::Update()
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode("Sphere"))
             {
-                ImGui::DragFloat3("Position", glm::value_ptr(object->m_position), 0.1f);
-                ImGui::SliderInt("Material ID", &object->m_materialID, 0, 10);
+                ImGui::DragFloat3("Position", glm::value_ptr(object.transform.position), 0.1f);
+                ImGui::SliderInt("Material ID", &object.m_materialID, 0, 10);
                 ImGui::TreePop();
             }
 

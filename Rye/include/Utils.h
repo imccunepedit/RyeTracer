@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 
 
@@ -22,24 +22,24 @@ namespace Rye
         return seed / (float) std::numeric_limits<uint32_t>::max();
     }
 
-    static glm::vec4 RandomInSphere(uint32_t& seed, float radius=1.0f)
+    static glm::vec3 RandomInSphere(uint32_t& seed, float radius=1.0f)
     {
         while(true)
         {
-            glm::vec4 out = glm::vec4(RandomFloat(seed)*2-1, RandomFloat(seed)*2-1, RandomFloat(seed)*2-1, 0);
+            glm::vec3 out = glm::vec3(RandomFloat(seed)*2-1, RandomFloat(seed)*2-1, RandomFloat(seed)*2-1);
             if (glm::dot(out, out) < 1)
                 return out*radius;
         }
     }
 
 
-    static glm::vec4 RandomOnSphere(uint32_t& seed, float radius=1.0f)
+    static glm::vec3 RandomOnSphere(uint32_t& seed, float radius=1.0f)
     {
         return glm::normalize(RandomInSphere(seed))*radius;
     }
 
 
-    static float Fresnel(glm::vec4 I, glm::vec4 N, float n1)
+    static float Fresnel(glm::vec3 I, glm::vec3 N, float n1)
     {
         float n2 = 1;
         float c1 = glm::dot(I,-N);

@@ -13,7 +13,7 @@ namespace Rye {
     class Plane : public Object {
         public:
             Plane(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, int materialID);
-            bool Hit(const Ray &ray, HitData& hit) const override;
+            bool Hit(const Ray &ray, HitData& hit) const;
 
         protected:
             virtual bool InsideBounds(glm::vec2 planarCoord) const { return true; }

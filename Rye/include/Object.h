@@ -3,17 +3,25 @@
 
 #include <glm/vec4.hpp>
 
+#include "Transform.h"
+
 namespace Rye {
     class Ray;
     class HitData;
 
     class Object {
+        enum Type {Sphere,
+                   Quad};
         public:
-            virtual bool Hit(const Ray& ray, HitData& hit) const { return false; }
+            Object() = default;
+            Object(Transform transform, int materialID) : transform(transform), m_materialID(materialID) {}
+
+            bool Hit(const Ray& ray, HitData& hit) const;
 
         public:
-            glm::vec4 m_position = glm::vec4(0);
+            Transform transform = Transform(0);
             int m_materialID = 0;
+
     };
 }
 

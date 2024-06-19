@@ -6,6 +6,7 @@
 
 #include "Ray.h"
 
+#if 0
 using namespace Rye;
 
 Plane::Plane(const glm::vec4 position, const glm::vec4 u, const glm::vec4 v, int materialID)
@@ -51,3 +52,5 @@ bool Plane::Hit(const Ray &ray, HitData &hit) const
     return true;
 }
 
+
+#endif

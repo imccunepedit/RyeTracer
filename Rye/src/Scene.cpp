@@ -2,17 +2,10 @@
 
 #include <iostream>
 
-#include "imgui.h"
-#include "glm/gtc/type_ptr.hpp"
-
 #include "Ray.h"
 
-// #include "Materials/Emission.h"
-// #include "Materials/Lambertian.h"
-// #include "Materials/Glass.h"
-// #include "Materials/Glossy.h"
-// #include "Materials/Metallic.h"
 #include "Material.h"
+#include "Object.h"
 
 #include "Objects/Sphere.h"
 #include "Objects/Quad.h"
@@ -36,7 +29,7 @@ bool Scene::Hit(const Ray& ray, HitData& hit)
         tempHit.seed = hit.seed;
 
         // if distance is infinite/max, we haven't hit anything so check the next sphere
-        if (!object->Hit(ray, tempHit))
+        if (!object.Hit(ray, tempHit))
             continue;
 
         // if our closest hit is closer than the hit on our sphere we aren't able to
@@ -70,12 +63,12 @@ void Scene::Initialize()
     AddMaterial(Material(Material::Lambertian, glm::vec4(0,0,1.0f,1)));
     AddMaterial(Material(Material::Dielectric));
 
-#if 0
+#if 1
     ambientColor = glm::vec4(0.6f,0.7f,0.75f, 1);
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,-1000,1), 999, materials[0])));
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(4,4,0,1), 1, materials[3])));
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(-4,4,0,1), 1, materials[2])));
-    AddObject(std::make_shared<Sphere>(Sphere(glm::vec4(0,4,1,1), 1, materials[1])));
+    AddObject(Object(Transform(glm::vec4(0,4,-1000,1), 999), 0));
+    AddObject(Object(Transform(glm::vec4(4,4,0,1), 1), 3));
+    AddObject(Object(Transform(glm::vec4(-4,4,0,1), 1), 2));
+    AddObject(Object(Transform(glm::vec4(0,4,1,1), 1), 1));
 
 #else
 
@@ -94,9 +87,9 @@ void Scene::Initialize()
 #endif
 }
 
-void Scene::AddObject(std::shared_ptr<Object> o)
+void Scene::AddObject(Object o)
 {
-    objects.push_back(std::move(o));
+    objects.push_back(o);
 }
 
 void Scene::RemoveObject(const int& i)
