@@ -21,6 +21,19 @@ A ray tracer that is barely tracing rays.
 - https://github.com/tylermorganwall/rayrender/
 - https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/
 * setup
-- clone with submodules
-- glfw needs to be configured, should work if installed on linux
-- for multithreading oneapi tbb needs to be configured
+- clone this repo
+#+begin_src
+git clone --depth=1 --recursive https://github.com/imccunepedit/RyeTracer.git
+#+end_src
+
+- make sure GLFW is installed and will be included
+- if multi-threading make sure oneapi tbb is installed and can be included
+- install premake and generate build files
+#+begin_src
+premake5 gmake2
+#+end_src
+- compile
+#+begin_src
+make
+#+end_src
+- outputted executable can be run  =./build/release-bun/Barley/Barley=
