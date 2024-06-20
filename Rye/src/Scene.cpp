@@ -55,7 +55,7 @@ void Scene::Initialize()
     AddMaterial(Material(Material::Lambertian, glm::vec4(0.68,0.1,0.1,1)));
     AddMaterial(Material(Material::Lambertian, glm::vec4(0.12,0.65,0.1,1)));
     AddMaterial(Material(Material::Conductor, glm::vec4(0.944,0.776,0.373,1)));
-    AddMaterial(Material(Material::Glossy, glm::vec4(0,0,1.0f,1)));
+    AddMaterial(Material(Material::Glossy, glm::vec4(0.25,0.75,1,1)));
     AddMaterial(Material(Material::Dielectric));
 
 #if 0
