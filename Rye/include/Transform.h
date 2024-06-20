@@ -46,15 +46,15 @@ class Transform
     private:
         void CalculateMatrix()
         {
-            matrix = glm::translate(glm::mat4(1), position);
+            // matrix = glm::translate(glm::mat4(1), position);
 
-            matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1,0,0));
-            matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0,1,0));
-            matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0,0,1));
+            // matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1,0,0));
+            // matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0,1,0));
+            // matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0,0,1));
 
-            matrix = glm::scale(matrix, scale);
+            // matrix = glm::scale(matrix, scale);
 
-            inverseMatrix = glm::inverse(matrix);
+            // inverseMatrix = glm::inverse(matrix);
         }
 
     public:

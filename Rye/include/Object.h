@@ -13,10 +13,23 @@ namespace Rye {
         public:
             enum Type {Sphere, Quad};
         public:
-            Object(Type type)
-                : objectType(type) {}
-            Object(Type type, Transform transform, int materialID)
-                : objectType(type), transform(transform), m_materialID(materialID) {}
+            Object(glm::vec3 position, float radius, int materialID)
+                : objectType(Sphere), transform(position, radius), m_materialID(materialID)
+            {
+
+            }
+
+            Object(glm::vec3 position, glm::vec3 u, glm::vec3 v, int materialID)
+                : objectType(Quad), transform(position), m_u(u), m_v(v), m_materialID(materialID)
+            {
+                    glm::vec3 n = glm::cross(u, v);
+                    m_w = n / glm::dot(n,n);
+                    m_planeNormal = glm::normalize(n);
+                    m_planeOffset = glm::dot(transform.position, m_planeNormal);
+            }
+
+            // Object(Type type, Transform transform, int materialID)
+            //     :
 
             bool Hit(const Ray& ray, HitData& hit) const;
             bool SphereHit(const Ray& ray, HitData& hit) const;
@@ -26,6 +39,13 @@ namespace Rye {
             Type objectType;
             Transform transform = Transform();
             int m_materialID = 0;
+
+        private:
+            glm::vec3 m_planeNormal = glm::vec3(0,0,1);
+            glm::vec3 m_u = glm::vec3(1,0,0);
+            glm::vec3 m_v = glm::vec3(0,1,0);
+            glm::vec3 m_w = glm::vec3(0,0,1);
+            float m_planeOffset = 1.0f;
     };
 }
 
