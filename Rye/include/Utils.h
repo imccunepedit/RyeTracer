@@ -1,7 +1,7 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include <cstdint>
+#include <iostream>
 
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
@@ -9,6 +9,11 @@
 
 namespace Rye
 {
+    static void log(std::string info)
+    {
+        std::cout << info << std::endl;
+    }
+
     static uint32_t pcgHash(uint32_t input)
     {
         uint32_t state = input * 747796405u + 2891336453u;
@@ -39,21 +44,20 @@ namespace Rye
     }
 
 
-    static float Fresnel(glm::vec3 I, glm::vec3 N, float n1)
+    static float Fresnel(glm::vec3 I, glm::vec3 N, float eta)
     {
-        float n2 = 1;
         float c1 = glm::dot(I,-N);
 // #define SCHLICK
-#ifndef SCHLICK
-        float c2 = sqrtf(1 - n1*n1/(n2*n2) * (1- c1*c1));
-        float Rs = (n1*c1 - n2*c2) / (n1*c1 + n2*c2);
-        float Rp = (n1*c2 - n2*c1) / (n1*c2 + n2*c1);
-        return 0.5 * (Rs*Rs + Rp*Rp);
-#else
-        float n12 = n1-n2;
-        float R0 = n12 / (n1+n2);
+#ifdef SCHLICK
+        float R0 = (1-eta)/(1+eta);
         R0 *= R0;
         return R0 + (1-R0)*pow((1 - c1),5);
+#else
+        float inverse_eta = 1/eta;
+        float c2 = sqrtf(1 - inverse_eta*inverse_eta * (1 - c1*c1));
+        float Rs = (c1 - eta*c2) / (c1 + eta*c2);
+        float Rp = (c2 - eta*c1) / (c2 + eta*c1);
+        return 0.5f * (Rs*Rs + Rp*Rp);
 #endif
     }
 
