@@ -13,23 +13,36 @@ namespace Rye {
         public:
             enum Type {Sphere, Quad};
         public:
-            Object(glm::vec3 position, float radius, int materialID)
-                : objectType(Sphere), transform(position, radius), m_materialID(materialID)
-            {
+            // Object(glm::vec3 position, float radius, int materialID)
+            //     : objectType(Sphere), transform(position, radius), m_materialID(materialID)
+            // {
 
-            }
+            // }
 
-            Object(glm::vec3 position, glm::vec3 u, glm::vec3 v, int materialID)
-                : objectType(Quad), transform(position), m_u(u), m_v(v), m_materialID(materialID)
+            // Object(glm::vec3 position, glm::vec3 u, glm::vec3 v, int materialID)
+            //     : objectType(Quad), transform(position), m_u(u), m_v(v), m_materialID(materialID)
+            // {
+            //         glm::vec3 n = glm::cross(u, v);
+            //         m_w = n / glm::dot(n,n);
+            //         m_planeNormal = glm::normalize(n);
+            //         m_planeOffset = glm::dot(transform.position, m_planeNormal);
+            // }
+
+            Object(Type type, Transform tf, int materialID)
+                : objectType(type), transform(tf), m_materialID(materialID)
             {
-                    glm::vec3 n = glm::cross(u, v);
-                    m_w = n / glm::dot(n,n);
+                if (objectType == Quad)
+                {
+                    m_u = transform.matrix * glm::vec4(1,0,0,0);
+                    m_v = transform.matrix * glm::vec4(0,1,0,0);
+                    // m_u = transform.scale * glm::vec3(1,0,0);
+                    // m_v = transform.scale * glm::vec3(0,1,0);
+                    glm::vec3 n = glm::cross(m_u, m_v);
+                    m_w = n/glm::dot(n,n);
                     m_planeNormal = glm::normalize(n);
                     m_planeOffset = glm::dot(transform.position, m_planeNormal);
+                }
             }
-
-            // Object(Type type, Transform transform, int materialID)
-            //     :
 
             bool Hit(const Ray& ray, HitData& hit) const;
             bool SphereHit(const Ray& ray, HitData& hit) const;

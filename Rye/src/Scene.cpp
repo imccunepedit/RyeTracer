@@ -58,17 +58,17 @@ void Scene::Initialize()
     AddMaterial(Material(Material::Glossy, glm::vec4(0,0,1.0f,1)));
     AddMaterial(Material(Material::Dielectric));
 
-#if 1
+#if 0
     ambientColor = glm::vec4(0.6f,0.7f,0.75f, 2);
-    AddObject(Object(glm::vec3(0,4,-1000), 999, 1));
-    AddObject(Object(glm::vec3(4,4,0), 1, 3));
-    AddObject(Object(glm::vec3(-4,4,3), 2, 4));
-    AddObject(Object(glm::vec3(0,4,1), 0.1, 0));
-    AddObject(Object(glm::vec3(0,4,1), 0.1, 0));
-    AddObject(Object(glm::vec3(1,4,1), 0.1, 0));
-    AddObject(Object(glm::vec3(1,5,1), 0.1, 0));
-    AddObject(Object(glm::vec3(0,5,1), 0.1, 0));
-    AddObject(Object(glm::vec3(0,4,1), glm::vec3(1,0,0), glm::vec3(0,1,0), 2));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,-1000), 999), 1));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(4,4,0), 1), 3));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(-4,4,3), 2), 4));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,1), 0.1), 0));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,4,1), 0.1), 0));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(1,4,1), 0.1), 0));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(1,5,1), 0.1), 0));
+    AddObject(Object(Object::Sphere, Transform(glm::vec3(0,5,1), 0.1), 0));
+    AddObject(Object(Object::Quad, Transform(glm::vec3(0,4,1), 3), 2));
 
 #else
     AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 0));

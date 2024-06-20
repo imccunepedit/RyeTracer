@@ -64,10 +64,10 @@ bool Object::QuadHit(const Ray& ray, HitData& hit) const
 {
     float a = glm::dot(m_planeNormal, ray.direction);
 
-    if (std::abs(a) < 0.00001)
-    {
+    // currently quads are infinetly thin os theres no reason to intersect their back.
+    // if th ra direction and the plane normal don't point against each other then we would only hit the back
+    if (a > 0)
         return false;
-    }
 
     float t = (m_planeOffset - glm::dot(m_planeNormal, ray.origin)) / a;
 
@@ -86,7 +86,6 @@ bool Object::QuadHit(const Ray& ray, HitData& hit) const
         return false;
 
     hit.point = intersectionWorldSpace;
-    hit.front = true;
     hit.distance = t;
     hit.normal = m_planeNormal;
     hit.materialID = m_materialID;
