@@ -1,5 +1,7 @@
 #include "Object.h"
 
+#include "Utils.h"
+
 #include "Ray.h"
 
 using namespace Rye;
@@ -49,6 +51,7 @@ bool Object::SphereHit(const Ray& ray, HitData& hit) const
             return false;
         // if the point isn't behind us we are inside the sphere so we tell our hit that.
         hit.front = false;
+        // Rye::log("inside");
     }
 
     // otherwise calculate hit position

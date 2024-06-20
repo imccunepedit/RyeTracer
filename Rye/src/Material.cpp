@@ -13,7 +13,7 @@ bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
             return true;
 
         case Conductor:
-            scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness;
+            scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed, roughness);
             return true;
 
         case Dielectric:
@@ -38,8 +38,8 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
 
         case Dielectric:
             hit.color = glm::vec4(1);
-            if (!hit.front)
-                hit.color *= glm::exp((color-1.0f)*hit.distance);
+            // if (!hit.front)
+            //     hit.color = glm::exp((color-1.0f)*hit.distance);
             return;
 
         case Emissive:
@@ -58,7 +58,7 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             return;
 
         case Conductor:
-            float f = Fresnel(inRay, hit.normal, 0.2f);
+            float f = Fresnel(inRay, hit.normal, 5.0f);
             hit.color = (1-f) * color + f * glm::vec4(1);
             return;
     }
@@ -68,14 +68,13 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
 bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
 {
     float eta = 1/indexOfRefraction;
-    float at = 1;
 
-    hit.normal += RandomOnSphere(hit.seed) * roughness;
+    hit.normal += RandomOnSphere(hit.seed, roughness);
     hit.normal = glm::normalize(hit.normal);
 
     if (!hit.front)
     {
-        eta = 1/eta;
+        eta = indexOfRefraction;
         hit.normal *= -1;
     }
 

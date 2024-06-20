@@ -21,7 +21,9 @@ namespace Rye {
             void AddMaterial(Material m);
             void RemoveMaterial(const int& i);
 
-            void Initialize();
+            void CornellBox();
+            void TestScene();
+            void Box2();
             bool Hit(const Ray& ray, HitData& hit);
 
             Material& GetMaterial(uint32_t ID);

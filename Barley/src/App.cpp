@@ -20,7 +20,8 @@ using namespace Rye;
 
 App::App()
 {
-    m_scene.Initialize();
+    // m_scene.CornellBox();
+    m_scene.Box2();
     m_camera.Initialize();
 }
 

@@ -24,6 +24,8 @@ namespace Rye {
                 : materialType(type), color(color) {}
             Material(Type type, glm::vec4 color, float roughness)
                 : materialType(type), color(color), roughness(roughness) {}
+            Material(Type type, glm::vec4 color, float roughness, float ior)
+                : materialType(type), color(color), roughness(roughness), indexOfRefraction(ior) {}
 
         public:
             bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);

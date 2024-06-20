@@ -1,21 +1,21 @@
 #include "Camera.h"
 
-#include <iostream>
-
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 
+#include "Utils.h"
+
 using namespace Rye;
 
 void Camera::Resize(const int& w, const int& h)
 {
-    if ((w == film.width && h == film.height) || w*h <= 0 )
+    if ((w == film.width && h == film.height) || w*h <= 1 )
         return;
 
-    std::cout << "resize" << std::endl;
+    Rye::log("resize");
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
 
