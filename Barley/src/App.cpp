@@ -76,6 +76,8 @@ void App::Update()
             if (ImGui::TreeNode("Sphere"))
             {
                 ImGui::DragFloat3("Position", glm::value_ptr(object.transform.position), 0.1f);
+                ImGui::DragFloat3("Scale", glm::value_ptr(object.transform.scale), 0.1f);
+                ImGui::DragFloat3("Rotation", glm::value_ptr(object.transform.rotation), 0.1f);
                 ImGui::SliderInt("Material ID", &object.m_materialID, 0, 10);
                 ImGui::TreePop();
             }
