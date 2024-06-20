@@ -107,6 +107,7 @@ void Scene::Box2()
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5, 0, 1), 10, glm::vec3( 90,  0,  0)), 0)); // back
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(-90,  0,  0)), 0)); // front
     AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 1)); // light
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-3,-3, 9, 1),  6, glm::vec3(0,  0,  0)), 1)); // light
 
     AddObject(Object(Object::Sphere, Transform(glm::vec4(3,0,5,1), 1), 2));
     AddObject(Object(Object::Sphere, Transform(glm::vec4(-3,0,5,1), 1), 3));

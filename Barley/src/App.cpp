@@ -22,6 +22,7 @@ App::App()
 {
     // m_scene.CornellBox();
     m_scene.Box2();
+    // m_scene.TestScene();
     m_camera.Initialize();
 }
 

@@ -47,7 +47,7 @@ namespace Rye
     static float Fresnel(glm::vec3 I, glm::vec3 N, float eta)
     {
         float c1 = glm::dot(I,-N);
-// #define SCHLICK
+#define SCHLICK
 #ifdef SCHLICK
         float R0 = (1-eta)/(1+eta);
         R0 *= R0;

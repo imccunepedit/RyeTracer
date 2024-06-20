@@ -67,16 +67,11 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
 
 bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
 {
-    float eta = 1/indexOfRefraction;
+    float eta = hit.front ? 1/indexOfRefraction : indexOfRefraction;
+    hit.normal *= hit.front ? 1.0f : -1.0f;
 
-    hit.normal += RandomOnSphere(hit.seed, roughness);
-    hit.normal = glm::normalize(hit.normal);
-
-    if (!hit.front)
-    {
-        eta = indexOfRefraction;
-        hit.normal *= -1;
-    }
+    // hit.normal += RandomOnSphere(hit.seed, roughness);
+    // hit.normal = glm::normalize(hit.normal);
 
     scatterRay = glm::refract(inRay, hit.normal, eta);
     bool reflect = glm::dot(scatterRay, scatterRay) < 0;
