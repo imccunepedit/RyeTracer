@@ -26,7 +26,9 @@ App::App()
     m_camera.Initialize();
 }
 
-App::~App() = default;
+App::~App(){
+    renderThread.wait();
+}
 
 void App::AppMenu()
 {
