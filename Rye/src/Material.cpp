@@ -5,7 +5,7 @@
 
 using namespace Rye;
 
-bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
+bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const
 {
     switch (materialType) {
         case Lambertian:
@@ -65,7 +65,7 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
 
 }
 
-bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
+bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const
 {
     float eta = hit.front ? 1/indexOfRefraction : indexOfRefraction;
     hit.normal *= hit.front ? 1.0f : -1.0f;
@@ -84,7 +84,7 @@ bool Material::DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& s
     return true;
 }
 
-bool Material::GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay)
+bool Material::GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const
 {
     if (m_isSpecular)
     {

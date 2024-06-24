@@ -9,7 +9,7 @@
 
 using namespace Rye;
 
-bool Scene::Hit(const Ray& ray, HitData& hit)
+bool Scene::Hit(const Ray& ray, HitData& hit) const
 {
     // if there isn't anything in the scene return
     if (objects.size() == 0)
@@ -32,7 +32,7 @@ bool Scene::Hit(const Ray& ray, HitData& hit)
         if (hit.distance < tempHit.distance) // already hit something infront
             continue;
 
-        if (!tempHit.front && GetMaterial(tempHit.materialID).materialType != Material::Dielectric)
+        if (!tempHit.front && m_materials[tempHit.materialID].materialType != Material::Dielectric)
             continue;
 
         hit = tempHit;
@@ -120,7 +120,7 @@ void Scene::AddObject(Object o)
     objects.push_back(o);
 }
 
-void Scene::RemoveObject(const int& i)
+void Scene::RemoveObject(int i)
 {
     objects.erase(std::next(objects.begin(), i));
 }
@@ -131,7 +131,7 @@ void Scene::AddMaterial(Material m)
     materialCount ++;
 }
 
-void Scene::RemoveMaterial(const int& i)
+void Scene::RemoveMaterial(int i)
 {
     m_materials.erase(std::next(m_materials.begin(), i));
     materialCount --;

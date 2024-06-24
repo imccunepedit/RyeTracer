@@ -22,7 +22,8 @@ namespace Rye {
 
     class Ray {
         public:
-            glm::vec3 at(float t) const{
+            glm::vec3 at(float t) const
+            {
                 return origin + direction * t;
             }
 

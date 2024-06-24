@@ -10,7 +10,7 @@
 
 using namespace Rye;
 
-void Camera::Resize(const int& w, const int& h)
+void Camera::Resize(int w, int h)
 {
     if ((w == film.width && h == film.height) || w*h <= 1 )
         return;
@@ -31,7 +31,7 @@ void Camera::Initialize()
     CalculateBasisVectors();
 }
 
-void Camera::OnUpdate(const float& deltaTime)
+void Camera::OnUpdate(float deltaTime)
 {
     if (m_vFoV != vFoV)
     {
@@ -50,7 +50,7 @@ void Camera::OnUpdate(const float& deltaTime)
     Rotate(deltaTime);
 }
 
-glm::vec4 Camera::GetRayDirection(const int& index)
+glm::vec4 Camera::GetRayDirection(int index)
 {
     return m_rayDirections[index];
 }
@@ -98,7 +98,7 @@ void Camera::CalculateRays()
     }
 }
 
-void Camera::Translate(const float& deltaTime)
+void Camera::Translate(float deltaTime)
 {
     if (!(ImGui::IsMouseDown(ImGuiMouseButton_Right)))
     {
@@ -145,7 +145,7 @@ void Camera::Translate(const float& deltaTime)
 
 }
 
-void Camera::Rotate(const float& deltaTime)
+void Camera::Rotate(float deltaTime)
 {
     m_lastMousePosition = m_mousePosition;
     m_mousePosition = glm::vec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
@@ -196,30 +196,3 @@ void Camera::DrawControls()
         film.needsReset = true;
     }
 }
-
-
-
-
-// {
-
-//     // generate a seed for our hash generator, should be different for each pixel and shouldn't be any perceptible shift across frames ( only the case if the accumulator is reset every frame and the camera isn't moving)
-//     uint32_t seed = x + x * viewport_pixel_width + samples + (out_image->texture) * viewport_pixel_width * viewport_pixel_height;
-
-//     // generate an offset so we cover more of our pixels area with rays
-//     glm::vec2 ray_screen_target = glm::vec2((x + raytracing::random_float(seed))/viewport_pixel_width,
-//                                             (y + raytracing::random_float(seed))/viewport_pixel_height) * 2.0f - 1.0f;
-
-//     Ray ray;
-//     ray.seed = seed;
-//     ray.origin = m_position;
-
-//     glm::vec4 ray_world_target = inv_projection * glm::vec4(ray_screen_target, 1, 1);
-//     ray.direction = glm::normalize(glm::vec3(inv_view * ray_world_target));
-
-
-//     // glm::vec3 color = trace_ray(ray, scene, max_depth);
-//     accumulation_data[x + y *viewport_pixel_width] += trace_ray(ray, scene, max_depth);
-
-//     glm::vec3 color = accumulation_data[x+y*viewport_pixel_width] / (float)samples;
-//     image_data[x + y*viewport_pixel_width] = process_color(color);
-// }

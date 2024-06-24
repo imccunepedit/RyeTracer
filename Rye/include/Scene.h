@@ -16,15 +16,15 @@ namespace Rye {
     class Scene {
         public:
             void AddObject(Object o);
-            void RemoveObject(const int& i);
+            void RemoveObject(int i);
 
             void AddMaterial(Material m);
-            void RemoveMaterial(const int& i);
+            void RemoveMaterial(int i);
 
             void CornellBox();
             void TestScene();
             void Box2();
-            bool Hit(const Ray& ray, HitData& hit);
+            bool Hit(const Ray& ray, HitData& hit) const;
 
             Material& GetMaterial(uint32_t ID);
 

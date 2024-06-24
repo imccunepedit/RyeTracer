@@ -8,7 +8,7 @@
 
 using namespace Rye;
 
-void Film::Resize(const int& w, const int& h)
+void Film::Resize(int w, int h)
 {
     if(w*h <= 0)
         return;
@@ -38,7 +38,7 @@ void Film::ResetAccumulator()
     std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
 }
 
-void Film::SetPixel(const int& index, const glm::vec4& color)
+void Film::SetPixel(int index, const glm::vec4& color)
 {
     m_accumulated[index] += color;
     data[index] = ProcessColor(m_accumulated[index]);

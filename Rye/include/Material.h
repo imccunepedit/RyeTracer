@@ -28,12 +28,12 @@ namespace Rye {
                 : materialType(type), color(color), roughness(roughness), indexOfRefraction(ior) {}
 
         public:
-            bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
+            bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const;
             void Color(const glm::vec3& inRay, HitData& hit);
 
         private:
-            bool DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
-            bool GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay);
+            bool DielectricBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const;
+            bool GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const;
 
         public:
             int materialType;
@@ -46,7 +46,7 @@ namespace Rye {
             float emissiveStrength = 4.0f;
 
         private:
-            bool m_isSpecular = false;
+             bool m_isSpecular = false;
     };
 }
 

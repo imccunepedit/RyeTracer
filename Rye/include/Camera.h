@@ -13,19 +13,20 @@
 
 
 namespace Rye {
-    class Camera {
+    class Camera
+    {
         public:
             void Initialize();
-            void Resize(const int& w, const int& h);
+            void Resize(int w, int h);
 
-            glm::vec4 GetRayOrigin() { return m_position; }
-            glm::vec4 GetRayDirection(const int& index);
+            glm::vec4 GetRayOrigin() const { return m_position; }
+            glm::vec4 GetRayDirection(int index);
 
-            void OnUpdate(const float& deltaTime);
+            void OnUpdate(float deltaTime);
             void DebugWindow();
             void DrawControls();
 
-            bool Inputting() { return m_input; }
+            bool Inputting() const { return m_input; }
 
         private:
             void CalculateBasisVectors();
@@ -33,8 +34,8 @@ namespace Rye {
             void CalculatePerspectiveMatrix();
             void CalculateRays();
 
-            void Translate(const float& deltaTime);
-            void Rotate(const float& deltaTime);
+            void Translate(float deltaTime);
+            void Rotate(float deltaTime);
 
         public:
             Film film;

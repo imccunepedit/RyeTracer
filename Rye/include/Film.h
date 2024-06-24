@@ -7,15 +7,15 @@ namespace Rye {
     class Film
     {
         public:
-            void SetPixel(const int& index, const glm::vec4& color);
-            void Resize(const int& w, const int& h);
+            void SetPixel(int index, const glm::vec4& color);
+            void Resize(int w, int h);
             void ResetAccumulator();
             void NewSample() {
                 m_samples ++;
                 m_samplesInverse = 1.0f/m_samples;
             };
 
-            int Samples() { return m_samples; }
+            int Samples() const { return m_samples; }
 
             glm::vec4 ProcessColor(glm::vec4 color);
 

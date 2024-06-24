@@ -1,10 +1,33 @@
 #include "Object.h"
 
-#include "Utils.h"
-
 #include "Ray.h"
 
 using namespace Rye;
+
+
+Object::Object(Type type, Transform tf, int materialID)
+    : objectType(type), transform(tf), m_materialID(materialID)
+{
+    switch (objectType) {
+        default:
+            break;
+        case Quad:
+        {
+            m_u = transform.matrix * glm::vec4(1, 0, 0, 0);
+            m_v = transform.matrix * glm::vec4(0, 1, 0, 0);
+            glm::vec3 n = glm::cross(m_u, m_v);
+            m_w = n / glm::dot(n, n);
+            m_planeNormal = glm::normalize(n);
+            m_planeOffset = glm::dot(transform.position, m_planeNormal);
+            break;
+        }
+
+        case AABB:
+        {
+            break;
+        }
+    }
+}
 
 bool Object::Hit(const Ray &ray, HitData& hit) const
 {

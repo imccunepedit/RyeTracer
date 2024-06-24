@@ -20,10 +20,10 @@ namespace Rye {
             void DrawControls();
 
         private:
-            glm::vec4 RayGen(const int& i);
+            glm::vec4 RayGen(int i);
             HitData TraceRay(const Ray& ray, HitData& hit);
-            HitData ClosestHit(const Ray& ray, HitData& hit);
-            HitData Miss(const Ray& ray, HitData& hit);
+            HitData ClosestHit(const Ray& ray, HitData& hit) const;
+            HitData Miss(const Ray& ray, HitData& hit) const;
 
         private:
             Camera* m_camera = nullptr;

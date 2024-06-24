@@ -42,7 +42,7 @@ int Renderer::Render()
     return (int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - timer).count();
 }
 
-glm::vec4 Renderer::RayGen(const int& i)
+glm::vec4 Renderer::RayGen(int i)
 {
 
     uint32_t seed = i + m_camera->film.Samples() * m_camera->rayCount;
@@ -103,13 +103,13 @@ HitData Renderer::TraceRay(const Ray& ray, HitData& hit)
     return ClosestHit(ray, hit);
 }
 
-HitData Renderer::ClosestHit(const Ray& ray, HitData& hit)
+HitData Renderer::ClosestHit(const Ray& ray, HitData& hit) const
 {
     m_scene->GetMaterial(hit.materialID).Color(ray.direction, hit);
     return hit;
 }
 
-HitData Renderer::Miss(const Ray& ray, HitData& hit)
+HitData Renderer::Miss(const Ray& ray, HitData& hit) const
 {
     hit.color = m_scene->ambientColor;
     return hit;
