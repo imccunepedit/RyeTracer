@@ -74,7 +74,7 @@ bool Object::QuadHit(const Ray& ray, HitData& hit) const
 
     float t = (m_planeOffset - glm::dot(m_planeNormal, ray.origin)) / a;
 
-    float min_t = 0.0001;
+    float min_t = 0.001;
     if (t < min_t)
         return false;
 

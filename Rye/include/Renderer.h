@@ -29,7 +29,7 @@ namespace Rye {
             Camera* m_camera = nullptr;
             Scene* m_scene = nullptr;
 
-            int m_maxDepth = 5;
+            int m_maxDepth = 10; // could do less if there isn't any glass or different scene with glass
     };
 }
 
