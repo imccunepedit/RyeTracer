@@ -58,8 +58,8 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             return;
 
         case Conductor:
-            float f = Fresnel(inRay, hit.normal, 5.0f);
-            hit.color = (1-f) * color + f * glm::vec4(1);
+            float f = Fresnel(inRay, hit.normal, indexOfRefraction);
+            hit.color = (1-f) * color + f;
             return;
     }
 

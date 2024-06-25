@@ -27,7 +27,8 @@ App::App()
 }
 
 App::~App(){
-    renderThread.wait();
+    if (renderThread.valid())
+        renderThread.wait();
 }
 
 void App::AppMenu()
