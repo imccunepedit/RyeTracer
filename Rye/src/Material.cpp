@@ -37,9 +37,9 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             return;
 
         case Dielectric:
-            hit.color = glm::vec4(1);
-            // if (!hit.front)
-            //     hit.color = glm::exp((color-1.0f)*hit.distance);
+            hit.color = glm::vec3(1);
+            if (!hit.front)
+                hit.color = glm::exp((color-1.0f)*hit.distance);
             return;
 
         case Emissive:
@@ -47,10 +47,10 @@ void Material::Color(const glm::vec3& inRay, HitData& hit)
             return;
 
         case Glossy:
-            if (RandomFloat(hit.seed) <= specularity)
+            if (RandomFloat(hit.seed) <= specularity*Fresnel(inRay, hit.normal, indexOfRefraction))
             {
                 m_isSpecular = true;
-                hit.color = glm::vec4(1.0f);
+                hit.color = glm::vec3(1);
                 return;
             }
             m_isSpecular = false;

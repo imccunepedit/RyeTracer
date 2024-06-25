@@ -12,7 +12,7 @@ namespace Rye {
     struct HitData {
         glm::vec3 point;
         glm::vec3 normal;
-        glm::vec4 color = glm::vec4(0,0,0,1);
+        glm::vec3 color = glm::vec3(0,0,0);
         float distance = std::numeric_limits<float>::max();
         bool front = true;
         uint32_t materialID = 0;

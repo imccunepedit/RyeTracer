@@ -50,14 +50,14 @@ void Camera::OnUpdate(float deltaTime)
     Rotate(deltaTime);
 }
 
-glm::vec4 Camera::GetRayDirection(int index)
+glm::vec3 Camera::GetRayDirection(int index)
 {
     return m_rayDirections[index];
 }
 
 void Camera::CalculateViewMatrix()
 {
-    m_view = glm::lookAt(glm::vec3(m_position), glm::vec3(m_position+m_forward), glm::vec3(0,0,1));
+    m_view = glm::lookAt(m_position, m_position+m_forward, glm::vec3(0,0,1));
     m_inverseView = glm::inverse(m_view);
 }
 
@@ -90,8 +90,8 @@ void Camera::CalculateRays()
 
             rayScreenTarget = rayScreenTarget*2.0f - 1.0f;
 
-            glm::vec4 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
-            glm::vec4 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(glm::vec3(rayWorldTarget)),0);
+            glm::vec3 rayWorldTarget = m_inverseProjection * glm::vec4(rayScreenTarget, 1, 1);
+            glm::vec3 rayWorldDirection = m_inverseView * glm::vec4(glm::normalize(rayWorldTarget),0);
 
             m_rayDirections[i+ j*w] = rayWorldDirection;
         }
@@ -108,7 +108,7 @@ void Camera::Translate(float deltaTime)
     m_input = true;
 
 
-    glm::vec4 translation = glm::vec4(0);
+    glm::vec3 translation = glm::vec3(0);
 
     if (ImGui::IsKeyDown(ImGuiKey_W))
     {
@@ -163,7 +163,7 @@ void Camera::Rotate(float deltaTime)
         glm::mat4 rotate = glm::rotate(glm::mat4(1), -mouse_delta.y*m_sensitivity*deltaTime, glm::vec3(m_right));
         rotate = glm::rotate(rotate, -mouse_delta.x*m_sensitivity*deltaTime, glm::vec3(0,0,1));
 
-        m_forward = rotate*m_forward;
+        m_forward = rotate*glm::vec4(m_forward,0);
 
         CalculateViewMatrix();
         CalculateBasisVectors();

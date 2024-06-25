@@ -33,7 +33,7 @@ int Renderer::Render()
     using oneapi::tbb::parallel_for;
     parallel_for(size_t(0), size_t(m_camera->rayCount), [this](size_t i)
     {
-        glm::vec4 color = RayGen(i);
+        glm::vec3 color = RayGen(i);
         m_camera->film.SetPixel(i,color);
     });
 #endif
@@ -42,7 +42,7 @@ int Renderer::Render()
     return (int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - timer).count();
 }
 
-glm::vec4 Renderer::RayGen(int i)
+glm::vec3 Renderer::RayGen(int i)
 {
 
     uint32_t seed = i + m_camera->film.Samples() * m_camera->rayCount;
@@ -51,7 +51,7 @@ glm::vec4 Renderer::RayGen(int i)
     ray.origin = m_camera->GetRayOrigin();
     ray.direction = m_camera->GetRayDirection(i);
 
-    glm::vec4 color = glm::vec4(1);
+    glm::vec3 color = glm::vec3(1);
 
     if (m_camera->Inputting())
     {

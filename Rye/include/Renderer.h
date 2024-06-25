@@ -1,7 +1,7 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
 namespace Rye {
     class Camera;
@@ -20,7 +20,7 @@ namespace Rye {
             void DrawControls();
 
         private:
-            glm::vec4 RayGen(int i);
+            glm::vec3 RayGen(int i);
             HitData TraceRay(const Ray& ray, HitData& hit);
             HitData ClosestHit(const Ray& ray, HitData& hit) const;
             HitData Miss(const Ray& ray, HitData& hit) const;

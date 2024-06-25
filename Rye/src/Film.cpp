@@ -17,10 +17,10 @@ void Film::Resize(int w, int h)
     height = h;
 
     delete[] m_accumulated;
-    m_accumulated = new glm::vec4[width*height];
+    m_accumulated = new glm::vec3[width*height];
 
     delete[] data;
-    data = new glm::vec4[width*height];
+    data = new glm::vec3[width*height];
 
     needsReset = true;
     ResetAccumulator();
@@ -35,20 +35,20 @@ void Film::ResetAccumulator()
 
     needsReset = false;
     m_samples = 0;
-    std::memset(m_accumulated, 0, width*height*sizeof(glm::vec4));
+    std::memset(m_accumulated, 0, width*height*sizeof(glm::vec3));
 }
 
-void Film::SetPixel(int index, const glm::vec4& color)
+void Film::SetPixel(int index, const glm::vec3& color)
 {
     m_accumulated[index] += color;
     data[index] = ProcessColor(m_accumulated[index]);
 }
 
 
-glm::vec4 Film::ProcessColor(glm::vec4 color)
+glm::vec3 Film::ProcessColor(glm::vec3 color)
 {
     color = color * m_samplesInverse;
-    color = glm::max(color, glm::vec4(0));
+    color = glm::max(color, glm::vec3(0));
     color = glm::sqrt(color);
 
     return color;

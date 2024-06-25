@@ -2,7 +2,6 @@
 #define MATERIAL_H_
 
 #include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <glm/geometric.hpp>
 
 
@@ -20,11 +19,11 @@ namespace Rye {
         public:
             Material(Type type)
                 : materialType(type) {}
-            Material(Type type, glm::vec4 color)
+            Material(Type type, glm::vec3 color)
                 : materialType(type), color(color) {}
-            Material(Type type, glm::vec4 color, float roughness)
+            Material(Type type, glm::vec3 color, float roughness)
                 : materialType(type), color(color), roughness(roughness) {}
-            Material(Type type, glm::vec4 color, float roughness, float ior)
+            Material(Type type, glm::vec3 color, float roughness, float ior)
                 : materialType(type), color(color), roughness(roughness), indexOfRefraction(ior) {}
 
         public:
@@ -37,7 +36,7 @@ namespace Rye {
 
         public:
             int materialType;
-            glm::vec4 color = glm::vec4(0.5f,0.5f,0.5f,1.0f);
+            glm::vec3 color = glm::vec3(0.5f,0.5f,0.5f);
             float roughness = 0.0f;
 
             bool doubleSided = false;

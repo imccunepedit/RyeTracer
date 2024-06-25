@@ -6,12 +6,12 @@
 
 #include <glad/glad.h>
 
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
 namespace Barley {
     class Image {
         public:
-            void Set(glm::vec4* data);
+            void Set(glm::vec3* data);
             void Resize();
             void Draw();
             void BindImage() {
