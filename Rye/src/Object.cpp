@@ -4,7 +4,7 @@
 
 using namespace Rye;
 
-constexpr float epsilon = 0.00001f;
+constexpr float epsilon = 0.0001f;
 
 Object::Object(Type type, Transform tf, int materialID)
     : objectType(type), transform(tf), m_materialID(materialID)
