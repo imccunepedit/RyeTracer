@@ -26,7 +26,8 @@ App::App()
     m_camera.Initialize();
 }
 
-App::~App(){
+App::~App()
+{
     if (renderThread.valid())
         renderThread.wait();
 }

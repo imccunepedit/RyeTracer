@@ -4,6 +4,7 @@
 
 using namespace Rye;
 
+constexpr float epsilon = 0.00001f;
 
 Object::Object(Type type, Transform tf, int materialID)
     : objectType(type), transform(tf), m_materialID(materialID)
@@ -60,17 +61,16 @@ bool Object::SphereHit(const Ray& ray, HitData& hit) const
         return false;
     }
 
-    float min_t = 0.001;
     // make sure that we only use rays that go away from the camera
     // we don't want to be able to see behind use
 
     float t = (-b - std::sqrt(discriminant));
-    if (t < min_t)
+    if (t < epsilon)
     {
         // if the first t was negative that means that it hit something behind us, we can now check
         // if the second point is also behind us
         t = (-b + std::sqrt(discriminant));
-        if (t < min_t)
+        if (t < epsilon)
             return false;
         // if the point isn't behind us we are inside the sphere so we tell our hit that.
         hit.front = false;
@@ -97,8 +97,7 @@ bool Object::QuadHit(const Ray& ray, HitData& hit) const
 
     float t = (m_planeOffset - glm::dot(m_planeNormal, ray.origin)) / a;
 
-    float min_t = 0.001;
-    if (t < min_t)
+    if (t < epsilon)
         return false;
 
     glm::vec3 intersectionWorldSpace = ray.at(t);

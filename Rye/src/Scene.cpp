@@ -55,16 +55,17 @@ void Scene::CornellBox()
     AddMaterial(Material(Material::Lambertian, glm::vec4(0.12,0.65,0.1,1))); // green left wall
     AddMaterial(Material(Material::Conductor, glm::vec4(0.944,0.776,0.373,1))); // gold ball
     AddMaterial(Material(Material::Glossy, glm::vec4(0.25,0.75,1,1))); // blue plastic ball
-    AddMaterial(Material(Material::Dielectric)); // glass ball
+    AddMaterial(Material(Material::Dielectric, glm::vec4(1))); // glass ball
 
 
-    AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 0));
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5,10, 1), 10, glm::vec3(180,  0,  0)), 1)); // top
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5, 0, 1), 10, glm::vec3(  0,  0,  0)), 1)); // bottom
     AddObject(Object(Object::Quad, Transform(glm::vec4( 5,-5, 0, 1), 10, glm::vec3(  0,-90,  0)), 2)); // right
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(  0, 90,  0)), 3)); // left
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5, 5, 0, 1), 10, glm::vec3( 90,  0,  0)), 1)); // back
     AddObject(Object(Object::Quad, Transform(glm::vec4(-5,-5,10, 1), 10, glm::vec3(-90,  0,  0)), 1)); // front
+
+    AddObject(Object(Object::Quad, Transform(glm::vec4(-3, 3, 9, 1),  6, glm::vec3(180,  0,  0)), 0));
 
     AddObject(Object(Object::Sphere, Transform(glm::vec4(-3,0,1,1), 1), 6));
     AddObject(Object(Object::Sphere, Transform(glm::vec4(0,0,1,1), 1), 5));
