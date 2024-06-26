@@ -9,7 +9,7 @@ namespace Rye {
     class HitData;
 }
 
-namespace Rye::Assets {
+namespace Rye::Objects {
     class Sphere
     {
         public:

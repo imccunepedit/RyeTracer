@@ -18,13 +18,14 @@ namespace Rye::Materials {
 
             bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const;
             void Color(const glm::vec3& inRay, HitData& hit) const;
-            static bool IsDoubleSided() { return true; }
+            bool IsDoubleSided() const { return true; }
 
         public:
-            glm::vec3 color = glm::vec3(1.0f);
+            glm::vec3 color;
+            float indexOfRefraction;
+
             float roughness = 0.0f;
 
-            float indexOfRefraction = 1.5f;
 
     };
 }

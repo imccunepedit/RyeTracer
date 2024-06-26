@@ -10,7 +10,7 @@
 #include "Objects/Object.h"
 #include "Materials/Material.h"
 
-using namespace Rye::Assets;
+using namespace Rye::Objects;
 using namespace Rye::Materials;
 
 namespace Rye {

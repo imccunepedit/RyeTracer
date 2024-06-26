@@ -8,7 +8,7 @@ namespace Rye {
     class HitData;
 }
 
-namespace Rye::Assets {
+namespace Rye::Objects {
     class Plane
     {
         public:

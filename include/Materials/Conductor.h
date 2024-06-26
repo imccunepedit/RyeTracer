@@ -24,7 +24,7 @@ namespace Rye::Materials {
             glm::vec3 color = glm::vec3(1.0f);
             float roughness = 0.0f;
 
-            float indexOfRefraction = 1.7f;
+            float indexOfRefraction = 1.75f;
 
     };
 }

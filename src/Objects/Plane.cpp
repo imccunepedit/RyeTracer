@@ -5,7 +5,7 @@
 
 #include "Renderer/Ray.h"
 
-using namespace Rye::Assets;
+using namespace Rye::Objects;
 
 
 bool Plane::Hit(const Ray& ray, HitData& hit, float t_min) const

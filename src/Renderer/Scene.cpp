@@ -32,8 +32,8 @@ bool Scene::Hit(const Ray& ray, HitData& hit, float t_min) const
         if (hit.distance < tempHit.distance) // already hit something infront
             continue;
 
-        if (!tempHit.front && m_materials[tempHit.materialID].IsDoubleSided())
-            continue;
+        // if (!tempHit.front && m_materials[tempHit.materialID].IsDoubleSided())
+        //     continue;
 
         hit = tempHit;
 
@@ -70,7 +70,8 @@ void Scene::CornellBox()
     AddObject(Quad(glm::vec3(-3,-3, 9), glm::vec3(0,6,0), glm::vec3(6,0,0), 0));
 
     AddObject(Sphere(glm::vec3(-3,0,1), 1, 6));
-    AddObject(Sphere(glm::vec3(0,0,1), 1, 5));
+    // AddObject(Sphere(glm::vec3(0,0,1), 1, 6));
+    AddObject(AABB(glm::vec3(-1,-1,0.1), glm::vec3(1,1,2), 6));
     AddObject(Sphere(glm::vec3(3,0,1), 1, 4));
 
 }
@@ -80,29 +81,31 @@ void Scene::TestScene()
     ambientColor = glm::vec4(0.6f,0.7f,0.75f, 2);
 
     AddMaterial(Lambertian()); // gray walls
-    AddMaterial(Emissive());   // light
-    AddMaterial(Lambertian(glm::vec3(0.68,0.1,0.1))); // red right wall
     AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
-    AddMaterial(Lambertian(glm::vec3(0.12,0.65,0.1))); // green left wall
-    AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4)); // gold ball
-    AddMaterial(Glossy(glm::vec3(0.25,0.75,1))); // blue plastic ball
+    // AddMaterial(Emissive());   // light
+    AddMaterial(Lambertian(glm::vec3(0.68,0.1,0.1))); // red right wall
+    // AddMaterial(Lambertian(glm::vec3(0.12,0.65,0.1))); // green left wall
+    // AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4)); // gold ball
+    // AddMaterial(Glossy(glm::vec3(0.25,0.75,1))); // blue plastic ball
 
-    AddObject(Sphere(glm::vec3(0,4,-1000), 999, 0));
-    AddObject(Sphere(glm::vec3(0,4,1), 1, 1));
-    AddObject(Sphere(glm::vec3(4,4,0), 1, 3));
-    AddObject(Sphere(glm::vec3(7,4,0), 1, 5));
-    AddObject(Sphere(glm::vec3(-4,4,3), 2, 4));
-    AddObject(Quad(glm::vec3(-5,-5, 0), glm::vec3( 0,10, 0), glm::vec3(10, 0, 0), 1)); // bottom
+    // AddObject(Sphere(glm::vec3(0,4,-1000), 999, 0));
+    // AddObject(Sphere(glm::vec3(0,4,1), 1, 1));
+    // AddObject(Sphere(glm::vec3(4,4,0), 1, 3));
+    // AddObject(Sphere(glm::vec3(7,4,0), 1, 5));
+    // AddObject(Sphere(glm::vec3(-4,4,3), 2, 4));
+    AddObject(Quad(glm::vec3(-10,-10, 0), glm::vec3(20, 0, 0), glm::vec3( 0,20, 0), 9)); // bottom
+    AddObject(AABB(glm::vec3(0.5,0.5,0.1), glm::vec3(1.5,1.5,1.1), 1));
+    AddObject(AABB(glm::vec3(3,2,0.1), glm::vec3(4,3,1.1), 2));
 }
 
 void Scene::Box2()
 {
 
-    AddMaterial(Lambertian()); // gray walls
     AddMaterial(Emissive());   // light
+    AddMaterial(Lambertian()); // gray walls
     AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4)); // gold ball
     AddMaterial(Conductor(glm::vec3(0.926,0.721,0.504), 1.4)); // copper ball
-    AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
+    AddMaterial(Dielectric(glm::vec3(1), 1.0f)); // glass ball
 
     AddObject(Quad(glm::vec3(-5,-5,10), glm::vec3( 0,10, 0), glm::vec3(10, 0, 0), 1)); // top
     AddObject(Quad(glm::vec3(-5,-5, 0), glm::vec3(10, 0, 0), glm::vec3( 0,10, 0), 1)); // bottom
@@ -113,9 +116,10 @@ void Scene::Box2()
     AddObject(Quad(glm::vec3(-5, 5, 0), glm::vec3(10, 0, 0), glm::vec3( 0, 0,10), 1)); // back
     AddObject(Quad(glm::vec3(-5,-5, 0), glm::vec3( 0, 0,10), glm::vec3(10, 0, 0), 1)); // front
 
-    AddObject(Sphere(glm::vec3(3,0,5), 1, 2));
+    AddObject(Sphere(glm::vec3(3,0,5), 1, 0));
     AddObject(Sphere(glm::vec3(-3,0,5), 1, 3));
-    AddObject(Sphere(glm::vec3(0,0,5), 1, 4));
+    AddObject(AABB(glm::vec3(-1,-1,4), glm::vec3(1,1,6), 4));
+    // AddObject(Sphere(glm::vec3(0,0,5), 1, 4));
 }
 
 

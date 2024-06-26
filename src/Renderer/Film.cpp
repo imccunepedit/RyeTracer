@@ -10,9 +10,6 @@ using namespace Rye;
 
 void Film::Resize(int w, int h)
 {
-    if(w*h <= 0)
-        return;
-
     width = w;
     height = h;
 
@@ -40,7 +37,8 @@ void Film::ResetAccumulator()
 
 void Film::SetPixel(int index, const glm::vec3& color)
 {
-    m_accumulated[index] += color;
+
+    m_accumulated[index] += glm::clamp(color, glm::vec3(0), glm::vec3(1000));
     data[index] = ProcessColor(m_accumulated[index]);
 }
 

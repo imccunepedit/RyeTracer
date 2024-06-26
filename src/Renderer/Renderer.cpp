@@ -93,7 +93,7 @@ glm::vec3 Renderer::RayGen(int i)
 HitData Renderer::TraceRay(const Ray& ray, HitData& hit)
 {
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
-    if (!m_scene->Hit(ray, hit, 0.0001))
+    if (!m_scene->Hit(ray, hit, 0.01f))
     {
         return Miss(ray, hit);
     }

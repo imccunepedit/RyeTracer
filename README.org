@@ -1,5 +1,5 @@
-[[docs/Samples-21000.MaxDepth-10.GlassGlossyMetal.png]]
-Demo scene rendered with 21000 samples and a max depth of 10. Took ~1 hour to accumulate.
+[[docs/Samples-5000.MaxDepth-10.GlassGlossyMetal.png]]
+Demo scene rendered with 5000 samples and a max depth of 10.
 
 
 

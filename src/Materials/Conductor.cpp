@@ -15,5 +15,6 @@ bool Conductor::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRay
 void Conductor::Color(const glm::vec3 &inRay, HitData &hit) const
 {
     float f = Math::Fresnel(inRay, hit.normal, indexOfRefraction);
-    hit.color = (1-f) * color + f;
+    // hit.color = color;
+    hit.color = (1-f) * color + glm::vec3(1) * f;
 }
