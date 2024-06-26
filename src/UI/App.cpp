@@ -12,8 +12,8 @@
 
 #include "Renderer/Camera.h"
 #include "Renderer/Scene.h"
-#include "Assets/Material.h"
-#include "Assets/Object.h"
+#include "Objects/Material.h"
+#include "Objects/Object.h"
 
 using namespace Rye::UI;
 
@@ -71,50 +71,50 @@ void App::Update()
     //     m_scene.AddObject(Object(Transform(glm::vec4(10,0,0,1),1),0));;
     // }
 
-    if (ImGui::TreeNode("Objects"))
-    {
-        for (size_t i = 0; i < m_scene.objects.size(); i++)
-        {
-            Object& object = m_scene.objects.at(i);
-            ImGui::PushID(i);
+    // if (ImGui::TreeNode("Objects"))
+    // {
+    //     for (size_t i = 0; i < m_scene.objects.size(); i++)
+    //     {
+    //         Object& object = m_scene.objects.at(i);
+    //         ImGui::PushID(i);
 
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode("Sphere"))
-            {
-                ImGui::DragFloat3("Position", glm::value_ptr(object.transform.position), 0.1f);
-                ImGui::DragFloat3("Scale", glm::value_ptr(object.transform.scale), 0.1f);
-                ImGui::DragFloat3("Rotation", glm::value_ptr(object.transform.rotation), 0.1f);
-                ImGui::SliderInt("Material ID", &object.m_materialID, 0, 10);
-                ImGui::TreePop();
-            }
+    //         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    //         if (ImGui::TreeNode("Sphere"))
+    //         {
+    //             ImGui::DragFloat3("Position", glm::value_ptr(object.transform.position), 0.1f);
+    //             ImGui::DragFloat3("Scale", glm::value_ptr(object.transform.scale), 0.1f);
+    //             ImGui::DragFloat3("Rotation", glm::value_ptr(object.transform.rotation), 0.1f);
+    //             ImGui::SliderInt("Material ID", &object.m_materialID, 0, 10);
+    //             ImGui::TreePop();
+    //         }
 
-            ImGui::PopID();
-        }
-        ImGui::TreePop();
-    }
+    //         ImGui::PopID();
+    //     }
+    //     ImGui::TreePop();
+    // }
 
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Materials"))
-    {
-        for (size_t i = 0; i < m_scene.materialCount; i++)
-        {
-            ImGui::PushID(i);
-            Material& material = m_scene.GetMaterial(i);
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode("material"))
-            {
-                ImGui::ColorEdit3("Color", glm::value_ptr(material.color), ImGuiColorEditFlags_Float);
-                ImGui::DragFloat("Roughness", &material.roughness,0.01,0,1);
-                ImGui::DragFloat("IoR", &material.indexOfRefraction, 0.002f, 0.0f);
-                ImGui::DragFloat("Emissive Strength", &material.emissiveStrength, 1.0f, 0.0f);
-                ImGui::SliderInt("Material Type", &material.materialType, 0, 4);
-                // material.DrawAttributes();
-                ImGui::TreePop();
-            }
-            ImGui::PopID();
-        }
-        ImGui::TreePop();
-    }
+    // ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    // if (ImGui::TreeNode("Materials"))
+    // {
+    //     for (size_t i = 0; i < m_scene.materialCount; i++)
+    //     {
+    //         ImGui::PushID(i);
+    //         Material& material = m_scene.GetMaterial(i);
+    //         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    //         if (ImGui::TreeNode("material"))
+    //         {
+    //             ImGui::ColorEdit3("Color", glm::value_ptr(material.color), ImGuiColorEditFlags_Float);
+    //             ImGui::DragFloat("Roughness", &material.roughness,0.01,0,1);
+    //             ImGui::DragFloat("IoR", &material.indexOfRefraction, 0.002f, 0.0f);
+    //             ImGui::DragFloat("Emissive Strength", &material.emissiveStrength, 1.0f, 0.0f);
+    //             ImGui::SliderInt("Material Type", &material.materialType, 0, 4);
+    //             // material.DrawAttributes();
+    //             ImGui::TreePop();
+    //         }
+    //         ImGui::PopID();
+    //     }
+    //     ImGui::TreePop();
+    // }
 
     ImGui::End();
 

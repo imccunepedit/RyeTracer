@@ -1,4 +1,4 @@
-#include "Assets/Material.h"
+#include "Objects/Material.h"
 
 #include "Renderer/Ray.h"
 #include "Utils/Random.h"

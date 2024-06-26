@@ -10,7 +10,7 @@
 #include "Renderer/Ray.h"
 #include "Renderer/Camera.h"
 #include "Renderer/Scene.h"
-#include "Assets/Material.h"
+#include "Objects/Material.h"
 
 using namespace Rye;
 
@@ -94,7 +94,7 @@ glm::vec3 Renderer::RayGen(int i)
 HitData Renderer::TraceRay(const Ray& ray, HitData& hit)
 {
     // trace the given ray into our scene, if it doesn't hit anything return the ambient scene color
-    if (!m_scene->Hit(ray, hit))
+    if (!m_scene->Hit(ray, hit, 0.0001))
     {
         return Miss(ray, hit);
     }

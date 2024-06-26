@@ -1,30 +1,33 @@
 #ifndef SCENE_H_
 #define SCENE_H_
 
+
 #include <vector>
 #include <memory>
 
 #include <glm/vec4.hpp>
 
+#include "Objects/Object.h"
+
+using namespace Rye::Assets;
 
 namespace Rye {
-    class Object;
     class Material;
     class Ray;
     class HitData;
 
     class Scene {
         public:
-            void AddObject(Object o);
+            void AddObject(const ObjectTypes& o);
             void RemoveObject(int i);
 
-            void AddMaterial(Material m);
+            void AddMaterial(const Material& m);
             void RemoveMaterial(int i);
 
             void CornellBox();
             void TestScene();
             void Box2();
-            bool Hit(const Ray& ray, HitData& hit) const;
+            bool Hit(const Ray& ray, HitData& hit, float t_min) const;
 
             Material& GetMaterial(uint32_t ID);
 

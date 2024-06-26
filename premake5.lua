@@ -27,6 +27,7 @@ vendor = "%{wks.location}/vendor"
 project "Rye"
     kind "WindowedApp"
     language "c++"
+    cppdialect "c++20"
 
     files {
         "src/**.cpp",
