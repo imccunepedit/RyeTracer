@@ -5,7 +5,7 @@
 
 class GLFWwindow;
 
-namespace Barley {
+namespace Rye::UI {
     class Window {
         public:
             Window();

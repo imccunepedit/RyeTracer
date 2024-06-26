@@ -1,8 +1,8 @@
-#include "Image.h"
+#include "UI/Image.h"
 
 #include "imgui.h"
 
-using namespace Barley;
+using namespace Rye::UI;
 
 void Image::Resize()
 {

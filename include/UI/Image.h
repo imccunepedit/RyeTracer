@@ -8,7 +8,7 @@
 
 #include <glm/vec3.hpp>
 
-namespace Barley {
+namespace Rye::UI {
     class Image {
         public:
             void Set(glm::vec3* data);

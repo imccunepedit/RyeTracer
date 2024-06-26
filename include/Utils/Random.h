@@ -40,13 +40,5 @@ namespace Rye::Utils
     }
 
 
-
-    struct Complex
-    {
-        float a,b;
-
-    };
-
-
 }
 #endif // UTILS_H_

@@ -3,7 +3,7 @@
 
 #include <glm/vec4.hpp>
 
-#include "Transform.h"
+#include "Assets/Transform.h"
 
 namespace Rye {
     class Ray;

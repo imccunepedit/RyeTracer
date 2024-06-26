@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 
 #include <iostream>
 #include <chrono>
@@ -7,10 +7,10 @@
 
 #include "imgui.h"
 
-#include "Camera.h"
-#include "Scene.h"
-#include "Ray.h"
-#include "Material.h"
+#include "Renderer/Ray.h"
+#include "Renderer/Camera.h"
+#include "Renderer/Scene.h"
+#include "Assets/Material.h"
 
 using namespace Rye;
 

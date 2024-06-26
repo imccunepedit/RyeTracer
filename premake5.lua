@@ -23,9 +23,38 @@ project "*"
 
 vendor = "%{wks.location}/vendor"
 
+
+project "Rye"
+    kind "WindowedApp"
+    language "c++"
+
+    files {
+        "src/**.cpp",
+    }
+
+    includedirs {
+        "include/",
+
+        "%{vendor}/imgui/",
+
+        "%{vendor}/glfw/include/",
+        "%{vendor}/glad/include/",
+
+        "%{vendor}/tracy/public/",
+        "%{vendor}/glm/",
+    }
+
+    links {
+        "Glad",
+        "glfw",
+        "ImGui",
+
+        "pthread",
+        "dl",
+        "tbb",
+    }
+
 include "vendor"
-include "Barley"
-include "Rye"
 
 
 require "premake-ecc/ecc"

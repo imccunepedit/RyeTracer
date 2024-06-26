@@ -1,10 +1,11 @@
-#include "Material.h"
+#include "Assets/Material.h"
 
-#include "Ray.h"
+#include "Renderer/Ray.h"
 #include "Utils/Random.h"
-#include "Utils/Fresnel.h"
+#include "Math/Fresnel.h"
 
 using namespace Rye;
+using namespace Rye::Math;
 using namespace Rye::Utils;
 
 bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const

@@ -1,11 +1,11 @@
-#include "Scene.h"
+#include "Renderer/Scene.h"
 
 #include <iostream>
 
-#include "Ray.h"
+#include "Renderer/Ray.h"
 
-#include "Material.h"
-#include "Object.h"
+#include "Assets/Material.h"
+#include "Assets/Object.h"
 
 using namespace Rye;
 

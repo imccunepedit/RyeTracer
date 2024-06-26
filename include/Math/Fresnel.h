@@ -4,9 +4,18 @@
 #include <glm/geometric.hpp>
 #include <glm/vec3.hpp>
 
+#define FAST_FRESNEL
 
-namespace Rye::Utils
+namespace Rye::Math
 {
+    static float Schlick(glm::vec3 I, glm::vec3 N, float eta)
+    {
+        float c1 = glm::dot(I, -N);
+        float R0 = (1 - eta) / (1 + eta);
+        R0 *= R0;
+        return R0 + (1 - R0) * pow((1 - c1), 5);
+    }
+
 #ifndef FAST_FRESNEL
     static float Fresnel(glm::vec3 I, glm::vec3 N, float eta)
     {
@@ -17,17 +26,8 @@ namespace Rye::Utils
         float Rp = (c2 - eta * c1) / (c2 + eta * c1);
         return 0.5f * (Rs * Rs + Rp * Rp);
     }
-#endif
-
-    static float Schlick(glm::vec3 I, glm::vec3 N, float eta)
-    {
-        float c1 = glm::dot(I, -N);
-        float R0 = (1 - eta) / (1 + eta);
-        R0 *= R0;
-        return R0 + (1 - R0) * pow((1 - c1), 5);
-    }
-#ifdef  FAST_FRESNEL
-    using Fresnel = Schlick;
+#else
+    #define Fresnel Schlick
 #endif
 
 }

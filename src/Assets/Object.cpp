@@ -1,6 +1,6 @@
-#include "Object.h"
+#include "Assets/Object.h"
 
-#include "Ray.h"
+#include "Renderer/Ray.h"
 
 using namespace Rye;
 

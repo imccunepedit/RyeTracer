@@ -1,4 +1,4 @@
-#include "App.h"
+#include "UI/App.h"
 
 #include <memory>
 #include <chrono>
@@ -10,13 +10,13 @@
 
 #include "imgui.h"
 
-#include "Camera.h"
-#include "Scene.h"
-#include "Material.h"
-#include "Object.h"
+#include "Renderer/Camera.h"
+#include "Renderer/Scene.h"
+#include "Assets/Material.h"
+#include "Assets/Object.h"
 
-using namespace Barley;
-using namespace Rye;
+using namespace Rye::UI;
+
 
 App::App()
 {

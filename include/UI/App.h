@@ -6,15 +6,15 @@
 #include <future>
 #include <vector>
 
-#include "Image.h"
+#include "UI/Image.h"
 
-#include "Camera.h"
-#include "Scene.h"
-#include "Renderer.h"
+#include "Renderer/Camera.h"
+#include "Renderer/Scene.h"
+#include "Renderer/Renderer.h"
 
 using namespace Rye;
 
-namespace Barley {
+namespace Rye::UI {
     class App : public Window
     {
         public:
@@ -37,7 +37,7 @@ namespace Barley {
             Camera m_camera;
             Renderer m_renderer = Renderer(&m_camera, &m_scene);
 
-            Barley::Image Viewport;
+            Image Viewport;
 
     };
 }

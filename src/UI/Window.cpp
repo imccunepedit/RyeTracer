@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "UI/Window.h"
 
 #include <stdlib.h>
 
@@ -10,7 +10,7 @@
 #include "backends/imgui_impl_opengl3.h"
 
 
-using namespace Barley;
+using namespace Rye::UI;
 
 void Window::Run()
 {
