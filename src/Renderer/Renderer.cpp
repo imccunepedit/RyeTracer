@@ -10,7 +10,6 @@
 #include "Renderer/Ray.h"
 #include "Renderer/Camera.h"
 #include "Renderer/Scene.h"
-#include "Objects/Material.h"
 
 using namespace Rye;
 

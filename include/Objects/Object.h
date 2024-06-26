@@ -9,12 +9,15 @@
 #include "Objects/Quad.h"
 #include "Objects/Plane.h"
 
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-template<class... Ts> overload(Ts...) -> overload<Ts...>; // line not needed in C++20...
 
 namespace Rye::Assets {
+    // https://www.cppstories.com/2018/09/visit-variants/
+    template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+    template<class... Ts> overload(Ts...) -> overload<Ts...>; // line not needed in C++20...
 
-    using ObjectTypes = std::variant<Rye::Assets::Sphere, Rye::Assets::Plane, Rye::Assets::Quad>;
+    using ObjectTypes = std::variant<Rye::Assets::Sphere,
+                                     Rye::Assets::Plane,
+                                     Rye::Assets::Quad>;
 
     class Object
     {

@@ -75,7 +75,7 @@ Window::Window()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window size x,y,title,not full screen
-    windowHandle = glfwCreateWindow(1280, 720, "m_floating Renderer", nullptr, nullptr);
+    windowHandle = glfwCreateWindow(1800, 900, "m_floating Renderer", nullptr, nullptr);
 
 
     // make sure window exists

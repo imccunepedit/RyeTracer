@@ -8,7 +8,6 @@
 #include <glm/geometric.hpp>
 
 namespace Rye {
-    class Material;
     struct HitData {
         glm::vec3 point;
         glm::vec3 normal;

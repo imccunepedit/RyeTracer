@@ -12,8 +12,6 @@
 
 #include "Renderer/Camera.h"
 #include "Renderer/Scene.h"
-#include "Objects/Material.h"
-#include "Objects/Object.h"
 
 using namespace Rye::UI;
 

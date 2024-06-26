@@ -8,11 +8,12 @@
 #include <glm/vec4.hpp>
 
 #include "Objects/Object.h"
+#include "Materials/Material.h"
 
 using namespace Rye::Assets;
+using namespace Rye::Materials;
 
 namespace Rye {
-    class Material;
     class Ray;
     class HitData;
 
@@ -21,7 +22,7 @@ namespace Rye {
             void AddObject(const ObjectTypes& o);
             void RemoveObject(int i);
 
-            void AddMaterial(const Material& m);
+            void AddMaterial(const MaterialTypes& m);
             void RemoveMaterial(int i);
 
             void CornellBox();
