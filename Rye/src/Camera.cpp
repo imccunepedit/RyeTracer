@@ -6,7 +6,7 @@
 
 #include "imgui.h"
 
-#include "Utils.h"
+#include "Utils/Log.h"
 
 using namespace Rye;
 
@@ -15,7 +15,7 @@ void Camera::Resize(int w, int h)
     if ((w == film.width && h == film.height) || w*h <= 1 )
         return;
 
-    Rye::log("resize");
+    Rye::Utils::log("resize");
     film.Resize(w, h);
     m_aspectRatio = (float)w/h;
 

@@ -1,19 +1,21 @@
 #include "Material.h"
 
 #include "Ray.h"
-#include "Utils.h"
+#include "Utils/Random.h"
+#include "Utils/Fresnel.h"
 
 using namespace Rye;
+using namespace Rye::Utils;
 
 bool Material::BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const
 {
     switch (materialType) {
         case Lambertian:
-            scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed));
+            scatterRay = glm::normalize(hit.normal + RandomUnitF3(hit.seed));
             return true;
 
         case Conductor:
-            scatterRay = glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed, roughness);
+            scatterRay = glm::reflect(inRay, hit.normal) + RandomUnitF3(hit.seed, roughness);
             return true;
 
         case Dielectric:
@@ -88,10 +90,10 @@ bool Material::GlossyBSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatt
 {
     if (m_isSpecular)
     {
-        scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + RandomOnSphere(hit.seed) * roughness);
+        scatterRay = glm::normalize(glm::reflect(inRay, hit.normal) + RandomUnitF3(hit.seed) * roughness);
         return true;
     }
 
-    scatterRay = glm::normalize(hit.normal + RandomOnSphere(hit.seed));
+    scatterRay = glm::normalize(hit.normal + RandomUnitF3(hit.seed));
     return true;
 }

@@ -7,12 +7,8 @@
 #include <glm/geometric.hpp>
 
 
-namespace Rye
+namespace Rye::Utils
 {
-    static void log(std::string info)
-    {
-        std::cout << info << std::endl;
-    }
 
     static uint32_t pcgHash(uint32_t input)
     {
@@ -38,28 +34,18 @@ namespace Rye
     }
 
 
-    static glm::vec3 RandomOnSphere(uint32_t& seed, float radius=1.0f)
+    static glm::vec3 RandomUnitF3(uint32_t& seed, float radius=1.0f)
     {
         return glm::normalize(RandomInSphere(seed))*radius;
     }
 
 
-    static float Fresnel(glm::vec3 I, glm::vec3 N, float eta)
+
+    struct Complex
     {
-        float c1 = glm::dot(I,-N);
-// #define SCHLICK
-#ifdef SCHLICK
-        float R0 = (1-eta)/(1+eta);
-        R0 *= R0;
-        return R0 + (1-R0)*pow((1 - c1),5);
-#else
-        float inverse_eta = 1/eta;
-        float c2 = sqrtf(1 - inverse_eta*inverse_eta * (1 - c1*c1));
-        float Rs = (c1 - eta*c2) / (c1 + eta*c2);
-        float Rp = (c2 - eta*c1) / (c2 + eta*c1);
-        return 0.5f * (Rs*Rs + Rp*Rp);
-#endif
-    }
+        float a,b;
+
+    };
 
 
 }
