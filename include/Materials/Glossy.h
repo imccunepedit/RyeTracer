@@ -24,10 +24,6 @@ namespace Rye::Materials {
             glm::vec3 color = glm::vec3(1.0f);
             float roughness = 0.0f;
             float specularity = 0.2f;
-
-        private:
-            mutable bool m_isSpecular = false;
-
     };
 }
 
