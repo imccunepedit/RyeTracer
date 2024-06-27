@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
 #include "Objects/Object.h"
 #include "Materials/Material.h"
@@ -37,10 +37,10 @@ namespace Rye {
 
             size_t materialCount = 0;
 
-            glm::vec4 ambientColor = glm::vec4(0);
+            glm::vec3 ambientColor = glm::vec3(0);
 
-            glm::vec4 lightDirection = glm::vec4(1,0,-1, 0);
-            glm::vec4 lightColor = glm::vec4(1,0.8,0.6, 1);
+            glm::vec3 lightDirection = glm::vec3(1,0,-1);
+            glm::vec3 lightColor = glm::vec3(1,0.8,0.6);
 
         private:
             std::vector<Material> m_materials;

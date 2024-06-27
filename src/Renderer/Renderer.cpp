@@ -91,7 +91,10 @@ glm::vec3 Renderer::RayGen(int i)
             break;
 
         if (!m_scene->GetMaterial(hit.materialID).BSDF(ray.direction, hit, ray.direction))
+        {
+            color = hit.color;
             break;
+        }
 
         ray.origin = hit.point;
 

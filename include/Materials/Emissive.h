@@ -21,7 +21,7 @@ namespace Rye::Materials {
             static bool IsDoubleSided() { return false; }
 
         public:
-            glm::vec3 color = glm::vec3(0.5f,0.5f,0.5f);
+            glm::vec3 color = glm::vec3(1.0f);
             float emissiveStrength = 4.0f;
     };
 }
