@@ -7,7 +7,7 @@ Demo scene rendered with 5000 samples and a max depth of 10.
 A ray tracer that is barely tracing rays.
 
 
-* some links
+* COMMENT some links
 - https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/asimplediffusematerial
 - https://www.pbr-book.org/4ed/
 - https://github.com/GPSnoopy/RayTracingInVulkan

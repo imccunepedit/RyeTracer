@@ -17,7 +17,8 @@ bool Dielectric::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRa
     // hit.normal = glm::normalize(hit.normal);
 
     scatterRay = glm::refract(inRay, hit.normal, eta);
-    bool reflect = glm::dot(scatterRay, scatterRay) < 0.001;
+    bool reflect = glm::all(glm::equal(scatterRay, glm::vec3(0.0f)));
+    // bool reflect = glm::dot(scatterRay, scatterRay) < 0.001;
 
     reflect |= Math::Fresnel(inRay, hit.normal, eta) > Utils::RandomFloat(hit.seed);
 

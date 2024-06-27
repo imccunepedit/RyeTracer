@@ -14,9 +14,7 @@ namespace Rye::Objects {
     class AABB
     {
         public:
-            AABB(glm::vec3 min, glm::vec3 max, int materialID)
-                : m_min(min), m_max(max), m_materialID(materialID)
-            {}
+            AABB(glm::vec3 min, glm::vec3 max, int materialID);
 
             bool Hit(const Ray& ray, HitData& hit, float t_min) const;
 

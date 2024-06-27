@@ -59,6 +59,17 @@ glm::vec3 Renderer::RayGen(int i)
         hit.seed = 1;
         return TraceRay(ray, hit).color;
     }
+    else if (m_debug)
+    {
+        HitData hit;
+        hit.seed = 1;
+        TraceRay(ray, hit);
+        if (!m_viewNormals)
+            return  hit.color;
+        if (!m_absNormals)
+            return hit.normal;
+        return glm::abs(hit.normal);
+    }
 
     float hits;
     for (int b=0; b <= m_maxDepth; ++b)
@@ -117,4 +128,7 @@ HitData Renderer::Miss(const Ray& ray, HitData& hit) const
 void Renderer::DrawControls()
 {
     ImGui::DragInt("Max Depth", &m_maxDepth);
+    ImGui::Checkbox("Debug view", &m_debug);
+    ImGui::Checkbox("View Normals", &m_viewNormals);
+    ImGui::Checkbox("Absolute Normals", &m_absNormals);
 }

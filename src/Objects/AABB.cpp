@@ -9,6 +9,14 @@
 
 using namespace Rye::Objects;
 
+AABB::AABB(glm::vec3 min, glm::vec3 max, int materialID)
+    : m_min(min), m_max(max), m_materialID(materialID)
+{
+
+}
+
+
+
 bool AABB::Hit(const Ray& ray, HitData& hit, float t_min) const
 {
     glm::vec3 invRayDir = 1.0f / ray.direction;
@@ -34,8 +42,8 @@ bool AABB::Hit(const Ray& ray, HitData& hit, float t_min) const
       n0.z *= -1;
     }
 
-    float tf = glm::min(glm::min(t1.x, t1.y), t1.z);
-    float tn = glm::max(glm::max(t0.x, t0.y), t0.z);
+    float tf = glm::min(glm::min(glm::max(t0.x, t1.x), glm::max(t0.y, t1.y)), glm::max(t0.z, t1.z));
+    float tn = glm::max(glm::max(glm::min(t0.x, t1.x), glm::min(t0.y, t1.y)), glm::min(t0.z, t1.z));
 
     // we didn't hit the box
     if (tf < tn)

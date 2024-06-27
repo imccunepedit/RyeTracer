@@ -28,6 +28,9 @@ namespace Rye {
         private:
             Camera* m_camera = nullptr;
             Scene* m_scene = nullptr;
+            bool m_debug = false;
+            bool m_viewNormals = false;
+            bool m_absNormals = false;
 
             int m_maxDepth = 10; // could do less if there isn't any glass or different scene with glass
     };

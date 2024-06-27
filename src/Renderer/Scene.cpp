@@ -94,8 +94,9 @@ void Scene::TestScene()
     // AddObject(Sphere(glm::vec3(7,4,0), 1, 5));
     // AddObject(Sphere(glm::vec3(-4,4,3), 2, 4));
     AddObject(Quad(glm::vec3(-10,-10, 0), glm::vec3(20, 0, 0), glm::vec3( 0,20, 0), 9)); // bottom
-    AddObject(AABB(glm::vec3(0.5,0.5,0.1), glm::vec3(1.5,1.5,1.1), 1));
-    AddObject(AABB(glm::vec3(3,2,0.1), glm::vec3(4,3,1.1), 2));
+    AddObject(AABB(glm::vec3(0.5,0.5,0.1), glm::vec3(1.5,1.5,1.1), 2));
+    AddObject(Sphere(glm::vec3(-1.5,0.5,1), 1, 1));
+    // AddObject(AABB(glm::vec3(3,0.5,0.1), glm::vec3(4,3,1.1), 1));
 }
 
 void Scene::Box2()
