@@ -125,6 +125,7 @@ HitData Renderer::ClosestHit(const Ray& ray, HitData& hit) const
 HitData Renderer::Miss(const Ray& ray, HitData& hit) const
 {
     hit.color = m_scene->ambientColor;
+    hit.normal = glm::vec3(0);
     return hit;
 }
 
