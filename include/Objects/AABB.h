@@ -3,6 +3,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "Objects/Quad.h"
+
 namespace Rye {
     class Ray;
     class HitData;
@@ -20,7 +22,8 @@ namespace Rye::Objects {
 
         private:
             int m_materialID = 0;
-            glm::vec3 m_min, m_max;
+            Quad m_faces[6];
+            // glm::vec3 m_min, m_max;
     };
 }
 

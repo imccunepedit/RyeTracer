@@ -15,7 +15,7 @@ namespace Rye::Objects {
             Plane() {}
 
             Plane(const glm::vec3 normal, const glm::vec3 point);
-            bool Hit(const Ray& ray, HitData& hit, float t_min) const;
+            bool Hit(const Ray& ray, HitData& hit, float t_min, bool doubleSided = false) const;
         private:
             glm::vec3 m_normal;
             float m_planeOffset;

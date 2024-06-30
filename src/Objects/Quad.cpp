@@ -7,9 +7,9 @@
 
 using namespace Rye::Objects;
 
-bool Quad::Hit(const Ray& ray, HitData& hit, float t_min) const
+bool Quad::Hit(const Ray& ray, HitData& hit, float t_min, bool doubleSided) const
 {
-    if (!m_plane.Hit(ray, hit, t_min))
+    if (!m_plane.Hit(ray, hit, t_min, doubleSided))
         return false;
 
     glm::vec3 intersectionWorldSpace = hit.point;

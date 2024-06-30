@@ -8,14 +8,18 @@
 using namespace Rye::Objects;
 
 
-bool Plane::Hit(const Ray& ray, HitData& hit, float t_min) const
+bool Plane::Hit(const Ray& ray, HitData& hit, float t_min, bool doubleSided) const
 {
     float a = glm::dot(m_normal, ray.direction);
 
     // currently quads are infinetly thin so theres no reason to intersect their back.
     // if th ra direction and the plane normal don't point against each other then we would only hit the back
     if (a > 0)
-        return false;
+    {
+        if (!doubleSided)
+            return false;
+        hit.front = false;
+    }
 
     float t = (m_planeOffset - glm::dot(m_normal, ray.origin)) / a;
 
