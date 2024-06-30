@@ -6,6 +6,12 @@
 
 namespace Rye::Math
 {
+    static float SineThetaSqr(float cosTheta, float eta)
+    // calculated the sqaure of the sin of the angle of the refracted ray
+    {
+        return 1 - eta * eta * (1 - cosTheta * cosTheta);
+    }
+
     static float Schlick(glm::vec3 I, glm::vec3 N, float eta)
     {
         float c1 = glm::dot(I, -N);
@@ -17,12 +23,12 @@ namespace Rye::Math
     static float Fresnel(glm::vec3 I, glm::vec3 N, float eta)
     {
         float c1 = glm::dot(I, -N);
-        float inverse_eta = 1 / eta;
-        float c2 = glm::sqrt(1 - inverse_eta * inverse_eta * (1 - c1 * c1));
+        float c2 = glm::sqrt(SineThetaSqr(c1, 1/eta));
         float Rs = (c1 - eta * c2) / (c1 + eta * c2);
         float Rp = (c2 - eta * c1) / (c2 + eta * c1);
         return 0.5f * (Rs * Rs + Rp * Rp);
     }
+
 
 }
 // namespace Rye::Math

@@ -10,25 +10,28 @@ using namespace Rye::Materials;
 
 bool Dielectric::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRay) const
 {
-    float eta = hit.front ? 1/indexOfRefraction : indexOfRefraction;
+    float eta = hit.front ? 1.0f/indexOfRefraction : indexOfRefraction;
     hit.normal *= hit.front ? 1.0f : -1.0f;
 
     // hit.normal += RandomOnSphere(hit.seed, roughness);
     // hit.normal = glm::normalize(hit.normal);
 
-    scatterRay = glm::refract(inRay, hit.normal, eta);
+    float sinesq = Math::SineThetaSqr(glm::dot(inRay, -hit.normal), eta);
 
+    bool reflect = sinesq < 0.0f;
+    // if (reflect)
+    // {
+    //     hit.color = glm::vec3(1,0,0);
+    //     // scatterRay = glm::reflect(glm::normalize(inRay), glm::normalize(hit.normal));
+    //     return false;
+    // }
 
-    bool reflect = glm::all(glm::equal(scatterRay, glm::vec3(0.0f)));
+    if (!reflect)
+        reflect = Math::Fresnel(inRay, hit.normal, eta) > Utils::RandomFloat(hit.seed);
 
-    if (reflect)
-    {
-        hit.color = glm::vec3(1,0,0);
-        return false;
-    }
-    reflect |= Math::Fresnel(inRay, hit.normal, eta) > Utils::RandomFloat(hit.seed);
-
-    if (reflect)
+    if (!reflect)
+        scatterRay = glm::refract(inRay, hit.normal, eta);
+    else
         scatterRay = glm::reflect(inRay, hit.normal);
 
     return true;
