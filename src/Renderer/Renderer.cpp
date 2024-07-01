@@ -94,12 +94,8 @@ glm::vec3 Renderer::RayGen(int i)
         if (hit.distance == std::numeric_limits<float>::max())
             break;
 
-        // for emissive materials we don't want any more bounces
         if (!m_scene->GetMaterial(hit.materialID).BSDF(ray.direction, hit, ray.direction))
-        {
-            color *= hit.color;
             break;
-        }
 
         ray.origin = hit.point;
 
