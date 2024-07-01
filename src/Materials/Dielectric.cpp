@@ -16,19 +16,7 @@ bool Dielectric::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRa
     // hit.normal += RandomOnSphere(hit.seed, roughness);
     // hit.normal = glm::normalize(hit.normal);
 
-    float sinesq = Math::SineThetaSqr(glm::dot(inRay, -hit.normal), eta);
-
-    bool reflect = sinesq < 0.0f;
-    // if (reflect)
-    // {
-    //     hit.color = glm::vec3(1,0,0);
-    //     // scatterRay = glm::reflect(glm::normalize(inRay), glm::normalize(hit.normal));
-    //     return false;
-    // }
-
-    if (!reflect)
-        reflect = Math::Fresnel(inRay, hit.normal, eta) > Utils::RandomFloat(hit.seed);
-
+    bool reflect = Math::Fresnel(glm::dot(inRay, -hit.normal), eta) >= Utils::RandomFloat(hit.seed);
     if (!reflect)
         scatterRay = glm::refract(inRay, hit.normal, eta);
     else
