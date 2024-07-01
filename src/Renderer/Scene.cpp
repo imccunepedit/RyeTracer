@@ -53,7 +53,7 @@ void Scene::CornellBox()
     AddMaterial(Lambertian()); // gray walls
     AddMaterial(Lambertian(glm::vec3(0.68,0.1,0.1))); // red right wall
     AddMaterial(Lambertian(glm::vec3(0.12,0.65,0.1))); // green left wall
-    AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4)); // gold ball
+    AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4f)); // gold ball
     AddMaterial(Glossy(glm::vec3(0.25,0.75,1))); // blue plastic ball
     AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
 
@@ -69,10 +69,10 @@ void Scene::CornellBox()
 
     AddObject(Quad(glm::vec3(-3,-3, 9), glm::vec3(0,6,0), glm::vec3(6,0,0), 0));
 
-    AddObject(Sphere(glm::vec3(-3,0,1), 1, 6));
+    AddObject(Sphere(glm::vec3(-3,0,1.001f), 1, 6));
     // AddObject(Sphere(glm::vec3(0,0,1), 1, 6));
-    AddObject(AABB(glm::vec3(-1,-1,0.1), glm::vec3(1,1,2), 6));
-    AddObject(Sphere(glm::vec3(3,0,1), 1, 4));
+    AddObject(AABB(glm::vec3(-1,-1,0.2f), glm::vec3(1,1,2.2), 6));
+    AddObject(Sphere(glm::vec3(3,0,1.001f), 1, 4));
 
 }
 

@@ -38,7 +38,7 @@ void Film::ResetAccumulator()
 void Film::SetPixel(int index, const glm::vec3& color)
 {
 
-    m_accumulated[index] += glm::clamp(color, glm::vec3(0), glm::vec3(1));
+    m_accumulated[index] += glm::clamp(color, glm::vec3(0), glm::vec3(10000));
     data[index] = ProcessColor(m_accumulated[index]);
 }
 
