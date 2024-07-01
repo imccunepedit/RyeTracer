@@ -7,7 +7,7 @@ using namespace Rye::Materials;
 
 bool Lambertian::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRay) const
 {
-    scatterRay = glm::normalize(hit.normal + Rye::Utils::RandomUnitF3(hit.seed));
+    scatterRay = glm::normalize(hit.normal + Utils::RandomUnitF3(hit.seed));
     return true;
 }
 

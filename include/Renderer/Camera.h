@@ -40,7 +40,7 @@ namespace Rye {
 
         public:
             Film film;
-            float vFoV = 20;
+            float vFoV = 40;
             int rayCount = 1;
 
         private:

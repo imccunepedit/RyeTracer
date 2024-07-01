@@ -33,6 +33,10 @@ int Renderer::Render()
     parallel_for(size_t(0), size_t(m_camera->rayCount), [this](size_t i)
     {
         glm::vec3 color = RayGen(i);
+
+        // if (i == m_camera->rayCount/2)
+        //     std::cout << color.r << " " << color.g << " " << color.b << std::endl;
+
         m_camera->film.SetPixel(i,color);
     });
 #endif
@@ -59,7 +63,8 @@ glm::vec3 Renderer::RayGen(int i)
         hit.seed = 1;
         return TraceRay(ray, hit).color;
     }
-    else if (m_debug)
+
+    if (m_debug)
     {
         HitData hit;
         hit.seed = 1;
@@ -71,13 +76,12 @@ glm::vec3 Renderer::RayGen(int i)
         return glm::abs(hit.normal);
     }
 
-    float hits;
     for (int b=0; b <= m_maxDepth; ++b)
     {
         if (b == m_maxDepth)
         {
             // if we are at max depth we haven't hit any light source so return black
-            color = glm::vec4(0);
+            color = glm::vec3(0);
             break;
         }
 
@@ -90,9 +94,10 @@ glm::vec3 Renderer::RayGen(int i)
         if (hit.distance == std::numeric_limits<float>::max())
             break;
 
+        // for emissive materials we don't want any more bounces
         if (!m_scene->GetMaterial(hit.materialID).BSDF(ray.direction, hit, ray.direction))
         {
-            color = hit.color;
+            color *= hit.color;
             break;
         }
 
