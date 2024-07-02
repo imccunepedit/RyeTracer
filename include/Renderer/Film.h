@@ -7,7 +7,7 @@ namespace Rye {
     class Film
     {
         public:
-            void SetPixel(int index, const glm::vec3& color);
+            void SetPixel(int index, glm::vec3& color);
             void Resize(int w, int h);
             void ResetAccumulator();
             void NewSample() {

@@ -4,8 +4,6 @@
 #include "Utils/Random.h"
 #include "Math/Fresnel.h"
 
-#include "Utils/Log.h"
-
 using namespace Rye::Materials;
 
 bool Dielectric::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRay) const
@@ -28,8 +26,7 @@ bool Dielectric::BSDF(const glm::vec3 &inRay, HitData &hit, glm::vec3 &scatterRa
 
 void Dielectric::Color(const glm::vec3 &inRay, HitData &hit) const
 {
-    // hit.color = hit.normal;
     hit.color = glm::vec3(1);
-    // if (!hit.front)
-    //     hit.color = glm::exp((color-1.0f)*hit.distance);
+    if (!hit.front)
+        hit.color = glm::exp((color-1.0f)*hit.distance);
 }

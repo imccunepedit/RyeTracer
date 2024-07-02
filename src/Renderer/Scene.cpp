@@ -78,13 +78,13 @@ void Scene::CornellBox()
 
 void Scene::TestScene()
 {
-    ambientColor = glm::vec3(0.6f,0.7f,0.75f);
+    // ambientColor = glm::vec3(0.6f,0.7f,0.75f);
 
-    AddMaterial(Lambertian()); // gray walls
-    AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
     AddMaterial(Lambertian(glm::vec3(0.68,0.1,0.1))); // red right wall
-    AddMaterial(Emissive(20.0f));   // light
-    AddMaterial(Dielectric(glm::vec3(1), 0.6f)); // glass ball
+    AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
+    AddMaterial(Emissive(30.0f));   // light
+    // AddMaterial(Lambertian()); // gray walls
+    // AddMaterial(Dielectric(glm::vec3(1), 0.6f)); // glass ball
     // AddMaterial(Lambertian(glm::vec3(0.12,0.65,0.1))); // green left wall
     // AddMaterial(Conductor(glm::vec3(0.944,0.776,0.373), 1.4)); // gold ball
     // AddMaterial(Glossy(glm::vec3(0.25,0.75,1))); // blue plastic ball
@@ -94,11 +94,14 @@ void Scene::TestScene()
     // AddObject(Sphere(glm::vec3(4,4,0), 1, 3));
     // AddObject(Sphere(glm::vec3(7,4,0), 1, 5));
     // AddObject(Sphere(glm::vec3(-4,4,3), 2, 4));
-    AddObject(Quad(glm::vec3(-10,-10, 0), glm::vec3(100, 0, 0), glm::vec3( 0,100, 0), 0)); // bottom
+
+    AddObject(Quad(glm::vec3(-30,-30, 0), glm::vec3(100, 0, 0), glm::vec3( 0,100, 0), 0)); // bottom
+    AddObject(AABB(glm::vec3(1,-2.5,-0.1), glm::vec3(3,-0.5,2.0), 1));
+    AddObject(Sphere(glm::vec3(2.5,-5,1), 1, 1));
+    AddObject(Sphere(glm::vec3(-3,-6,5), 1, 2));
+
     // AddObject(Quad(glm::vec3( 2, 2, 8), glm::vec3( 0, 4, 0), glm::vec3( 4, 0, 0), 3)); // light
-    AddObject(AABB(glm::vec3(0.5,0.5,0.1), glm::vec3(1.5,1.5,1.1), 2));
-    AddObject(Sphere(glm::vec3(-1.5,0.5,1), 1, 4));
-    AddObject(AABB(glm::vec3(3.1,0.5,0.5), glm::vec3(5.1,2.5,2.5), 1));
+    // AddObject(AABB(glm::vec3(0.5,0.5,0.1), glm::vec3(1.5,1.5,1.1), 2));
 
     // AddObject(Quad(glm::vec3(3.1,0.5,0.5), glm::vec3(1,0,0),glm::vec3(0,0,1), 2));
     // AddObject(Quad(glm::vec3(3.1,0.5,0.5), glm::vec3(0,1,0),glm::vec3(1,0,0), 2));
