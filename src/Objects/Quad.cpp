@@ -19,7 +19,10 @@ bool Quad::Hit(const Ray& ray, HitData& hit, float t_min, bool doubleSided) cons
     intersectionPlanarSpace.x = glm::dot(glm::vec3(m_w), glm::cross(intersectionPlanarWorldSpace, glm::vec3(m_v)));
     intersectionPlanarSpace.y = glm::dot(glm::vec3(m_w), glm::cross(glm::vec3(m_u), intersectionPlanarWorldSpace));
 
-    if (intersectionPlanarSpace.x < 0.0f || intersectionPlanarSpace.x > 1.0f || intersectionPlanarSpace.y < 0.0f || intersectionPlanarSpace.y > 1.0f)
+    if (intersectionPlanarSpace.x <= 0.0f ||
+        intersectionPlanarSpace.x >= 1.0f ||
+        intersectionPlanarSpace.y <= 0.0f ||
+        intersectionPlanarSpace.y >= 1.0f)
         return false;
 
     hit.materialID = m_materialID;

@@ -80,9 +80,9 @@ void Scene::TestScene()
 {
     // ambientColor = glm::vec3(0.6f,0.7f,0.75f);
 
-    AddMaterial(Lambertian(glm::vec3(0.68,0.1,0.1))); // red right wall
+    AddMaterial(Lambertian(glm::vec3(0.5,0.5,0.5))); // red right wall
     AddMaterial(Dielectric(glm::vec3(1), 1.5f)); // glass ball
-    AddMaterial(Emissive(30.0f));   // light
+    AddMaterial(Emissive(glm::vec3(0.25,0.6,1), 60.0f));   // light
     // AddMaterial(Lambertian()); // gray walls
     // AddMaterial(Dielectric(glm::vec3(1), 0.6f)); // glass ball
     // AddMaterial(Lambertian(glm::vec3(0.12,0.65,0.1))); // green left wall

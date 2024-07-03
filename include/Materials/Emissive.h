@@ -11,9 +11,8 @@ namespace Rye::Materials {
     {
         public:
             Emissive() {}
-            Emissive(float strength)
-                : emissiveStrength(strength)
-            {}
+            Emissive(float strength);
+            Emissive(glm::vec3 color, float strength);
 
             bool BSDF(const glm::vec3& inRay, HitData& hit, glm::vec3& scatterRay) const { return false; }
 
