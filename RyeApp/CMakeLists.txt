@@ -39,9 +39,9 @@ target_link_libraries(RyeApp PRIVATE
   glfw
   Vulkan::Vulkan
 
-  pthread
-  dl
-#   tbb
+  # pthread
+  # dl
+  # tbb
 )
 
 
