@@ -9,7 +9,7 @@
 
 class GLFWwindow;
 
-namespace Barley {
+namespace Rye {
     struct QueueFamilyIndices
     {
         std::optional<uint32_t> graphicsFamily;

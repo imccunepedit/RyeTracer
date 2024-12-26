@@ -3,7 +3,7 @@
 
 #include "Window.h"
 
-namespace Barley {
+namespace Rye {
     class App : public Window
     {
         public:

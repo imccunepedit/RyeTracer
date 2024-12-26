@@ -1,7 +1,7 @@
 #include "App.h"
 
 int main() {
-    Barley::App App;
+    Rye::App App;
 
     App.Run();
 

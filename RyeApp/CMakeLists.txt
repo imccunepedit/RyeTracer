@@ -52,6 +52,9 @@ target_include_directories(RyeApp PRIVATE
 )
 
 
+execute_process(COMMAND bin/compile_shaders.sh)
+
+
 # Output directories
 set_target_properties(RyeApp PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

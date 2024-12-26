@@ -94,7 +94,7 @@ const std::vector<Vertex> vertices = {{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
                                       {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}};
 const std::vector<uint16_t> indices = {0, 1, 2, 2, 3, 0};
 
-using namespace Barley;
+using namespace Rye;
 
 void Window::Run() {
   while (!glfwWindowShouldClose(m_windowHandle) && !m_shouldQuit) {
@@ -397,17 +397,17 @@ void Window::CreateVulkanInstance() {
   }
 
 #ifndef NDEBUG
-  // uint32_t extensionCount = 0;
-  // vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-  // std::vector<VkExtensionProperties> extensions(extensionCount);
-  // vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-  //                                        extensions.data());
+  uint32_t extensionCount = 0;
+  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+  std::vector<VkExtensionProperties> available_extensions(extensionCount);
+  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
+                                         available_extensions.data());
 
-  // std::cout << "available extensions" << std::endl;
+  std::cout << "available extensions" << std::endl;
 
-  // for (const auto &extension : extensions) {
-  //   std::cout << "\t" << extension.extensionName << std::endl;
-  // }
+  for (const auto &extension : available_extensions) {
+    std::cout << "\t" << extension.extensionName << std::endl;
+  }
 #endif
 
   if (vkCreateInstance(&createInfo, nullptr, &m_vulkanInstance) != VK_SUCCESS)

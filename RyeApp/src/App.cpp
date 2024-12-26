@@ -4,7 +4,7 @@
 
 #include "imgui.h"
 
-using namespace Barley;
+using namespace Rye;
 
 App::App() {}
 
